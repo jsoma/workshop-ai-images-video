@@ -910,12 +910,12 @@ WARNING: [youtube] rDXubdQdJYs: n challenge solving failed: Some formats may be 
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">In this 0:59 second video:
+<pre class="cell-output">Based on the video provided:
 
-*   **Joe Biden** had approximately **37.5 seconds** of screen time.
-*   **Donald Trump** had approximately **21.5 seconds** of screen time.
+*   **Joe Biden** had approximately **26 seconds** of screen time.
+*   **Donald Trump** had approximately **24 seconds** of screen time.
 
-**Joe Biden got significantly more screen time in this debate video.**</pre>
+Therefore, **Joe Biden** had slightly more screen time in this debate video.</pre>
 <p>You can't fact-check this. You can't show your editor the work. You can't catch errors. It's a vibe.</p>
 <h2>The right way</h2>
 <p>Classify each frame with an LLM. Produce an auditable CSV — every row links to a frame you can check.</p>
@@ -953,36 +953,36 @@ WARNING: [youtube] rDXubdQdJYs: n challenge solving failed: Some formats may be 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Saved to </span><span class="si">{</span><span class="n">OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">frame-001.jpg: Unknown (0.50)</pre>
-<pre class="cell-output">frame-002.jpg: unknown (0.90)</pre>
-<pre class="cell-output">frame-003.jpg: unknown (0.80)</pre>
-<pre class="cell-output">frame-004.jpg: unknown (0.80)</pre>
-<pre class="cell-output">frame-005.jpg: Donald Trump (0.90)</pre>
-<pre class="cell-output">frame-006.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-007.jpg: unknown (0.50)</pre>
-<pre class="cell-output">frame-008.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-009.jpg: unknown (0.50)</pre>
-<pre class="cell-output">frame-010.jpg: unknown (0.00)</pre>
-<pre class="cell-output">frame-011.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-001.jpg: Joe Biden (0.70)</pre>
+<pre class="cell-output">frame-002.jpg: Biden (0.90)</pre>
+<pre class="cell-output">frame-003.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-004.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-005.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-006.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-007.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-008.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-009.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-010.jpg: Speaking individual (0.80)</pre>
+<pre class="cell-output">frame-011.jpg: Joe Biden (0.90)</pre>
 <pre class="cell-output">frame-012.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-013.jpg: Not identifiable (0.90)</pre>
-<pre class="cell-output">frame-014.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-015.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-016.jpg: unknown (0.70)</pre>
-<pre class="cell-output">frame-017.jpg: Donald Trump (0.90)</pre>
-<pre class="cell-output">frame-018.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-013.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-014.jpg: unknown (0.00)</pre>
+<pre class="cell-output">frame-015.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-016.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-017.jpg: unknown (0.00)</pre>
+<pre class="cell-output">frame-018.jpg: Unknown (0.50)</pre>
 <pre class="cell-output">frame-019.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-020.jpg: Unknown (0.50)</pre>
-<pre class="cell-output">frame-021.jpg: Not identified (0.00)</pre>
-<pre class="cell-output">frame-022.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-023.jpg: unknown (0.00)</pre>
+<pre class="cell-output">frame-020.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-021.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-022.jpg: unknown (0.80)</pre>
+<pre class="cell-output">frame-023.jpg: Joe Biden (0.90)</pre>
 <pre class="cell-output">frame-024.jpg: President Biden (0.90)</pre>
-<pre class="cell-output">frame-025.jpg: Donald Trump (0.90)</pre>
-<pre class="cell-output">frame-026.jpg: unknown (0.80)</pre>
-<pre class="cell-output">frame-027.jpg: Unknown (0.50)</pre>
-<pre class="cell-output">frame-028.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-029.jpg: Biden (0.90)</pre>
-<pre class="cell-output">frame-030.jpg: unknown (0.50)
+<pre class="cell-output">frame-025.jpg: Unknown (1.00)</pre>
+<pre class="cell-output">frame-026.jpg: Unknown (0.80)</pre>
+<pre class="cell-output">frame-027.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-028.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-029.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-030.jpg: Unknown (0.80)
 
 Saved to outputs/frame_classifications.csv</pre>
 <p><strong>Compare the two.</strong> Same question, same video. One gives you a number. The other gives you a spreadsheet with an audit trail. Even if the vibe answer is right, you can't verify it. That's the point.</p>

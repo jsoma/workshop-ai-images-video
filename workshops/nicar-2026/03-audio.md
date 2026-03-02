@@ -1,6 +1,8 @@
 ---
 install:
   - whisperx
+env_keys:
+  - HF_TOKEN
 data_files:
   - "rDXubdQdJYs.mp3"
 ---

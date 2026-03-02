@@ -933,11 +933,11 @@ OSError: dlopen(/Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-ni
   Reason: tried: &#x27;/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file), &#x27;/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file), &#x27;/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file), &#x27;/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file)
 [end of libtorchcodec loading traceback].
   warnings.warn(</pre>
-<pre class="cell-output">2026-03-01 23:06:58 - whisperx.asr - INFO - No language specified, language will be detected for each audio file (increases inference time)</pre>
-<pre class="cell-output">2026-03-01 23:06:58 - whisperx.vads.pyannote - INFO - Performing voice activity detection using Pyannote...</pre>
+<pre class="cell-output">2026-03-01 23:22:07 - whisperx.asr - INFO - No language specified, language will be detected for each audio file (increases inference time)</pre>
+<pre class="cell-output">2026-03-01 23:22:07 - whisperx.vads.pyannote - INFO - Performing voice activity detection using Pyannote...</pre>
 <pre class="cell-output">Lightning automatically upgraded your loaded checkpoint from v1.5.4 to v2.6.1. To apply the upgrade to your files permanently, run `python -m lightning.pytorch.utilities.upgrade_checkpoint .venv/lib/python3.12/site-packages/whisperx/assets/pytorch_model.bin`</pre>
-<pre class="cell-output">2026-03-01 23:07:06 - whisperx.asr - INFO - Detected language: en (1.00) in first 30s of audio</pre>
-<pre class="cell-output">2026-03-01 23:07:31 - whisperx.diarize - INFO - Loading diarization model: pyannote/speaker-diarization-community-1</pre>
+<pre class="cell-output">2026-03-01 23:22:15 - whisperx.asr - INFO - Detected language: en (1.00) in first 30s of audio</pre>
+<pre class="cell-output">2026-03-01 23:22:39 - whisperx.diarize - INFO - Loading diarization model: pyannote/speaker-diarization-community-1</pre>
 <pre class="cell-output">/Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/pyannote/audio/models/blocks/pooling.py:103: UserWarning: std(): degrees of freedom is &lt;= 0. Correction should be strictly less than the reduction factor (input numel divided by output numel). (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/native/ReduceOps.cpp:1839.)
   std = sequences.std(dim=-1, correction=1)</pre>
 <pre class="cell-output">
@@ -1015,19 +1015,18 @@ Speaker          Time      %
 </pre></div>
 
 <pre class="cell-output">[00:02 - 00:07] Speaker 1: relative to what we&#x27;re going to do with more border patrol and more asylum officers.
-[00:08 - 00:08] Speaker 2: President Trump.
-[00:08 - 00:13] Speaker 1: I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
-[00:13 - 00:17] Speaker 3: The only person at this stage is a convicted felon is the man I&#x27;m looking at right now.
-[00:17 - 00:20] Speaker 1: But when he talks about a convicted felon, his son is a convicted felon.
-[00:20 - 00:22] Speaker 3: What what what are you talking about?
-[00:23 - 00:24] Speaker 3: You you have the morals of an alley cat.
-[00:25 - 00:29] Speaker 1: My son was not a loser, was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.
-[00:29 - 00:33] Speaker 3: He&#x27;s blaming inflation and he&#x27;s right it&#x27;s been very bad.
-[00:33 - 00:34] Speaker 3: He caused the inflation.
-[00:35 - 00:46] Speaker 1: excuse me, with um dealing with everything we have to do with uh look if we finally beat Medicare.
-[00:46 - 00:48] Speaker 2: Thank you, President Biden, President Trump.
-[00:48 - 00:53] Speaker 1: Well, I took two tests, cognitive test, I aced them. Go through the first five questions, he couldn&#x27;t do it.
-[00:53 - 00:58] Speaker 3: This guy&#x27;s three years younger and a lot less confident. I think that this look at the record. Look at what I&#x27;ve done.</pre>
+[00:08 - 00:08] Speaker 2: President Trump?
+[00:08 - 00:12] Speaker 3: I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
+[00:13 - 00:16] Speaker 1: The only person at this stage is a convicted felon, this man I&#x27;m looking at right now.
+[00:17 - 00:20] Speaker 3: But when he talks about a convicted felon, his son is a convicted felon.
+[00:20 - 00:22] Speaker 1: What, what are you talking about?
+[00:23 - 00:24] Speaker 1: You you have the morals of an alley cat.
+[00:25 - 00:28] Speaker 3: My son was not a loser, was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.
+[00:29 - 00:34] Speaker 1: He&#x27;s blaming inflation and he&#x27;s right, it&#x27;s been very bad. He caused the inflation.
+[00:35 - 00:46] Speaker 3: Excuse me, with um, dealing with everything we have to do with uh, look, if we finally beat Medicare.
+[00:46 - 00:48] Speaker 2: Thank you, President Biden. President Trump.
+[00:48 - 00:53] Speaker 3: Well, I took two tests, cognitive tests, I aced them. Go through the first five questions, he couldn&#x27;t do it.
+[00:53 - 00:58] Speaker 1: This guy&#x27;s three years younger and a lot less competent. I think that this, look at the record. Look at what I&#x27;ve done.</pre>
 <p>Cloud tradeoff: faster, structured output built-in, but your audio goes to Google. Most newsrooms will use both local and cloud depending on the sensitivity of the material.</p>
 
 <footer>

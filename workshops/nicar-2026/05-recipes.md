@@ -1,4 +1,6 @@
 ---
+env_keys:
+  - HF_TOKEN
 data_files:
   - "debate/*.jpg"
 ---
