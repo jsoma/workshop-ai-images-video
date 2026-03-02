@@ -1,3 +1,10 @@
+---
+install:
+  - ffmpeg-python
+data_files:
+  - "rDXubdQdJYs.mp4"
+  - "debate/*.jpg"
+---
 # Video
 
 What can you do with a video? It's images + audio + time. Decompose it, then use the tools you already have.

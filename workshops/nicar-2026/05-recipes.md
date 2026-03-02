@@ -1,3 +1,7 @@
+---
+data_files:
+  - "debate/*.jpg"
+---
 # The full pipeline
 
 ## Screen time

@@ -1,3 +1,9 @@
+---
+install:
+  - natural-pdf[ai]
+data_files:
+  - "city.png"
+---
 # Documents
 
 PDFs are images too. Text trapped in a scan, a photo of a posted notice, a 500-page FOIA dump — these are all "images with text in them."

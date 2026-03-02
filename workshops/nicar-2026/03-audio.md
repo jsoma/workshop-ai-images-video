@@ -1,3 +1,9 @@
+---
+install:
+  - whisperx
+data_files:
+  - "rDXubdQdJYs.mp3"
+---
 # Audio
 
 What can you do with audio? Turn it into text, then do text things. Split it by speaker.

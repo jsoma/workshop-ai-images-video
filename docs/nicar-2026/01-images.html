@@ -824,6 +824,7 @@ pre { line-height: 125%; }
 <span class="n">result</span><span class="o">.</span><span class="n">output</span>
 </pre></div>
 
+<pre class="cell-output">Vehicle(make=&#x27;Toyota&#x27;, model=&#x27;Highlander&#x27;, color=&#x27;beige&#x27;, year_estimate=2005, vehicle_type=&#x27;SUV&#x27;, confidence=0.9)</pre>
 <p>Notice the Pydantic model: each field has a name, a type, and a description. The LLM fills in the fields. If it's wrong, you can see <em>which</em> field is wrong.</p>
 <h2>Batch processing</h2>
 <p>Same thing, whole folder. Out comes a CSV.</p>
@@ -861,6 +862,87 @@ pre { line-height: 125%; }
 <span class="n">df</span>
 </pre></div>
 
+<div class="cell-output"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>filename</th>
+      <th>make</th>
+      <th>model</th>
+      <th>color</th>
+      <th>year_estimate</th>
+      <th>vehicle_type</th>
+      <th>confidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>28246634.jpg</td>
+      <td>Volkswagen</td>
+      <td>Transporter</td>
+      <td>black</td>
+      <td>2015</td>
+      <td>van</td>
+      <td>0.80</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>28246768.jpg</td>
+      <td>Toyota</td>
+      <td>Camry</td>
+      <td>Silver</td>
+      <td>2015</td>
+      <td>Sedan</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>28262472.jpg</td>
+      <td>Lexus</td>
+      <td>LX</td>
+      <td>Black</td>
+      <td>2020</td>
+      <td>SUV</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>28262480.jpg</td>
+      <td>Toyota</td>
+      <td>Yaris</td>
+      <td>yellow</td>
+      <td>2018</td>
+      <td>sedan</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>28266737.jpg</td>
+      <td>Tesla</td>
+      <td>Model Y</td>
+      <td>White</td>
+      <td>2022</td>
+      <td>SUV</td>
+      <td>0.95</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 <p>Open the output CSV. Spot-check a few rows against the source images. Does the make match what you see? Does the color? That's verification — not trusting the model, checking its work.</p>
 <h2>Swap providers</h2>
 <p>Same structured task, different LLM provider. Change one string.</p>
@@ -895,6 +977,10 @@ pre { line-height: 125%; }
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">--- openai:gpt-4o-mini ---
+subject=&#x27;A scenic landscape at sunrise&#x27; setting=&#x27;A wide-open field with hills and a road in the distance&#x27; mood=&#x27;Calm and serene&#x27; details=[&#x27;The sky features soft pink and orange hues as the sun rises&#x27;, &#x27;There are patches of mist hovering over the field&#x27;, &#x27;Lush greenery and purple wildflowers are prominent in the foreground&#x27;]</pre>
+<pre class="cell-output">--- google-gla:gemini-2.5-flash ---
+subject=&#x27;A rural landscape at sunrise or sunset&#x27; setting=&#x27;An open field with a road and low-lying fog&#x27; mood=&#x27;Serene and beautiful&#x27; details=[&#x27;A vibrant sky displaying shades of orange, yellow, and blue from the sunrise or sunset.&#x27;, &#x27;Low-lying fog or mist blankets the distant horizon and parts of the landscape.&#x27;, &#x27;A road stretches through the scene, lined with numerous patches of purple flowers, likely lupines.&#x27;, &#x27;Grassy fields with varying shades of green and brown extend across the foreground and midground.&#x27;, &#x27;A fence runs through the field, and a large dark rock is visible in the left foreground.&#x27;]</pre>
 <p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts.</p>
 
 <footer>
