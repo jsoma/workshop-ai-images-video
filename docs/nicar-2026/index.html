@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analyzing Images &amp; Video with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+(function() {
+  try {
+    var saved = localStorage.getItem('theme');
+    var theme = saved ? saved :
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
+<style>
+/* ==========================================================================
+   DARK THEME (Darkroom) — index page
+   ========================================================================== */
+
+[data-theme="dark"] {
+  --color-bg:           #09090b;
+  --color-bg-subtle:    #141416;
+  --color-surface:      #1c1c1f;
+  --color-border:       #2a2a2e;
+  --color-border-light: #1f1f22;
+  --color-text:         #e8e4dc;
+  --color-text-muted:   #8a8580;
+  --color-text-faint:   #5a5550;
+  --color-accent:       #c41230;
+  --color-accent-hover: #e01940;
+  --color-accent-faint: rgba(196, 18, 48, 0.12);
+  --color-colab:        transparent;
+  --color-colab-text:   #e8e4dc;
+  --color-colab-border: #e8e4dc;
+  --color-colab-hover:  #e8e4dc;
+  --color-colab-hover-text: #09090b;
+
+  --font-display:  "Instrument Serif", "Georgia", serif;
+  --font-body:     "DM Sans", "Helvetica Neue", sans-serif;
+  --font-mono:     "JetBrains Mono", "SF Mono", monospace;
+  --font-size-hero:    clamp(2.8rem, 6vw, 4.5rem);
+  --font-size-badge:   0.72rem;
+  --font-size-author:  0.95rem;
+  --font-size-desc:    1.05rem;
+  --font-size-module-num: 1.1rem;
+  --font-size-module-title: 1.15rem;
+  --font-size-module-desc: 0.88rem;
+  --font-size-footer:  0.78rem;
+  --line-height-body:  1.65;
+  --letter-spacing-badge: 0.18em;
+  --letter-spacing-hero: -0.025em;
+
+  --space-page-x:   clamp(1.5rem, 5vw, 6rem);
+  --space-page-y:   clamp(2rem, 6vh, 5rem);
+  --space-hero-gap: 1.2rem;
+  --space-module-y: 0;
+  --space-module-x: 0;
+
+  --radius-card:    0px;
+  --radius-btn:     2px;
+  --border-width:   1px;
+
+  --shadow-card:        none;
+  --grain-opacity:      0.035;
+  --bg-decoration-display: none;
+  --module-number-size: var(--font-size-module-num);
+  --module-number-weight: 500;
+  --module-number-opacity: 1;
+  --module-number-color: var(--color-accent);
+
+  --toggle-icon: "\263E";
+}
+
+/* ==========================================================================
+   LIGHT THEME (Signal) — index page
+   ========================================================================== */
+
+[data-theme="light"] {
+  --color-bg:           #EFEFEB;
+  --color-bg-subtle:    #E3E3DD;
+  --color-surface:      #fff;
+  --color-border:       #111;
+  --color-border-light: #111;
+  --color-text:         #111;
+  --color-text-muted:   #555;
+  --color-text-faint:   #888;
+  --color-accent:       #FF2D55;
+  --color-accent-hover: #ff0040;
+  --color-accent-faint: rgba(255, 45, 85, 0.08);
+  --color-colab:        #111;
+  --color-colab-text:   #fff;
+  --color-colab-border: #111;
+  --color-colab-hover:  var(--color-accent);
+  --color-colab-hover-text: #fff;
+
+  --font-display:  "Archivo Black", "Impact", sans-serif;
+  --font-body:     "IBM Plex Mono", "Courier New", monospace;
+  --font-mono:     "IBM Plex Mono", "Courier New", monospace;
+  --font-size-hero:    clamp(3rem, 8vw, 5.5rem);
+  --font-size-badge:   0.75rem;
+  --font-size-author:  0.82rem;
+  --font-size-desc:    0.88rem;
+  --font-size-module-num: 4rem;
+  --font-size-module-title: 1rem;
+  --font-size-module-desc: 0.8rem;
+  --font-size-footer:  0.72rem;
+  --line-height-body:  1.55;
+  --letter-spacing-badge: 0.2em;
+  --letter-spacing-hero: -0.03em;
+
+  --space-page-x:   clamp(1.5rem, 4vw, 3rem);
+  --space-page-y:   clamp(2rem, 5vh, 4rem);
+  --space-hero-gap: 1rem;
+  --space-module-y: 0;
+  --space-module-x: 0;
+
+  --radius-card:    0px;
+  --radius-btn:     0px;
+  --border-width:   3px;
+
+  --shadow-card:        none;
+  --grain-opacity:      0;
+  --bg-decoration-display: block;
+  --module-number-size: var(--font-size-module-num);
+  --module-number-weight: 400;
+  --module-number-opacity: 0.06;
+  --module-number-color: var(--color-text);
+
+  --toggle-icon: "\2600";
+}
+
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: var(--line-height-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* --- Grain overlay --- */
+.grain {
+  position: fixed; inset: 0; z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  transition: opacity 0.3s ease;
+}
+
+/* --- Background decoration (grid lines, light theme only) --- */
+.bg-decoration {
+  display: var(--bg-decoration-display);
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-decoration::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 119px,
+      rgba(0,0,0,0.03) 119px,
+      rgba(0,0,0,0.03) 120px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 119px,
+      rgba(0,0,0,0.03) 119px,
+      rgba(0,0,0,0.03) 120px
+    );
+}
+
+/* --- Page container --- */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--space-page-y) var(--space-page-x);
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
+   HERO
+   ========================================================================== */
+
+.hero {
+  padding-bottom: 3rem;
+  border-bottom: var(--border-width) solid var(--color-border);
+  margin-bottom: 0;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--font-size-badge);
+  font-weight: 500;
+  letter-spacing: var(--letter-spacing-badge);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-hero-gap);
+}
+
+[data-theme="dark"] .hero-badge::after {
+  content: "";
+  display: block;
+  width: 2rem;
+  height: 1px;
+  background: var(--color-accent);
+  margin-top: 0.6rem;
+}
+
+[data-theme="light"] .hero-badge {
+  font-weight: 600;
+  background: var(--color-accent-faint);
+  padding: 0.3em 0.8em;
+  border: 2px solid var(--color-accent);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-hero);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: var(--letter-spacing-hero);
+  color: var(--color-text);
+  margin-bottom: var(--space-hero-gap);
+}
+
+[data-theme="light"] .hero-title {
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.hero-author {
+  font-size: var(--font-size-author);
+  color: var(--color-text-muted);
+  margin-bottom: calc(var(--space-hero-gap) * 0.8);
+}
+
+[data-theme="light"] .hero-author {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.hero-desc {
+  font-size: var(--font-size-desc);
+  color: var(--color-text-muted);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.hero-desc strong {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+[data-theme="light"] .hero-desc strong {
+  font-weight: 600;
+  background: linear-gradient(transparent 60%, rgba(255, 45, 85, 0.15) 60%);
+}
+
+/* --- Theme toggle (index) --- */
+.index-theme-toggle {
+  position: absolute;
+  top: var(--space-page-y);
+  right: var(--space-page-x);
+  z-index: 10;
+}
+
+.index-theme-toggle button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  background: none;
+  border: 1px solid var(--color-border-light);
+  padding: 0.4em 0.8em;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.index-theme-toggle button:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.index-theme-toggle button::before {
+  content: var(--toggle-icon);
+  font-size: 1rem;
+}
+
+/* ==========================================================================
+   MODULES
+   ========================================================================== */
+
+.modules {
+  padding: var(--space-module-y) var(--space-module-x);
+}
+
+.module {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  border-bottom: var(--border-width) solid var(--color-border-light);
+  transition: background 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: inherit;
+}
+
+.module:last-child {
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+[data-theme="dark"] .module:hover {
+  background: var(--color-accent-faint);
+}
+
+[data-theme="light"] .module {
+  padding: 1.6rem 1.2rem;
+}
+
+[data-theme="light"] .module:hover {
+  background: var(--color-surface);
+  transform: translateX(6px);
+}
+
+.module-number {
+  font-family: var(--font-mono);
+  font-size: var(--module-number-size);
+  font-weight: var(--module-number-weight);
+  color: var(--module-number-color);
+  opacity: var(--module-number-opacity);
+  flex-shrink: 0;
+  min-width: 2.5rem;
+}
+
+[data-theme="light"] .module-number {
+  font-family: var(--font-display);
+  line-height: 1;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  user-select: none;
+}
+
+.module-body {
+  flex: 1;
+  min-width: 0;
+}
+
+[data-theme="light"] .module-body {
+  position: relative;
+  z-index: 1;
+}
+
+.module-body h2 {
+  font-family: var(--font-body);
+  font-size: var(--font-size-module-title);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+[data-theme="light"] .module-body h2 {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.3rem;
+}
+
+.module:hover .module-body h2 {
+  color: var(--color-accent);
+}
+
+/* Signal: accent stripe on hover */
+[data-theme="light"] .module::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--color-accent);
+  transition: width 0.2s ease;
+}
+
+[data-theme="light"] .module:hover::before {
+  width: 5px;
+}
+
+.module-body p {
+  font-size: var(--font-size-module-desc);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.module-actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+[data-theme="dark"] .module-actions {
+  gap: 0.6rem;
+}
+
+[data-theme="light"] .module-actions {
+  position: relative;
+  z-index: 1;
+}
+
+/* Read button (outline style) */
+.read-btn {
+  display: block;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.45em 1em;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-btn);
+  color: var(--color-text-muted);
+  background: transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+[data-theme="light"] .read-btn {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 0.55em 1.1em;
+  border-width: var(--border-width);
+}
+
+.read-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.colab-btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 0.45em 1em;
+  border: 1px solid var(--color-colab-border);
+  border-radius: var(--radius-btn);
+  color: var(--color-colab-text);
+  background: var(--color-colab);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+[data-theme="light"] .colab-btn {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 0.55em 1.1em;
+  border-width: var(--border-width);
+}
+
+.colab-btn:hover {
+  background: var(--color-colab-hover);
+  color: var(--color-colab-hover-text);
+  border-color: var(--color-colab-hover);
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  margin-top: 1rem;
+  font-size: var(--font-size-footer);
+  color: var(--color-text-faint);
+  letter-spacing: 0.02em;
+}
+
+[data-theme="light"] .site-footer {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 0.5rem;
+}
+
+.site-footer a {
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+}
+
+.site-footer a:hover {
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .module {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  .module-actions { margin-top: 0.5rem; }
+  .hero-title { font-size: clamp(2rem, 8vw, 3rem); }
+  [data-theme="light"] .module { padding: 1.2rem 0.8rem; }
+  [data-theme="light"] .module-number { font-size: 3rem; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="bg-decoration"></div>
+
+<div class="page">
+  <div class="index-theme-toggle">
+    <button onclick="toggleTheme()" id="theme-btn">Switch theme</button>
+  </div>
+
+  <header class="hero">
+    <span class="hero-badge">NICAR 2026</span>
+    <h1 class="hero-title">Analyzing Images &amp;<br>Video with AI</h1>
+    <p class="hero-author">Jonathan Soma, Columbia University</p>
+    <div class="hero-desc"><p>You already know what to do with text: summarize it, answer questions about it, extract data from it. Images, audio, and video are just ways of <strong>getting to text and structured data.</strong></p></div>
+  </header>
+
+  <section class="modules">
+    <div class="module">
+      <span class="module-number">01</span>
+      <div class="module-body">
+        <h2>Images</h2>
+        <p>You already know what to do with text: summarize it, answer questions about it, extract data from it. Images, audio, and video are just ways of <strong>getting to text and structured data.</strong></p>
+      </div>
+      <div class="module-actions">
+        <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/01-images.ipynb" class="colab-btn">Open in Colab</a>
+        <a href="01-images.html" class="read-btn">Read</a>
+      </div>
+    </div>    <div class="module">
+      <span class="module-number">02</span>
+      <div class="module-body">
+        <h2>Documents</h2>
+        <p>PDFs are images too. Text trapped in a scan, a photo of a posted notice, a 500-page FOIA dump — these are all "images with text in them."</p>
+      </div>
+      <div class="module-actions">
+        <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/02-documents.ipynb" class="colab-btn">Open in Colab</a>
+        <a href="02-documents.html" class="read-btn">Read</a>
+      </div>
+    </div>    <div class="module">
+      <span class="module-number">03</span>
+      <div class="module-body">
+        <h2>Audio</h2>
+        <p>What can you do with audio? Turn it into text, then do text things. Split it by speaker.</p>
+      </div>
+      <div class="module-actions">
+        <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/03-audio.ipynb" class="colab-btn">Open in Colab</a>
+        <a href="03-audio.html" class="read-btn">Read</a>
+      </div>
+    </div>    <div class="module">
+      <span class="module-number">04</span>
+      <div class="module-body">
+        <h2>Video</h2>
+        <p>What can you do with a video? It's images + audio + time. Decompose it, then use the tools you already have.</p>
+      </div>
+      <div class="module-actions">
+        <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/04-video.ipynb" class="colab-btn">Open in Colab</a>
+        <a href="04-video.html" class="read-btn">Read</a>
+      </div>
+    </div>    <div class="module">
+      <span class="module-number">05</span>
+      <div class="module-body">
+        <h2>The full pipeline</h2>
+        <p>Frames → classify → per-subject screen time with percentages. This is the deliverable you'd bring to an editor meeting.</p>
+      </div>
+      <div class="module-actions">
+        <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/05-recipes.ipynb" class="colab-btn">Open in Colab</a>
+        <a href="05-recipes.html" class="read-btn">Read</a>
+      </div>
+    </div>
+  </section>
+
+<div style="text-align: center; margin: 2rem 0;">
+<script async src="https://subscribe-forms.beehiiv.com/embed.js"></script><iframe src="https://subscribe-forms.beehiiv.com/74449fe6-9aee-4fca-81ec-c07b8588210f" class="beehiiv-embed" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="width: 440px; height: 87px; margin: 0; border-radius: 0px 0px 0px 0px !important; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"></iframe>
+</div>
+
+  <footer class="site-footer">
+    <span>NICAR 2026 — Indianapolis</span>
+    <a href="https://jonathansoma.com">jonathansoma.com</a>
+  </footer>
+</div>
+
+<script>
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  var btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+}
+
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme');
+  var next = current === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('theme', next); } catch (e) {}
+  applyTheme(next);
+}
+
+// Set button text to match current theme
+applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+
+// Listen for OS theme changes (only if user hasn't manually chosen)
+var mq = window.matchMedia('(prefers-color-scheme: light)');
+function onThemeChange(e) {
+  try { if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'light' : 'dark'); } catch (ex) {}
+}
+if (mq.addEventListener) mq.addEventListener('change', onThemeChange);
+else if (mq.addListener) mq.addListener(onThemeChange);
+</script>
+</body>
+</html>

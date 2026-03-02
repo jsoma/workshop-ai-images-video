@@ -1,0 +1,42 @@
+[project]
+name = "nicar2026-demos"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    # Core
+    "torch",
+    "torchvision",
+    "pandas",
+    "Pillow",
+    "ipykernel",
+    # LLM clients
+    "openai",
+    "google-genai",
+    "anthropic",
+    "pydantic-ai",
+    # Vision models
+    "transformers>=5",
+    "sentence-transformers",
+    # Detection
+    "ultralytics",
+    "supervision",
+    # Video
+    "yt-dlp",
+    "ffmpeg-python",
+    "scenedetect[opencv]",
+    # Audio
+    "openai-whisper",
+    # Utilities
+    "python-dotenv",
+    "opencv-python-headless", # tracking/redaction scripts import cv2
+    "matplotlib", # notebooks make charts
+    # Documents / OCR
+    "natural-pdf[all]",
+    # "docling",    # caps transformers<5 — install separately if needed
+    # NOTE: The following packages have known dependency conflicts and
+    # should be installed separately (ideally in a fresh venv):
+    #   pip install whisperx          # word-level alignment + diarization
+    #   pip install pyannote.audio    # standalone speaker diarization
+    #   pip install rfdetr            # RT-DETR object detection
+    "chromadb>=1.5.1",
+]

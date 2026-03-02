@@ -1,0 +1,50 @@
+[project]
+name = "nicar2026-ai-images-video"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    # Core
+    "torch",
+    "torchvision",
+    "pandas",
+    "Pillow",
+    # LLM clients
+    "openai",
+    "google-genai",
+    "anthropic",
+    "pydantic-ai",
+    # Vision models
+    "transformers",
+    "sentence-transformers",
+    # Detection
+    "ultralytics",
+    "supervision",
+    # Video
+    "yt-dlp",
+    "ffmpeg-python",
+    "scenedetect[opencv]",
+    # Audio
+    "openai-whisper",
+    "whisperx>=3.8",
+    "pyannote.audio>=4.0",
+    # Documents / OCR
+    "natural-pdf[ai,export]>=0.5.0",
+    # Utilities
+    "python-dotenv",
+    "opencv-python-headless",
+    "matplotlib",
+    "chromadb>=1.5.1",
+    # Build system (notebook generation + HTML rendering)
+    "markdown",
+    "pygments",
+    "nbformat",
+    "nbconvert",
+    "ipykernel",
+    "nest-asyncio",
+]
+
+[project.optional-dependencies]
+
+[tool.uv]
+# Prefer binary wheels to speed up installs
+compile-bytecode = true
