@@ -798,7 +798,7 @@ pre { line-height: 125%; }
 <p>You already know what to do with text: summarize it, answer questions about it, extract data from it. Images, audio, and video are just ways of <strong>getting to text and structured data.</strong></p>
 <h2>Structured output</h2>
 <p>Send an image to an LLM and get back structured data — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop.</p>
-<div class="show-image"><img src="../../data/car.jpg"></div>
+<div class="show-image"><img src="../data/car.jpg"></div>
 <p><strong><code>vision-llm/structured.py</code></strong> — Send one image to an LLM, get structured Pydantic data back</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -825,6 +825,37 @@ pre { line-height: 125%; }
 </pre></div>
 
 <p>Notice the Pydantic model: each field has a name, a type, and a description. The LLM fills in the fields. If it's wrong, you can see <em>which</em> field is wrong.</p>
+<h2>Without structured output</h2>
+<p>Same image, same question, but the answer comes back as plain text. Easy to read, hard to sort or filter across hundreds of images.</p>
+<p><strong><code>vision-llm/raw-openai-text.py</code></strong> — Same task using raw OpenAI client, plain text response — no structured output</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o-mini&quot;</span>
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">()</span>
+<span class="n">base64_image</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">((</span><span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;car.jpg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;List the following about this vehicle:</span>
+<span class="s2">- make</span>
+<span class="s2">- model</span>
+<span class="s2">- color</span>
+<span class="s2">- estimated year</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span> <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/jpeg;base64,</span><span class="si">{</span><span class="n">base64_image</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}},</span>
+    <span class="p">]}],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</pre></div>
+
 <h2>Batch processing</h2>
 <p>Same thing, whole folder. Out comes a CSV.</p>
 <p><strong><code>vision-llm/batch.py</code></strong> — Process a folder of images into structured data -&gt; DataFrame -&gt; CSV</p>
