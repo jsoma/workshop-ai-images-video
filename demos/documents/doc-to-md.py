@@ -3,7 +3,7 @@ from pathlib import Path
 from docling.document_converter import DocumentConverter
 
 DATA = Path(__file__).parent.parent / "data"
-IMAGE = DATA / "city.png"
+IMAGE = DATA / "flock-scan.png"
 
 converter = DocumentConverter()
 result = converter.convert(str(IMAGE))

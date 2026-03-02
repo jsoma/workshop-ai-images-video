@@ -530,12 +530,22 @@ em { font-style: italic; }
 strong { font-weight: 500; }
 [data-theme="light"] strong { font-weight: 600; }
 
-.show-image {
+.show-image, .show-media {
   margin: 1.5rem 0;
   text-align: center;
 }
 
 .show-image img {
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.show-audio audio {
+  width: 100%;
+  max-width: 500px;
+}
+
+.show-video video {
   border: var(--border-w) solid var(--color-border);
   border-radius: var(--radius);
 }

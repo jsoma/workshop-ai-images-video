@@ -6,6 +6,7 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 import pandas as pd
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent
+from typing import Literal
 
 MODEL = "openai:gpt-4o-mini"
 DATA = Path(__file__).parent.parent / "data"
@@ -15,12 +16,13 @@ class Vehicle(BaseModel):
     model: str = Field(description="Vehicle model name")
     color: str = Field(description="Primary color")
     year_estimate: int = Field(description="Estimated model year")
-    vehicle_type: str = Field(description="sedan, SUV, truck, van, etc.")
+    vehicle_type: Literal["sedan", "SUV", "truck", "van", "motorcycle", "other"] = Field(description="Type of vehicle")
     confidence: float = Field(description="Confidence in identification, 0.0 to 1.0")
 
 agent = Agent(MODEL, output_type=Vehicle)
 rows = []
-for image_path in sorted((DATA / "cars").glob("*.jpg")):
+image_paths = sorted((DATA / "cars").glob("*.jpg"))
+for image_path in image_paths:
     result = agent.run_sync([
         "Analyze the vehicle in this image. Fill in all fields.",
         BinaryContent(data=image_path.read_bytes(), media_type="image/jpeg"),
