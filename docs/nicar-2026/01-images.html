@@ -824,6 +824,7 @@ pre { line-height: 125%; }
 <span class="n">result</span><span class="o">.</span><span class="n">output</span>
 </pre></div>
 
+<pre class="cell-output">Vehicle(make=&#x27;Toyota&#x27;, model=&#x27;Highlander&#x27;, color=&#x27;Silver&#x27;, year_estimate=2004, vehicle_type=&#x27;SUV&#x27;, confidence=0.9)</pre>
 <p>Notice the Pydantic model: each field has a name, a type, and a description. The LLM fills in the fields. If it's wrong, you can see <em>which</em> field is wrong.</p>
 <h2>Without structured output</h2>
 <p>Same image, same question, but the answer comes back as plain text. Easy to read, hard to sort or filter across hundreds of images.</p>
@@ -856,6 +857,12 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">Based on the vehicle seen in the image, here are the details:
+
+- **Make**: Toyota
+- **Model**: Highlander
+- **Color**: Beige or Light Gold
+- **Estimated Year**: 2001-2007 (common production years for this model)</pre>
 <h2>Batch processing</h2>
 <p>Same thing, whole folder. Out comes a CSV.</p>
 <p><strong><code>vision-llm/batch.py</code></strong> — Process a folder of images into structured data -&gt; DataFrame -&gt; CSV</p>
@@ -892,6 +899,87 @@ pre { line-height: 125%; }
 <span class="n">df</span>
 </pre></div>
 
+<div class="cell-output"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>filename</th>
+      <th>make</th>
+      <th>model</th>
+      <th>color</th>
+      <th>year_estimate</th>
+      <th>vehicle_type</th>
+      <th>confidence</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>28246634.jpg</td>
+      <td>Volkswagen</td>
+      <td>Transporter</td>
+      <td>black</td>
+      <td>2015</td>
+      <td>van</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>28246768.jpg</td>
+      <td>Toyota</td>
+      <td>Camry</td>
+      <td>Silver</td>
+      <td>2012</td>
+      <td>Sedan</td>
+      <td>0.95</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>28262472.jpg</td>
+      <td>Lexus</td>
+      <td>LX</td>
+      <td>Black</td>
+      <td>2020</td>
+      <td>SUV</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>28262480.jpg</td>
+      <td>Toyota</td>
+      <td>Yaris</td>
+      <td>Yellow</td>
+      <td>2018</td>
+      <td>Sedan</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>28266737.jpg</td>
+      <td>Tesla</td>
+      <td>Model Y</td>
+      <td>White</td>
+      <td>2020</td>
+      <td>SUV</td>
+      <td>0.95</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 <p>Open the output CSV. Spot-check a few rows against the source images. Does the make match what you see? Does the color? That's verification — not trusting the model, checking its work.</p>
 <h2>Swap providers</h2>
 <p>Same structured task, different LLM provider. Change one string.</p>
@@ -926,6 +1014,10 @@ pre { line-height: 125%; }
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">--- openai:gpt-4o-mini ---
+subject=&#x27;Landscape with sunset and flowers&#x27; setting=&#x27;Open field near a road&#x27; mood=&#x27;Serene and tranquil&#x27; details=[&#x27;Vibrant sunset colors&#x27;, &#x27;Lush green grass and purple flowers&#x27;, &#x27;Fog hovering over the landscape&#x27;, &#x27;Power lines in the background&#x27;, &#x27;Calm and peaceful atmosphere&#x27;]</pre>
+<pre class="cell-output">--- google-gla:gemini-2.5-flash ---
+subject=&#x27;a serene rural landscape at sunrise or sunset&#x27; setting=&#x27;an expansive open field with a road and low-lying fog, possibly in a northern region&#x27; mood=&#x27;peaceful, tranquil, and ethereal&#x27; details=[&#x27;a vibrant sky with hues of orange, yellow, and blue from the rising or setting sun&#x27;, &#x27;a thick band of fog or low clouds hugging the horizon, extending into the distant landscape&#x27;, &#x27;fields of green and brown grasses dotted with large patches of purple lupine flowers&#x27;, &#x27;a paved road curving into the distance, partially enveloped by the fog on one side&#x27;, &#x27;a wire fence running through the field, with utility poles visible in the far distance&#x27;]</pre>
 <p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts.</p>
 
 <footer>

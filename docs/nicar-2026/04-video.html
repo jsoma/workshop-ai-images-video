@@ -814,6 +814,22 @@ pre { line-height: 125%; }
 <span class="p">])</span>
 </pre></div>
 
+<pre class="cell-output">WARNING: &quot;-f best&quot; selects the best pre-merged format which is often not the best option.
+         To let yt-dlp download and merge the best available formats, simply do not pass any format selection.
+         If you know what you are doing and want only the best pre-merged format, use &quot;-f b&quot; instead to suppress this warning</pre>
+<pre class="cell-output">[youtube] Extracting URL: https://www.youtube.com/watch?v=rDXubdQdJYs
+[youtube] rDXubdQdJYs: Downloading webpage</pre>
+<pre class="cell-output">[youtube] rDXubdQdJYs: Downloading android vr player API JSON
+[youtube] rDXubdQdJYs: Downloading web safari player API JSON</pre>
+<pre class="cell-output">WARNING: [youtube] [pot:bgutil:http] Error reaching GET http://127.0.0.1:4416/ping (caused by TransportError). Please make sure that the server is reachable at http://127.0.0.1:4416.</pre>
+<pre class="cell-output">[youtube] rDXubdQdJYs: Downloading player 00c52fa0-tv
+[youtube] [jsc:deno] Solving JS challenges using deno</pre>
+<pre class="cell-output">[info] rDXubdQdJYs: Downloading 1 format(s): 18
+[download] data/The CNN Presidential debate in 60 seconds [rDXubdQdJYs].mp4 has already been downloaded
+[download] 100% of    2.63MiB</pre>
+<pre class="cell-output">WARNING: [youtube] [jsc] Remote components challenge solver script (deno) and NPM package (deno) were skipped. These may be required to solve JS challenges. You can enable these downloads with  --remote-components ejs:github  (recommended) or  --remote-components ejs:npm , respectively. For more information and alternatives, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
+WARNING: [youtube] rDXubdQdJYs: n challenge solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS</pre>
+<pre class="cell-output">CompletedProcess(args=[&#x27;yt-dlp&#x27;, &#x27;-o&#x27;, &#x27;data/%(title)s [%(id)s].%(ext)s&#x27;, &#x27;-f&#x27;, &#x27;best&#x27;, &#x27;--no-overwrites&#x27;, &#x27;https://www.youtube.com/watch?v=rDXubdQdJYs&#x27;], returncode=0)</pre>
 <h2>Extract frames</h2>
 <p>Decompose into one image per second. Now you have images — use the image tools.</p>
 <p><strong><code>video/frames.py</code></strong> — Extract frames from a video at 1 fps using ffmpeg-python</p>
@@ -838,6 +854,7 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracted </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames to </span><span class="si">{</span><span class="n">OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">Extracted 59 frames to outputs/frames</pre>
 <h2>Extract audio</h2>
 <p>Extract the audio track. Now you have audio — use the audio tools.</p>
 <p><strong><code>video/audio.py</code></strong> — Extract audio track from a video file using ffmpeg-python</p>
@@ -860,6 +877,7 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Audio saved to </span><span class="si">{</span><span class="n">OUTPUT</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s1">&#39;rDXubdQdJYs.wav&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">Audio saved to outputs/rDXubdQdJYs.wav</pre>
 <p>This is the pipeline behind real investigations. Documented examined hundreds of TikTok videos in French and Wolof: download, extract audio, transcribe with Whisper. Público processed 7,616 TikTok health videos the same way, then used GPT-4o to extract verifiable claims from the transcripts. Video → audio → text → structured data.</p>
 <h2>The wrong way</h2>
 <p>Ask Gemini a question about the video. Get a confident answer with no evidence.</p>
@@ -892,6 +910,12 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">In this debate video segment (0:00-0:59):
+
+*   **Joe Biden** had approximately **35 seconds** of screen time.
+*   **Donald Trump** had approximately **25 seconds** of screen time.
+
+Therefore, **Joe Biden** got more screen time in this video clip.</pre>
 <p>You can't fact-check this. You can't show your editor the work. You can't catch errors. It's a vibe.</p>
 <h2>The right way</h2>
 <p>Classify each frame with an LLM. Produce an auditable CSV — every row links to a frame you can check.</p>
@@ -929,6 +953,38 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Saved to </span><span class="si">{</span><span class="n">OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">frame-001.jpg: Joe Biden (0.85)</pre>
+<pre class="cell-output">frame-002.jpg: Biden (0.90)</pre>
+<pre class="cell-output">frame-003.jpg: Donald Trump (0.80)</pre>
+<pre class="cell-output">frame-004.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-005.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-006.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-007.jpg: unknown (0.80)</pre>
+<pre class="cell-output">frame-008.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-009.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-010.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-011.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-012.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-013.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-014.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-015.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-016.jpg: Unknown (0.80)</pre>
+<pre class="cell-output">frame-017.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-018.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-019.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-020.jpg: Unknown (0.80)</pre>
+<pre class="cell-output">frame-021.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-022.jpg: Unknown (0.80)</pre>
+<pre class="cell-output">frame-023.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-024.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-025.jpg: unknown (0.80)</pre>
+<pre class="cell-output">frame-026.jpg: Unknown (0.90)</pre>
+<pre class="cell-output">frame-027.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-028.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-029.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-030.jpg: unknown (0.90)
+
+Saved to outputs/frame_classifications.csv</pre>
 <p><strong>Compare the two.</strong> Same question, same video. One gives you a number. The other gives you a spreadsheet with an audit trail. Even if the vibe answer is right, you can't verify it. That's the point.</p>
 
 <footer>
