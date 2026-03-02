@@ -3,6 +3,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 import os
+import warnings
+import logging
+warnings.filterwarnings("ignore")
+logging.getLogger("whisperx").setLevel(logging.ERROR)
+logging.getLogger("pyannote").setLevel(logging.ERROR)
 from collections import defaultdict
 import torch, whisperx
 from whisperx.diarize import DiarizationPipeline
@@ -45,3 +50,8 @@ print(f"\n{'Speaker':<12} {'Time':>8} {'%':>6}")
 for spk in sorted(speaker_time):
     t = speaker_time[spk]
     print(f"  {spk:<10} {t/60:>6.1f}m {t/total*100:>5.1f}%")
+
+# --- cell ---
+import pandas as pd
+df = pd.DataFrame(result["segments"])
+df

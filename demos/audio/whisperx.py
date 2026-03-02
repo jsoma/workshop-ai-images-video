@@ -1,5 +1,10 @@
-# WhisperX word-level aligned transcription
+# WhisperX segment-level aligned transcription
 from pathlib import Path
+import warnings
+import logging
+warnings.filterwarnings("ignore")
+logging.getLogger("whisperx").setLevel(logging.ERROR)
+logging.getLogger("pyannote").setLevel(logging.ERROR)
 import torch
 import whisperx
 
@@ -21,8 +26,12 @@ result = whisperx.align(
     return_char_alignments=False,
 )
 
-for seg in result["segments"]:
-    for w in seg.get("words", []):
-        start = w.get("start", 0)
-        end = w.get("end", 0)
-        print(f"[{start:7.2f} - {end:7.2f}] {w.get('word', '')}  ({w.get('score', 0):.2f})")
+# Print out the entire transcript
+print(" ".join(seg["text"].strip() for seg in result["segments"]))
+
+# --- cell ---
+# You can also view the segments with timestamps and aligned text
+import pandas as pd
+
+df = pd.DataFrame(result["segments"])
+df

@@ -22,21 +22,23 @@ Let's get some details about this car.
 vision-llm/raw-openai-text.py
 ```
 
-Awful, right?
+It's great, but... what if we want it in a CSV? What if we have 200 to do? What if we want to make *demands* and ask for *structure?*
 
 ## Structured output
 
-An alternative is to send an image to an LLM and get back **structured data** — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop!
+An alternative is to send an image to an LLM and get back **structured output** — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop!
 
 ```script
 vision-llm/structured.py
 ```
 
-While there are a handful of ways to do this, we're specifically using a Python library called **Pydantic**. It gives you a lot of tools to describe what you're looking for: each field has a name, a type, and a description. AI fills in the fields. Easy peasy!
+While there are a handful of ways to do this, we're specifically using a Python library called **Pydantic**. It gives you a lot of tools to describe what you're looking for: each field has a name, a type, and a description. AI fills in the fields.
+
+Easy peasy!
 
 ## Batch processing
 
-Same thing, whole folder. But instead of one at a time, you get an entire CSV!
+Same thing as before, but we have **a whole folder of images**. And instead of one at a time, you can make an entire CSV!
 
 ```script
 vision-llm/batch.py
