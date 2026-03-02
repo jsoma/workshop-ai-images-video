@@ -1,27 +1,17 @@
-# Protests, TikTok, and more 🎥: analyzing images and videos with AI
+# Analyzing Images & Video with AI
 
-Dataharvest 2025
+**NICAR 2026**
 
-Jonathan Soma
+[Jonathan Soma, Columbia University](https://jonathansoma.com)
 
-Knight Chair in Data Journalism, Columbia University
+You already know what to do with text: summarize it, answer questions about it, extract data from it. Images, audio, and video are just ways of **getting to text and structured data.**
 
-[js4571@columbia.edu](mailto:js4571@columbia.edu) / [@dangerscarf](https://twitter.com/dangerscarf) / [dangerscarf.bsky.social](https://bsky.app/profile/dangerscarf.bsky.social)
+**[Browse the workshop online](https://jsoma.github.io/workshop-ai-images-video/nicar-2026/)**
 
-[badpdfs.com](https://badpdfs.com/) / [jsoma.github.io/natural-pdf/](https://jsoma.github.io/natural-pdf/)
+## Notebooks
 
-If you're interested in *scraping* TikTok, that's a different game! You might be interested in [this passive scraping session](https://github.com/jsoma/nicar25-passive-scraping).
-
-## Notebook links
-
-Open up the notebooks on Google Colab! You can press the play buttons to make them work.
-
-You will need to [install ffmpeg](https://chatgpt.com/share/6831bc33-4904-800d-b6c0-2800a7f875ab).
-
-1. [What color is the sky?](https://colab.research.google.com/github/jsoma/dataharvest25-ai-images-video/blob/main/01-What%20color%20is%20the%20sky.ipynb)
-2. [Debate screen time](https://colab.research.google.com/github/jsoma/dataharvest25-ai-images-video/blob/main/02-Debate%20screen%20time.ipynb)
-3. [Regions of interest](https://colab.research.google.com/github/jsoma/dataharvest25-ai-images-video/blob/main/03-Regions%20of%20interest.ipynb)
-4. [Car tracking and counting](https://colab.research.google.com/github/jsoma/dataharvest25-ai-images-video/blob/main/04-Car%20Tracking%20and%20Counting.ipynb)
-5. [Semantic image search](https://colab.research.google.com/github/jsoma/dataharvest25-ai-images-video/blob/main/05-Semantic%20search.ipynb)
-
-My PDF library [Natural PDF](https://jsoma.github.io/natural-pdf/) also has a lot of bits and pieces that work with images.
+1. [Images](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/01-images.ipynb)
+2. [Documents](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/02-documents.ipynb)
+3. [Audio](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/03-audio.ipynb)
+4. [Video](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/04-video.ipynb)
+5. [The full pipeline](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/05-recipes.ipynb)
