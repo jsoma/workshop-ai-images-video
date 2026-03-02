@@ -9,7 +9,6 @@ kernel_name: "nicar2026-ai"
 default_install:
   - python-dotenv
   - pydantic-ai
-  - pandas
 env_keys:
   - GOOGLE_API_KEY
 newsletter_embed: |

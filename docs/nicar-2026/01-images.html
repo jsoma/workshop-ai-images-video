@@ -824,7 +824,6 @@ pre { line-height: 125%; }
 <span class="n">result</span><span class="o">.</span><span class="n">output</span>
 </pre></div>
 
-<pre class="cell-output">Vehicle(make=&#x27;Toyota&#x27;, model=&#x27;Highlander&#x27;, color=&#x27;gold&#x27;, year_estimate=2005, vehicle_type=&#x27;SUV&#x27;, confidence=0.9)</pre>
 <p>Notice the Pydantic model: each field has a name, a type, and a description. The LLM fills in the fields. If it's wrong, you can see <em>which</em> field is wrong.</p>
 <h2>Batch processing</h2>
 <p>Same thing, whole folder. Out comes a CSV.</p>
@@ -862,87 +861,6 @@ pre { line-height: 125%; }
 <span class="n">df</span>
 </pre></div>
 
-<div class="cell-output"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>filename</th>
-      <th>make</th>
-      <th>model</th>
-      <th>color</th>
-      <th>year_estimate</th>
-      <th>vehicle_type</th>
-      <th>confidence</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>28246634.jpg</td>
-      <td>Volkswagen</td>
-      <td>Transporter</td>
-      <td>black</td>
-      <td>2010</td>
-      <td>van</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>28246768.jpg</td>
-      <td>Toyota</td>
-      <td>Camry</td>
-      <td>Silver</td>
-      <td>2013</td>
-      <td>Sedan</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>28262472.jpg</td>
-      <td>Lexus</td>
-      <td>LX 570</td>
-      <td>black</td>
-      <td>2015</td>
-      <td>SUV</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>28262480.jpg</td>
-      <td>Toyota</td>
-      <td>Yaris</td>
-      <td>Yellow</td>
-      <td>2018</td>
-      <td>Sedan</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>28266737.jpg</td>
-      <td>Tesla</td>
-      <td>Model Y</td>
-      <td>White</td>
-      <td>2020</td>
-      <td>SUV</td>
-      <td>0.95</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
 <p>Open the output CSV. Spot-check a few rows against the source images. Does the make match what you see? Does the color? That's verification — not trusting the model, checking its work.</p>
 <h2>Swap providers</h2>
 <p>Same structured task, different LLM provider. Change one string.</p>
@@ -977,10 +895,6 @@ pre { line-height: 125%; }
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">--- openai:gpt-4o-mini ---
-subject=&#x27;sunrise over a misty landscape&#x27; setting=&#x27;open field with wildflowers and a road&#x27; mood=&#x27;tranquil and serene&#x27; details=[&#x27;The sky is painted with soft hues of orange and blue from the rising sun.&#x27;, &#x27;There is a layer of mist hovering above the ground.&#x27;, &#x27;Lush purple wildflowers are visible in the foreground, adding color to the scene.&#x27;]</pre>
-<pre class="cell-output">--- google-gla:gemini-2.5-flash ---
-subject=&#x27;A serene landscape at sunset&#x27; setting=&#x27;An open, natural landscape with a road, fields, and fog&#x27; mood=&#x27;Peaceful and tranquil&#x27; details=[&#x27;A vibrant sunset with hues of orange, yellow, and blue in the sky.&#x27;, &#x27;A thick layer of low-lying fog or clouds along the horizon.&#x27;, &#x27;A paved road with a yellow line running along the right side of the image.&#x27;, &#x27;Expansive fields of green and brown grass dotted with purple flowers (lupines).&#x27;, &#x27;A wire fence extending into the distance across the field.&#x27;]</pre>
 <p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts.</p>
 
 <footer>
