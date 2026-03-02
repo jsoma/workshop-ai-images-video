@@ -565,8 +565,7 @@ pre {
   margin: 1rem 0;
   line-height: 1.6;
   color: var(--code-text);
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  white-space: pre;
   transition: all 0.3s ease;
 }
 
@@ -577,8 +576,10 @@ pre {
   padding: 1.2rem 1.3rem;
   margin: 1rem 0;
   overflow-x: auto;
+  scrollbar-width: none;
   transition: all 0.3s ease;
 }
+.highlight::-webkit-scrollbar { display: none; }
 
 .highlight pre {
   margin: 0; padding: 0; background: none; border: none; border-radius: 0;
@@ -863,57 +864,75 @@ pre { line-height: 125%; }
 <pre class="cell-output">Classified 30 frames
                                                     frames  total_seconds  \
 primary_subject                                                             
-unknown                                                  8            8.0   
-Unknown                                                  4            4.0   
-a political figure                                       4            4.0   
-Donald Trump                                             3            3.0   
-A man speaking at a political debate                     1            1.0   
-A political figure speaking at a debate                  1            1.0   
-Biden                                                    1            1.0   
-Joe Biden                                                1            1.0   
-Two political debate participants                        1            1.0   
-a male politician speaking during a debate               1            1.0   
-a man speaking at a political debate                     1            1.0   
+unknown                                                  5            5.0   
+Donald Trump                                             4            4.0   
+a politician                                             2            2.0   
+Unknown                                                  2            2.0   
+a person speaking about Medicare in a political...       1            1.0   
+two political candidates                                 1            1.0   
+not known                                                1            1.0   
+individual speaking about their son                      1            1.0   
+a political figure                                       1            1.0   
+a political debate participant                           1            1.0   
+a person speaking during a political debate              1            1.0   
+A male politician during a political debate              1            1.0   
 a person in a political debate                           1            1.0   
-a person speaking in a political debate                  1            1.0   
-a political debate speaker                               1            1.0   
-one of the candidates in a political debate, li...       1            1.0   
+A political figure speaking during a debate              1            1.0   
+a man in a suit with light hair speaking                 1            1.0   
+a male participant in a political debate                 1            1.0   
+Not sure who this is                                     1            1.0   
+Not specified                                            1            1.0   
+Not identified                                           1            1.0   
+Not identifiable                                         1            1.0   
+a man speaking at a political debate                     1            1.0   
 
                                                     avg_confidence  \
 primary_subject                                                      
-unknown                                                   0.187500   
-Unknown                                                   0.225000   
-a political figure                                        0.850000   
-Donald Trump                                              0.983333   
-A man speaking at a political debate                      0.800000   
-A political figure speaking at a debate                   0.800000   
-Biden                                                     0.900000   
-Joe Biden                                                 0.950000   
-Two political debate participants                         0.900000   
-a male politician speaking during a debate                0.800000   
-a man speaking at a political debate                      0.800000   
-a person in a political debate                            0.800000   
-a person speaking in a political debate                   0.800000   
-a political debate speaker                                0.800000   
-one of the candidates in a political debate, li...        0.800000   
+unknown                                                     0.0000   
+Donald Trump                                                0.9125   
+a politician                                                0.8000   
+Unknown                                                     0.0000   
+a person speaking about Medicare in a political...          0.9000   
+two political candidates                                    0.9000   
+not known                                                   0.9000   
+individual speaking about their son                         0.8000   
+a political figure                                          0.8000   
+a political debate participant                              0.9000   
+a person speaking during a political debate                 0.8000   
+A male politician during a political debate                 0.8500   
+a person in a political debate                              0.7000   
+A political figure speaking during a debate                 0.8500   
+a man in a suit with light hair speaking                    0.9500   
+a male participant in a political debate                    0.9500   
+Not sure who this is                                        0.5000   
+Not specified                                               0.0000   
+Not identified                                              0.0000   
+Not identifiable                                            0.5000   
+a man speaking at a political debate                        0.8000   
 
                                                     pct_of_total  
 primary_subject                                                   
-unknown                                                     26.7  
-Unknown                                                     13.3  
-a political figure                                          13.3  
-Donald Trump                                                10.0  
-A man speaking at a political debate                         3.3  
-A political figure speaking at a debate                      3.3  
-Biden                                                        3.3  
-Joe Biden                                                    3.3  
-Two political debate participants                            3.3  
-a male politician speaking during a debate                   3.3  
-a man speaking at a political debate                         3.3  
+unknown                                                     16.7  
+Donald Trump                                                13.3  
+a politician                                                 6.7  
+Unknown                                                      6.7  
+a person speaking about Medicare in a political...           3.3  
+two political candidates                                     3.3  
+not known                                                    3.3  
+individual speaking about their son                          3.3  
+a political figure                                           3.3  
+a political debate participant                               3.3  
+a person speaking during a political debate                  3.3  
+A male politician during a political debate                  3.3  
 a person in a political debate                               3.3  
-a person speaking in a political debate                      3.3  
-a political debate speaker                                   3.3  
-one of the candidates in a political debate, li...           3.3</pre>
+A political figure speaking during a debate                  3.3  
+a man in a suit with light hair speaking                     3.3  
+a male participant in a political debate                     3.3  
+Not sure who this is                                         3.3  
+Not specified                                                3.3  
+Not identified                                               3.3  
+Not identifiable                                             3.3  
+a man speaking at a political debate                         3.3</pre>
 <div class="cell-output"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -946,7 +965,7 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>frame-001.jpg</td>
       <td>1</td>
       <td>1.0</td>
-      <td>Two political debate participants</td>
+      <td>two political candidates</td>
       <td>split screen</td>
       <td>0.90</td>
     </tr>
@@ -955,25 +974,25 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>frame-002.jpg</td>
       <td>2</td>
       <td>2.0</td>
-      <td>unknown</td>
+      <td>a political figure</td>
       <td>close-up</td>
-      <td>0.50</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>2</th>
       <td>frame-003.jpg</td>
       <td>3</td>
       <td>3.0</td>
-      <td>Donald Trump</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.95</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>3</th>
       <td>frame-004.jpg</td>
       <td>4</td>
       <td>4.0</td>
-      <td>a political figure</td>
+      <td>a man speaking at a political debate</td>
       <td>close-up</td>
       <td>0.80</td>
     </tr>
@@ -984,7 +1003,7 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>5.0</td>
       <td>Donald Trump</td>
       <td>close-up</td>
-      <td>1.00</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>5</th>
@@ -993,16 +1012,16 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>6.0</td>
       <td>Donald Trump</td>
       <td>close-up</td>
-      <td>1.00</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>6</th>
       <td>frame-007.jpg</td>
       <td>7</td>
       <td>7.0</td>
-      <td>one of the candidates in a political debate, l...</td>
+      <td>Donald Trump</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>7</th>
@@ -1011,50 +1030,50 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>8.0</td>
       <td>a person in a political debate</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.70</td>
     </tr>
     <tr>
       <th>8</th>
       <td>frame-009.jpg</td>
       <td>9</td>
       <td>9.0</td>
-      <td>a political figure</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>9</th>
       <td>frame-010.jpg</td>
       <td>10</td>
       <td>10.0</td>
-      <td>unknown</td>
+      <td>a man in a suit with light hair speaking</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.95</td>
     </tr>
     <tr>
       <th>10</th>
       <td>frame-011.jpg</td>
       <td>11</td>
       <td>11.0</td>
-      <td>a political debate speaker</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>11</th>
       <td>frame-012.jpg</td>
       <td>12</td>
       <td>12.0</td>
-      <td>a political figure</td>
+      <td>Not specified</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>12</th>
       <td>frame-013.jpg</td>
       <td>13</td>
       <td>13.0</td>
-      <td>A political figure speaking at a debate</td>
+      <td>individual speaking about their son</td>
       <td>close-up</td>
       <td>0.80</td>
     </tr>
@@ -1063,52 +1082,52 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>frame-014.jpg</td>
       <td>14</td>
       <td>14.0</td>
-      <td>a man speaking at a political debate</td>
+      <td>Not identifiable</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.50</td>
     </tr>
     <tr>
       <th>14</th>
       <td>frame-015.jpg</td>
       <td>15</td>
       <td>15.0</td>
-      <td>unknown</td>
+      <td>not known</td>
       <td>close-up</td>
-      <td>0.50</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>15</th>
       <td>frame-016.jpg</td>
       <td>16</td>
       <td>16.0</td>
-      <td>a person speaking in a political debate</td>
+      <td>Not identified</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>16</th>
       <td>frame-017.jpg</td>
       <td>17</td>
       <td>17.0</td>
-      <td>Unknown</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>17</th>
       <td>frame-018.jpg</td>
       <td>18</td>
       <td>18.0</td>
-      <td>unknown</td>
+      <td>a politician</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>18</th>
       <td>frame-019.jpg</td>
       <td>19</td>
       <td>19.0</td>
-      <td>Unknown</td>
+      <td>unknown</td>
       <td>close-up</td>
       <td>0.00</td>
     </tr>
@@ -1117,7 +1136,7 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>frame-020.jpg</td>
       <td>20</td>
       <td>20.0</td>
-      <td>unknown</td>
+      <td>Unknown</td>
       <td>close-up</td>
       <td>0.00</td>
     </tr>
@@ -1126,25 +1145,25 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>frame-021.jpg</td>
       <td>21</td>
       <td>21.0</td>
-      <td>Unknown</td>
+      <td>a male participant in a political debate</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.95</td>
     </tr>
     <tr>
       <th>21</th>
       <td>frame-022.jpg</td>
       <td>22</td>
       <td>22.0</td>
-      <td>Joe Biden</td>
+      <td>a political debate participant</td>
       <td>close-up</td>
-      <td>0.95</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>22</th>
       <td>frame-023.jpg</td>
       <td>23</td>
       <td>23.0</td>
-      <td>a political figure</td>
+      <td>a person speaking about Medicare in a politica...</td>
       <td>close-up</td>
       <td>0.90</td>
     </tr>
@@ -1153,63 +1172,63 @@ one of the candidates in a political debate, li...           3.3</pre>
       <td>frame-024.jpg</td>
       <td>24</td>
       <td>24.0</td>
-      <td>Biden</td>
+      <td>A male politician during a political debate</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.85</td>
     </tr>
     <tr>
       <th>24</th>
       <td>frame-025.jpg</td>
       <td>25</td>
       <td>25.0</td>
-      <td>unknown</td>
+      <td>a person speaking during a political debate</td>
       <td>close-up</td>
-      <td>0.50</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>25</th>
       <td>frame-026.jpg</td>
       <td>26</td>
       <td>26.0</td>
-      <td>unknown</td>
+      <td>Not sure who this is</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.50</td>
     </tr>
     <tr>
       <th>26</th>
       <td>frame-027.jpg</td>
       <td>27</td>
       <td>27.0</td>
-      <td>Unknown</td>
+      <td>Donald Trump</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.95</td>
     </tr>
     <tr>
       <th>27</th>
       <td>frame-028.jpg</td>
       <td>28</td>
       <td>28.0</td>
-      <td>a male politician speaking during a debate</td>
+      <td>Unknown</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>28</th>
       <td>frame-029.jpg</td>
       <td>29</td>
       <td>29.0</td>
-      <td>unknown</td>
+      <td>a politician</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>29</th>
       <td>frame-030.jpg</td>
       <td>30</td>
       <td>30.0</td>
-      <td>A man speaking at a political debate</td>
+      <td>A political figure speaking during a debate</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.85</td>
     </tr>
   </tbody>
 </table>

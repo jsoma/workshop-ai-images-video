@@ -565,8 +565,7 @@ pre {
   margin: 1rem 0;
   line-height: 1.6;
   color: var(--code-text);
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  white-space: pre;
   transition: all 0.3s ease;
 }
 
@@ -577,8 +576,10 @@ pre {
   padding: 1.2rem 1.3rem;
   margin: 1rem 0;
   overflow-x: auto;
+  scrollbar-width: none;
   transition: all 0.3s ease;
 }
+.highlight::-webkit-scrollbar { display: none; }
 
 .highlight pre {
   margin: 0; padding: 0; background: none; border: none; border-radius: 0;
@@ -806,55 +807,38 @@ pre { line-height: 125%; }
 
 <h1>Audio</h1>
 <p>What can you do with audio? Turn it into text, then do text things. Split it by speaker.</p>
-<h2>Transcribe and diarize (local)</h2>
-<p>WhisperX transcribes the audio and identifies who said what. Free, runs locally, your audio never leaves your machine.</p>
-<p><strong>Setup:</strong> Diarization requires a free Hugging Face token (<code>HF_TOKEN</code>) and accepting the model licenses at <a href="https://huggingface.co/pyannote/segmentation-3.0">pyannote/segmentation-3.0</a> and <a href="https://huggingface.co/pyannote/speaker-diarization-community-1">pyannote/speaker-diarization-community-1</a>.</p>
+<h2>Transcribe</h2>
+<p>Once upon a time OpenAI released an <em>open model</em> named Whisper. It's actually great! There are newer models out there - like <a href="https://parakeettdt.com/">Parakeet</a>, which is super quick - but Whisper is very easy to use so everyone runs it.</p>
 <div class="show-media show-audio"><audio controls src="../data/rDXubdQdJYs.mp3"></audio></div>
-<p><strong><code>audio/whisperx-diarize.py</code></strong> — Full WhisperX pipeline: transcribe, align, diarize (who said what)</p>
+<p>There are different versions of the model - like tiny, base, large - but <strong>turbo</strong> is the best combination of speed and accuracy. Below we're using <strong>WhisperX</strong> which is a feature-packed tool built on top of Whisper.</p>
+<p><strong><code>audio/whisperx.py</code></strong> — WhisperX word-level aligned transcription</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">whisperx</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">whisperx.diarize</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiarizationPipeline</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">whisperx</span>
 
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
 <span class="n">AUDIO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp3&quot;</span>
-<span class="n">MODEL</span><span class="p">,</span> <span class="n">LANGUAGE</span> <span class="o">=</span> <span class="s2">&quot;large-v3&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span>
-<span class="n">HF_TOKEN</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HF_TOKEN&quot;</span><span class="p">]</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;large-v3&quot;</span>
+<span class="n">LANGUAGE</span> <span class="o">=</span> <span class="s2">&quot;en&quot;</span>
+
 <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
 <span class="n">compute_type</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span> <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">else</span> <span class="s2">&quot;int8&quot;</span>
 
-<span class="c1"># Step 1: Transcribe</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">compute_type</span><span class="o">=</span><span class="n">compute_type</span><span class="p">)</span>
 <span class="n">audio</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_audio</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">))</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-<span class="c1"># Step 2: Align</span>
+
 <span class="n">model_a</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_align_model</span><span class="p">(</span><span class="n">language_code</span><span class="o">=</span><span class="n">LANGUAGE</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">],</span> <span class="n">model_a</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">return_char_alignments</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="c1"># Step 3: Diarize</span>
-<span class="n">diarize_model</span> <span class="o">=</span> <span class="n">DiarizationPipeline</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">HF_TOKEN</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">assign_word_speakers</span><span class="p">(</span><span class="n">diarize_model</span><span class="p">(</span><span class="n">audio</span><span class="p">),</span> <span class="n">result</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">align</span><span class="p">(</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">],</span> <span class="n">model_a</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span>
+    <span class="n">return_char_alignments</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># Print speaker-labeled segments</span>
-<span class="n">current_speaker</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">]:</span>
-    <span class="n">speaker</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speaker&quot;</span><span class="p">,</span> <span class="s2">&quot;UNKNOWN&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">speaker</span> <span class="o">!=</span> <span class="n">current_speaker</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- </span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2"> ---&quot;</span><span class="p">)</span>
-        <span class="n">current_speaker</span> <span class="o">=</span> <span class="n">speaker</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="c1"># Speaker time summary</span>
-<span class="n">speaker_time</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">]:</span>
-    <span class="n">speaker_time</span><span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speaker&quot;</span><span class="p">,</span> <span class="s2">&quot;UNKNOWN&quot;</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">seg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">seg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
-<span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">speaker_time</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;Speaker&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Time&#39;</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;%&#39;</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">spk</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">speaker_time</span><span class="p">):</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">speaker_time</span><span class="p">[</span><span class="n">spk</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">spk</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">t</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">&gt;6.1f</span><span class="si">}</span><span class="s2">m </span><span class="si">{</span><span class="n">t</span><span class="o">/</span><span class="n">total</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">&gt;5.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">start</span><span class="si">:</span><span class="s2">7.2f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end</span><span class="si">:</span><span class="s2">7.2f</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">w</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;word&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">w</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 </pre></div>
 
 <pre class="cell-output">/Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/pyannote/audio/core/io.py:47: UserWarning: 
@@ -944,13 +928,352 @@ OSError: dlopen(/Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-ni
   Reason: tried: &#x27;/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file), &#x27;/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file), &#x27;/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file), &#x27;/System/Volumes/Preboot/Cryptexes/OS/opt/homebrew/opt/ffmpeg/lib/libavutil.56.dylib&#x27; (no such file)
 [end of libtorchcodec loading traceback].
   warnings.warn(</pre>
-<pre class="cell-output">2026-03-02 14:23:47 - whisperx.asr - INFO - No language specified, language will be detected for each audio file (increases inference time)</pre>
-<pre class="cell-output">2026-03-02 14:23:47 - whisperx.vads.pyannote - INFO - Performing voice activity detection using Pyannote...</pre>
-<pre class="cell-output">Lightning automatically upgraded your loaded checkpoint from v1.5.4 to v2.6.1. To apply the upgrade to your files permanently, run `python -m lightning.pytorch.utilities.upgrade_checkpoint .venv/lib/python3.12/site-packages/whisperx/assets/pytorch_model.bin`</pre>
-<pre class="cell-output">2026-03-02 14:23:55 - whisperx.asr - INFO - Detected language: en (1.00) in first 30s of audio</pre>
-<pre class="cell-output">2026-03-02 14:24:20 - whisperx.diarize - INFO - Loading diarization model: pyannote/speaker-diarization-community-1</pre>
-<pre class="cell-output">/Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/pyannote/audio/models/blocks/pooling.py:103: UserWarning: std(): degrees of freedom is &lt;= 0. Correction should be strictly less than the reduction factor (input numel divided by output numel). (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/native/ReduceOps.cpp:1839.)
-  std = sequences.std(dim=-1, correction=1)</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:10:29 megatron_init:62] Megatron num_microbatches_calculator not found, using Apex version.</pre>
+<pre class="cell-output">W0302 15:10:29.164000 90174 torch/distributed/elastic/multiprocessing/redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.</pre>
+<pre class="cell-output">OneLogger: Setting error_handling_strategy to DISABLE_QUIETLY_AND_REPORT_METRIC_ERROR for rank (rank=0) with OneLogger disabled. To override: explicitly set error_handling_strategy parameter.</pre>
+<pre class="cell-output">No exporters were provided. This means that no telemetry data will be collected.</pre>
+<pre class="cell-output">2026-03-02 15:10:33 - whisperx.asr - INFO - No language specified, language will be detected for each audio file (increases inference time)</pre>
+<pre class="cell-output">2026-03-02 15:10:33 - whisperx.vads.pyannote - INFO - Performing voice activity detection using Pyannote...</pre>
+<pre class="cell-output">Lightning automatically upgraded your loaded checkpoint from v1.5.4 to v2.4.0. To apply the upgrade to your files permanently, run `python -m lightning.pytorch.utilities.upgrade_checkpoint .venv/lib/python3.12/site-packages/whisperx/assets/pytorch_model.bin`</pre>
+<pre class="cell-output">2026-03-02 15:10:41 - whisperx.asr - INFO - Detected language: en (1.00) in first 30s of audio</pre>
+<pre class="cell-output">[   2.46 -    2.96] relative  (0.78)
+[   3.00 -    3.08] to  (0.98)
+[   3.12 -    3.26] what  (0.86)
+[   3.30 -    3.40] we&#x27;re  (0.32)
+[   3.42 -    3.56] going  (0.58)
+[   3.60 -    3.66] to  (0.25)
+[   3.68 -    3.76] do  (0.96)
+[   3.82 -    3.94] with  (0.72)
+[   4.24 -    4.42] more  (0.76)
+[   4.46 -    4.75] border  (0.92)
+[   4.79 -    5.18] patrol  (0.85)
+[   5.55 -    5.61] and  (0.86)
+[   5.67 -    5.89] more  (0.90)
+[   6.71 -    7.07] asylum  (0.97)
+[   7.13 -    7.99] officers.  (0.71)
+[   8.01 -    8.25] President  (0.64)
+[   8.29 -    9.09] Trump?  (0.48)
+[   9.11 -    9.15] I  (0.95)
+[   9.19 -    9.37] really  (0.98)
+[   9.41 -    9.53] don&#x27;t  (0.81)
+[   9.55 -    9.65] know  (0.76)
+[   9.67 -    9.77] what  (0.86)
+[   9.81 -    9.89] he  (0.85)
+[   9.95 -   10.11] said  (0.95)
+[  10.17 -   10.21] at  (0.68)
+[  10.27 -   10.35] the  (0.86)
+[  10.41 -   10.51] end  (0.96)
+[  10.55 -   10.59] of  (0.95)
+[  10.65 -   10.83] that  (0.79)
+[  10.93 -   11.21] sentence.  (0.57)
+[  11.55 -   11.57] I  (0.01)
+[  11.60 -   11.71] don&#x27;t  (0.67)
+[  11.74 -   11.86] think  (0.81)
+[  11.88 -   11.96] he  (0.72)
+[  12.00 -   12.16] knows  (0.98)
+[  12.20 -   12.32] what  (0.98)
+[  12.34 -   12.44] he  (0.67)
+[  12.48 -   12.62] said  (0.91)
+[  12.70 -   12.90] either.  (0.89)
+[  12.94 -   13.24] The  (0.76)
+[  13.28 -   13.42] only  (0.94)
+[  13.50 -   13.78] person  (0.89)
+[  13.82 -   13.86] in  (0.98)
+[  13.92 -   14.02] this  (0.63)
+[  14.04 -   14.32] stage  (0.80)
+[  14.40 -   14.46] is  (0.86)
+[  14.52 -   14.54] a  (0.98)
+[  14.60 -   15.04] convicted  (0.91)
+[  15.10 -   15.38] felon  (0.83)
+[  15.48 -   15.52] is  (0.49)
+[  15.54 -   15.60] the  (0.33)
+[  15.62 -   15.80] man  (0.88)
+[  15.86 -   15.96] I&#x27;m  (0.88)
+[  16.00 -   16.26] looking  (0.87)
+[  16.38 -   16.42] at  (0.26)
+[  16.46 -   16.64] right  (0.88)
+[  16.70 -   16.90] now.  (0.96)
+[  17.32 -   17.42] But  (0.98)
+[  17.46 -   17.59] when  (0.86)
+[  17.62 -   17.68] he  (0.99)
+[  17.73 -   17.95] talks  (0.76)
+[  18.05 -   18.21] about  (0.94)
+[  18.27 -   18.29] a  (0.44)
+[  18.35 -   18.81] convicted  (0.95)
+[  18.85 -   19.17] felon,  (0.76)
+[  19.19 -   19.29] his  (0.86)
+[  19.33 -   19.49] son  (0.79)
+[  19.57 -   19.63] is  (0.76)
+[  19.69 -   19.71] a  (0.91)
+[  19.77 -   20.23] convicted  (0.94)
+[  20.27 -   20.63] felon.  (0.72)
+[  20.75 -   20.87] What  (0.97)
+[  21.15 -   21.39] are  (0.55)
+[  21.41 -   21.49] you  (0.96)
+[  21.55 -   21.91] talking  (0.86)
+[  21.97 -   22.29] about?  (0.97)
+[  22.91 -   23.35] You  (0.59)
+[  23.39 -   23.47] have  (0.56)
+[  23.51 -   23.57] the  (0.99)
+[  23.61 -   23.89] morals  (0.77)
+[  23.98 -   24.02] of  (0.91)
+[  24.07 -   24.11] an  (0.93)
+[  24.18 -   24.39] alley  (0.60)
+[  24.41 -   25.20] cat.  (0.96)
+[  25.22 -   25.36] My  (1.00)
+[  25.46 -   25.66] son  (0.82)
+[  25.72 -   25.82] was  (0.82)
+[  25.88 -   25.98] not  (0.95)
+[  26.06 -   26.08] a  (0.92)
+[  26.12 -   26.42] loser,  (0.89)
+[  26.46 -   26.54] was  (0.55)
+[  26.60 -   26.74] not  (0.99)
+[  26.80 -   26.82] a  (0.98)
+[  26.90 -   27.20] sucker.  (0.81)
+[  27.48 -   27.70] You&#x27;re  (0.49)
+[  27.74 -   27.82] the  (0.68)
+[  27.88 -   28.18] sucker.  (0.84)
+[  28.34 -   28.54] You&#x27;re  (0.58)
+[  28.58 -   28.66] the  (0.95)
+[  28.70 -   29.02] loser.  (0.95)
+[  29.70 -   29.91] He&#x27;s  (0.87)
+[  30.07 -   30.39] blaming  (0.89)
+[  30.43 -   30.93] inflation,  (0.89)
+[  31.57 -   31.65] and  (0.93)
+[  31.69 -   31.81] he&#x27;s  (0.85)
+[  31.85 -   32.07] right.  (0.31)
+[  32.09 -   32.17] It&#x27;s  (0.42)
+[  32.21 -   32.37] been  (0.94)
+[  32.41 -   32.59] very  (0.83)
+[  32.65 -   32.95] bad.  (0.99)
+[  33.61 -   33.77] He  (0.84)
+[  33.81 -   34.09] caused  (0.93)
+[  34.13 -   34.19] the  (0.81)
+[  34.23 -   34.75] inflation.  (0.92)
+[  35.07 -   35.31] Excuse  (0.43)
+[  35.35 -   35.43] me,  (0.90)
+[  35.47 -   35.61] with  (0.86)
+[  36.94 -   37.26] dealing  (0.83)
+[  37.32 -   37.48] with  (0.93)
+[  38.04 -   38.32] everything  (0.84)
+[  38.34 -   38.42] we  (0.80)
+[  38.48 -   38.58] have  (0.88)
+[  38.64 -   38.68] to  (0.99)
+[  38.74 -   38.88] do  (0.99)
+[  38.94 -   39.58] with...  (0.96)
+[  41.06 -   41.30] Look,  (0.68)
+[  43.15 -   43.23] if  (0.97)
+[  44.47 -   44.63] we  (0.81)
+[  44.67 -   45.01] finally  (0.92)
+[  45.07 -   45.29] beat  (0.86)
+[  45.51 -   46.51] Medicare...  (0.71)
+[  46.53 -   46.67] Thank  (0.89)
+[  46.71 -   46.79] you,  (0.53)
+[  46.81 -   47.17] President  (0.84)
+[  47.27 -   47.69] Biden.  (0.64)
+[  47.71 -   48.01] President  (0.74)
+[  48.07 -   48.41] Trump?  (0.61)
+[  48.58 -   48.84] Well,  (0.73)
+[  48.86 -   48.92] I  (0.84)
+[  48.96 -   49.14] took  (0.90)
+[  49.18 -   49.34] two  (0.90)
+[  49.38 -   49.69] tests,  (0.83)
+[  49.75 -   50.25] cognitive  (0.95)
+[  50.29 -   50.57] tests.  (0.87)
+[  50.65 -   50.71] I  (0.99)
+[  50.79 -   50.99] aced  (0.59)
+[  51.02 -   51.26] them.  (0.60)
+[  51.28 -   51.40] Go  (0.99)
+[  51.42 -   51.60] through  (0.87)
+[  51.64 -   51.70] the  (0.96)
+[  51.74 -   51.92] first  (0.82)
+[  51.96 -   52.18] five  (0.93)
+[  52.24 -   52.62] questions.  (0.93)
+[  52.64 -   52.73] He  (0.77)
+[  52.77 -   52.99] couldn&#x27;t  (0.88)
+[  53.03 -   53.15] do  (0.99)
+[  53.19 -   53.25] it.  (0.96)
+[  53.61 -   53.79] This  (0.70)
+[  53.81 -   54.05] guy&#x27;s  (0.50)
+[  54.09 -   54.29] three  (0.73)
+[  54.34 -   54.52] years  (0.72)
+[  54.58 -   54.86] younger  (0.98)
+[  54.90 -   54.98] and  (0.53)
+[  55.04 -   55.10] a  (0.90)
+[  55.14 -   55.30] lot  (0.63)
+[  55.34 -   55.50] less  (0.90)
+[  55.56 -   56.65] competent.  (0.99)
+[  56.67 -   56.75] I  (0.99)
+[  56.79 -   56.97] think  (0.99)
+[  56.99 -   57.07] that  (0.35)
+[  57.13 -   57.31] just  (0.62)
+[  57.37 -   57.51] look  (0.94)
+[  57.55 -   57.59] at  (0.95)
+[  57.63 -   57.70] the  (0.96)
+[  57.76 -   58.06] record.  (0.89)
+[  58.18 -   58.30] Look  (0.98)
+[  58.34 -   58.38] at  (0.49)
+[  58.40 -   58.50] what  (0.96)
+[  58.52 -   58.66] I&#x27;ve  (0.85)
+[  58.68 -   59.06] done.  (0.91)</pre>
+<h2>Transcribe</h2>
+<p>Here's Parakeet! If you're on a mac, use <a href="https://github.com/senstella/parakeet-mlx">parakeet-mlx</a>. I'm specifically using the <em>most complicated possible version of Parakeet</em> because it's the best.</p>
+<p><strong><code>audio/parakeet.py</code></strong> — Parakeet transcription via NeMo (NVIDIA Parakeet TDT with timestamps)</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nemo.collections.asr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nemo_asr</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">AUDIO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp3&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;nvidia/parakeet-tdt-0.6b-v2&quot;</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">nemo_asr</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ASRModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">MODEL</span><span class="p">)</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">)],</span> <span class="n">timestamps</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">channel_selector</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">stamp</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span><span class="p">[</span><span class="s2">&quot;segment&quot;</span><span class="p">]:</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">stamp</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">stamp</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">stamp</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">stamp</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">stamp</span><span class="p">[</span><span class="s1">&#39;segment&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:09 mixins:184] Tokenizer SentencePieceTokenizer initialized with 1024 tokens</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:10 modelPT:188] If you intend to do training or fine-tuning, please call the ModelPT.setup_training_data() method and provide a valid configuration file to setup the train data loader.
+    Train config : 
+    use_lhotse: true
+    skip_missing_manifest_entries: true
+    input_cfg: null
+    tarred_audio_filepaths: null
+    manifest_filepath: null
+    sample_rate: 16000
+    shuffle: true
+    num_workers: 2
+    pin_memory: true
+    max_duration: 40.0
+    min_duration: 0.1
+    text_field: answer
+    batch_duration: null
+    use_bucketing: true
+    bucket_duration_bins: null
+    bucket_batch_size: null
+    num_buckets: 30
+    bucket_buffer_size: 20000
+    shuffle_buffer_size: 10000</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:10 modelPT:195] If you intend to do validation, please call the ModelPT.setup_validation_data() or ModelPT.setup_multiple_validation_data() method and provide a valid configuration file to setup the validation data loader(s). 
+    Validation config : 
+    use_lhotse: true
+    manifest_filepath: null
+    sample_rate: 16000
+    batch_size: 16
+    shuffle: false
+    max_duration: 40.0
+    min_duration: 0.1
+    num_workers: 2
+    pin_memory: true
+    text_field: answer</pre>
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:12 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {&#x27;fastemit_lambda&#x27;: 0.0, &#x27;clamp&#x27;: -1.0, &#x27;durations&#x27;: [0, 1, 2, 3, 4], &#x27;sigma&#x27;: 0.02, &#x27;omega&#x27;: 0.1}</pre>
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:12 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {&#x27;fastemit_lambda&#x27;: 0.0, &#x27;clamp&#x27;: -1.0, &#x27;durations&#x27;: [0, 1, 2, 3, 4], &#x27;sigma&#x27;: 0.02, &#x27;omega&#x27;: 0.1}</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:12 label_looping_base:125] No conditional node support for Cuda.
+    Cuda graphs with while loops are disabled, decoding speed will be slower
+    Reason: CUDA is not available</pre>
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:12 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {&#x27;fastemit_lambda&#x27;: 0.0, &#x27;clamp&#x27;: -1.0, &#x27;durations&#x27;: [0, 1, 2, 3, 4], &#x27;sigma&#x27;: 0.02, &#x27;omega&#x27;: 0.1}</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:12 label_looping_base:125] No conditional node support for Cuda.
+    Cuda graphs with while loops are disabled, decoding speed will be slower
+    Reason: CUDA is not available</pre>
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:13 save_restore_connector:285] Model EncDecRNNTBPEModel was successfully restored from /Users/soma/.cache/huggingface/hub/models--nvidia--parakeet-tdt-0.6b-v2/snapshots/48b630d20b000e5ad3735e5378a2d9bde3f80826/parakeet-tdt-0.6b-v2.nemo.</pre>
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:13 rnnt_models:296] Timestamps requested, setting decoding timestamps to True. Capture them in Hypothesis object,                         with output[0][idx].timestep[&#x27;word&#x27;/&#x27;segment&#x27;/&#x27;char&#x27;]</pre>
+<pre class="cell-output">[NeMo I 2026-03-02 15:11:13 rnnt_models:226] Using RNNT Loss : tdt
+    Loss tdt_kwargs: {&#x27;fastemit_lambda&#x27;: 0.0, &#x27;clamp&#x27;: -1.0, &#x27;durations&#x27;: [0, 1, 2, 3, 4], &#x27;sigma&#x27;: 0.02, &#x27;omega&#x27;: 0.1}</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:13 label_looping_base:125] No conditional node support for Cuda.
+    Cuda graphs with while loops are disabled, decoding speed will be slower
+    Reason: CUDA is not available</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:13 dataloader:826] The following configuration keys are ignored by Lhotse dataloader: use_start_end_token</pre>
+<pre class="cell-output">[NeMo W 2026-03-02 15:11:13 dataloader:523] You are using a non-tarred dataset and requested tokenization during data sampling (pretokenize=True). This will cause the tokenization to happen in the main (GPU) process,possibly impacting the training speed if your tokenizer is very large.If the impact is noticable, set pretokenize=False in dataloader config.(note: that will disable token-per-second filtering and 2D bucketing features)</pre>
+<pre class="cell-output">Transcribing: 0it [00:00, ?it/s]</pre>
+<pre class="cell-output">Transcribing: 1it [00:03,  3.48s/it]</pre>
+<pre class="cell-output">Transcribing: 1it [00:03,  3.48s/it]</pre>
+<pre class="cell-output">[00:02.48 - 00:07.52] Relative to what we can do with more Border Patrol and more asylum officers.
+[00:07.84 - 00:08.48] President Trump?
+[00:08.96 - 00:11.20] I really don&#x27;t know what he said at the end of that sentence.
+[00:11.44 - 00:12.80] I don&#x27;t think he knows what he said either.
+[00:13.12 - 00:16.96] The only person in this stage who&#x27;s a convicted felon is the man I&#x27;m looking at right now.
+[00:17.28 - 00:20.56] But when he talks about a convicted felon, his son is a convicted felon.
+[00:21.20 - 00:22.56] What are you talking about?
+[00:23.28 - 00:24.80] You have the morals of an alley cat.
+[00:25.12 - 00:27.20] My son was not a loser, was not a sucker.
+[00:27.44 - 00:28.16] You&#x27;re the sucker.
+[00:28.32 - 00:29.28] You&#x27;re the loser.
+[00:29.60 - 00:31.92] He&#x27;s blaming inflation, and he&#x27;s right.
+[00:32.00 - 00:33.12] It&#x27;s been very bad.
+[00:33.44 - 00:34.64] He caused the inflation.
+[00:35.04 - 00:39.20] Excuse me, with dealing with everything we have to do with.
+[00:40.96 - 00:46.00] Look, if we finally beat Medicare.
+[00:46.40 - 00:47.60] Thank you, President Biden.
+[00:47.68 - 00:48.24] President Trump?
+[00:48.64 - 00:50.48] Well, I took two tests, cognitive tests.
+[00:50.56 - 00:51.12] I aced him.
+[00:51.28 - 00:52.48] Go through the first five questions.
+[00:52.64 - 00:53.28] He couldn&#x27;t do it.
+[00:53.52 - 00:56.16] This guy&#x27;s three years younger and a lot less competent.
+[00:56.48 - 00:57.92] I think that just look at the record.
+[00:58.08 - 00:58.64] Look at what I&#x27;ve done.</pre>
+<pre class="cell-output"></pre>
+<h2>Transcribe and diarize (local)</h2>
+<p>Along with transcribing, WhisperX transcribes the audio <em>and identifies who said what</em>. Free, runs locally (on your own computer), your audio never leaves your machine.</p>
+<p><strong>Setup:</strong> Diarization requires a free Hugging Face token (<code>HF_TOKEN</code>) and accepting the model licenses at <a href="https://huggingface.co/pyannote/segmentation-3.0">pyannote/segmentation-3.0</a> and <a href="https://huggingface.co/pyannote/speaker-diarization-community-1">pyannote/speaker-diarization-community-1</a>.</p>
+<p><strong><code>audio/whisperx-diarize.py</code></strong> — Full WhisperX pipeline: transcribe, align, diarize (who said what)</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">whisperx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">whisperx.diarize</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiarizationPipeline</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">AUDIO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp3&quot;</span>
+<span class="n">MODEL</span><span class="p">,</span> <span class="n">LANGUAGE</span> <span class="o">=</span> <span class="s2">&quot;large-v3&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span>
+<span class="n">HF_TOKEN</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HF_TOKEN&quot;</span><span class="p">]</span>
+<span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="n">compute_type</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span> <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">else</span> <span class="s2">&quot;int8&quot;</span>
+
+<span class="c1"># Step 1: Transcribe</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">compute_type</span><span class="o">=</span><span class="n">compute_type</span><span class="p">)</span>
+<span class="n">audio</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_audio</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">))</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="c1"># Step 2: Align</span>
+<span class="n">model_a</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_align_model</span><span class="p">(</span><span class="n">language_code</span><span class="o">=</span><span class="n">LANGUAGE</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">],</span> <span class="n">model_a</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">return_char_alignments</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Step 3: Diarize</span>
+<span class="n">diarize_model</span> <span class="o">=</span> <span class="n">DiarizationPipeline</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">HF_TOKEN</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">assign_word_speakers</span><span class="p">(</span><span class="n">diarize_model</span><span class="p">(</span><span class="n">audio</span><span class="p">),</span> <span class="n">result</span><span class="p">)</span>
+
+<span class="c1"># Print speaker-labeled segments</span>
+<span class="n">current_speaker</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">]:</span>
+    <span class="n">speaker</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speaker&quot;</span><span class="p">,</span> <span class="s2">&quot;UNKNOWN&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">speaker</span> <span class="o">!=</span> <span class="n">current_speaker</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--- </span><span class="si">{</span><span class="n">speaker</span><span class="si">}</span><span class="s2"> ---&quot;</span><span class="p">)</span>
+        <span class="n">current_speaker</span> <span class="o">=</span> <span class="n">speaker</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="si">:</span><span class="s2">05.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Speaker time summary</span>
+<span class="n">speaker_time</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">]:</span>
+    <span class="n">speaker_time</span><span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;speaker&quot;</span><span class="p">,</span> <span class="s2">&quot;UNKNOWN&quot;</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">seg</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">seg</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">]</span>
+<span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">speaker_time</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;Speaker&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Time&#39;</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;%&#39;</span><span class="si">:</span><span class="s2">&gt;6</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">spk</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">speaker_time</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">speaker_time</span><span class="p">[</span><span class="n">spk</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">spk</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">t</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">&gt;6.1f</span><span class="si">}</span><span class="s2">m </span><span class="si">{</span><span class="n">t</span><span class="o">/</span><span class="n">total</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">&gt;5.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">2026-03-02 15:11:19 - whisperx.asr - INFO - No language specified, language will be detected for each audio file (increases inference time)</pre>
+<pre class="cell-output">2026-03-02 15:11:19 - whisperx.vads.pyannote - INFO - Performing voice activity detection using Pyannote...</pre>
+<pre class="cell-output">Lightning automatically upgraded your loaded checkpoint from v1.5.4 to v2.4.0. To apply the upgrade to your files permanently, run `python -m lightning.pytorch.utilities.upgrade_checkpoint .venv/lib/python3.12/site-packages/whisperx/assets/pytorch_model.bin`</pre>
+<pre class="cell-output">2026-03-02 15:11:27 - whisperx.asr - INFO - Detected language: en (1.00) in first 30s of audio</pre>
+<pre class="cell-output">2026-03-02 15:11:52 - whisperx.diarize - INFO - Loading diarization model: pyannote/speaker-diarization-community-1</pre>
 <pre class="cell-output">
 --- SPEAKER_01 ---
   [00:02.46 - 00:07.99] relative to what we&#x27;re going to do with more border patrol and more asylum officers.
@@ -997,6 +1320,232 @@ OSError: dlopen(/Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-ni
 Speaker          Time      %
   SPEAKER_00    0.3m  38.0%
   SPEAKER_01    0.5m  62.0%</pre>
+<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">])</span>
+<span class="n">df</span>
+</pre></div>
+
+<div class="cell-output"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start</th>
+      <th>end</th>
+      <th>text</th>
+      <th>words</th>
+      <th>speaker</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2.461</td>
+      <td>7.990</td>
+      <td>relative to what we're going to do with more ...</td>
+      <td>[{'word': 'relative', 'start': 2.461, 'end': 2...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>8.010</td>
+      <td>9.091</td>
+      <td>President Trump?</td>
+      <td>[{'word': 'President', 'start': 8.01, 'end': 8...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>9.111</td>
+      <td>11.215</td>
+      <td>I really don't know what he said at the end of...</td>
+      <td>[{'word': 'I', 'start': 9.111, 'end': 9.151, '...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>11.555</td>
+      <td>12.897</td>
+      <td>I don't think he knows what he said either.</td>
+      <td>[{'word': 'I', 'start': 11.555, 'end': 11.575,...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>12.937</td>
+      <td>16.904</td>
+      <td>The only person in this stage is a convicted f...</td>
+      <td>[{'word': 'The', 'start': 12.937, 'end': 13.23...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>17.324</td>
+      <td>20.629</td>
+      <td>But when he talks about a convicted felon, his...</td>
+      <td>[{'word': 'But', 'start': 17.324, 'end': 17.42...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>20.750</td>
+      <td>22.292</td>
+      <td>What are you talking about?</td>
+      <td>[{'word': 'What', 'start': 20.75, 'end': 20.87...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>22.913</td>
+      <td>25.197</td>
+      <td>You have the morals of an alley cat.</td>
+      <td>[{'word': 'You', 'start': 22.913, 'end': 23.35...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>25.217</td>
+      <td>27.200</td>
+      <td>My son was not a loser, was not a sucker.</td>
+      <td>[{'word': 'My', 'start': 25.217, 'end': 25.357...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>27.481</td>
+      <td>28.182</td>
+      <td>You're the sucker.</td>
+      <td>[{'word': 'You're', 'start': 27.481, 'end': 27...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>28.342</td>
+      <td>29.023</td>
+      <td>You're the loser.</td>
+      <td>[{'word': 'You're', 'start': 28.342, 'end': 28...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>29.704</td>
+      <td>32.068</td>
+      <td>He's blaming inflation, and he's right.</td>
+      <td>[{'word': 'He's', 'start': 29.704, 'end': 29.9...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>32.088</td>
+      <td>32.950</td>
+      <td>It's been very bad.</td>
+      <td>[{'word': 'It's', 'start': 32.088, 'end': 32.1...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>33.611</td>
+      <td>34.753</td>
+      <td>He caused the inflation.</td>
+      <td>[{'word': 'He', 'start': 33.611, 'end': 33.771...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>35.073</td>
+      <td>46.512</td>
+      <td>Excuse me, with dealing with everything we hav...</td>
+      <td>[{'word': 'Excuse', 'start': 35.073, 'end': 35...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>46.532</td>
+      <td>47.694</td>
+      <td>Thank you, President Biden.</td>
+      <td>[{'word': 'Thank', 'start': 46.532, 'end': 46....</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>47.714</td>
+      <td>48.415</td>
+      <td>President Trump?</td>
+      <td>[{'word': 'President', 'start': 47.714, 'end':...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>48.580</td>
+      <td>50.572</td>
+      <td>Well, I took two tests, cognitive tests.</td>
+      <td>[{'word': 'Well,', 'start': 48.58, 'end': 48.8...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>50.652</td>
+      <td>51.256</td>
+      <td>I aced them.</td>
+      <td>[{'word': 'I', 'start': 50.652, 'end': 50.713,...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>51.276</td>
+      <td>52.624</td>
+      <td>Go through the first five questions.</td>
+      <td>[{'word': 'Go', 'start': 51.276, 'end': 51.397...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>52.644</td>
+      <td>53.248</td>
+      <td>He couldn't do it.</td>
+      <td>[{'word': 'He', 'start': 52.644, 'end': 52.725...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>53.610</td>
+      <td>56.649</td>
+      <td>This guy's three years younger and a lot less ...</td>
+      <td>[{'word': 'This', 'start': 53.61, 'end': 53.79...</td>
+      <td>SPEAKER_00</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>56.669</td>
+      <td>58.057</td>
+      <td>I think that just look at the record.</td>
+      <td>[{'word': 'I', 'start': 56.669, 'end': 56.749,...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>58.178</td>
+      <td>59.063</td>
+      <td>Look at what I've done.</td>
+      <td>[{'word': 'Look', 'start': 58.178, 'end': 58.2...</td>
+      <td>SPEAKER_01</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
 <p>"Speaker 1 said X at 0:42, Speaker 2 said Y at 1:15." Now you have a searchable, speaker-labeled transcript.</p>
 <p>If you'd prefer to not write code (lol), try <a href="https://goodsnooze.gumroad.com/l/macwhisper">MacWhisper</a>, <a href="https://handy.computer/">Handy</a>, <a href="https://tryvoiceink.com/">VoiceInk</a>, <a href="https://buzzcaptions.com/">Buzz</a>.</p>
 <h2>Structured transcription (cloud)</h2>
@@ -1027,19 +1576,18 @@ Speaker          Time      %
 </pre></div>
 
 <pre class="cell-output">[00:02 - 00:07] Speaker 1: relative to what we&#x27;re going to do with more border patrol and more asylum officers.
-[00:08 - 00:08] Speaker 2: President Trump.
+[00:08 - 00:08] Speaker 2: President Trump?
 [00:08 - 00:12] Speaker 1: I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
-[00:13 - 00:16] Speaker 3: The only person at this stage is a convicted felon is the man I&#x27;m looking at right now.
+[00:13 - 00:16] Speaker 3: The only person in this stage is a convicted felon, this man I&#x27;m looking at right now.
 [00:17 - 00:20] Speaker 1: But when he talks about a convicted felon, his son is a convicted felon.
-[00:20 - 00:21] Speaker 3: What are you talking about?
-[00:22 - 00:24] Speaker 3: You you have the morals of an alley cat.
-[00:25 - 00:29] Speaker 1: My son was not a loser, was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.
-[00:29 - 00:33] Speaker 3: He&#x27;s blaming inflation, and he&#x27;s right, it&#x27;s been very bad.
-[00:33 - 00:34] Speaker 3: He caused the inflation.
-[00:35 - 00:46] Speaker 1: Excuse me, with dealing with everything we have to do with uh look, if we finally beat Medicare.
+[00:20 - 00:22] Speaker 3: What, what, what are you talking about?
+[00:23 - 00:24] Speaker 3: You you have the morals of an alley cat.
+[00:25 - 00:28] Speaker 1: My son was not a loser, was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.
+[00:29 - 00:34] Speaker 3: He&#x27;s blaming inflation and he&#x27;s right, it&#x27;s been very bad. He caused the inflation.
+[00:35 - 00:45] Speaker 1: Excuse me, with um dealing with everything we have to do with uh look if we finally beat Medicare.
 [00:46 - 00:48] Speaker 2: Thank you, President Biden. President Trump.
 [00:48 - 00:53] Speaker 1: Well, I took two tests, cognitive tests, I aced them. Go through the first five questions, he couldn&#x27;t do it.
-[00:53 - 00:58] Speaker 3: This guy&#x27;s three years younger and a lot less competent. I think that this look at the record. Look at what I&#x27;ve done.</pre>
+[00:53 - 00:58] Speaker 3: This guy&#x27;s three years younger and a lot less confident. I think that this look at the record. Look at what I&#x27;ve done.</pre>
 <p>Cloud tradeoff: faster, structured output built-in, but your audio goes to Google. Most newsrooms will use both local and cloud depending on the sensitivity of the material.</p>
 
 <footer>

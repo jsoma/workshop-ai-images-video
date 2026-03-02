@@ -1,6 +1,7 @@
 ---
 install:
   - whisperx
+  - nemo_toolkit[asr]
 env_keys:
   - HF_TOKEN
 data_files:
@@ -10,15 +11,34 @@ data_files:
 
 What can you do with audio? Turn it into text, then do text things. Split it by speaker.
 
-## Transcribe and diarize (local)
+## Transcribe
 
-WhisperX transcribes the audio and identifies who said what. Free, runs locally, your audio never leaves your machine.
+Once upon a time OpenAI released an *open model* named Whisper. It's actually great! There are newer models out there - like [Parakeet](https://parakeettdt.com/), which is super quick - but Whisper is very easy to use so everyone runs it.
 
-**Setup:** Diarization requires a free Hugging Face token (`HF_TOKEN`) and accepting the model licenses at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1).
 
 ```show
 data/rDXubdQdJYs.mp3
 ```
+
+There are different versions of the model - like tiny, base, large - but **turbo** is the best combination of speed and accuracy. Below we're using **WhisperX** which is a feature-packed tool built on top of Whisper.
+
+```script
+audio/whisperx.py
+```
+
+## Transcribe
+
+Here's Parakeet! If you're on a mac, use [parakeet-mlx](https://github.com/senstella/parakeet-mlx). I'm specifically using the *most complicated possible version of Parakeet* because it's the best.
+
+```script
+audio/parakeet.py
+```
+
+## Transcribe and diarize (local)
+
+Along with transcribing, WhisperX transcribes the audio *and identifies who said what*. Free, runs locally (on your own computer), your audio never leaves your machine.
+
+**Setup:** Diarization requires a free Hugging Face token (`HF_TOKEN`) and accepting the model licenses at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1).
 
 ```script
 audio/whisperx-diarize.py

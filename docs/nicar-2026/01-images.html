@@ -565,8 +565,7 @@ pre {
   margin: 1rem 0;
   line-height: 1.6;
   color: var(--code-text);
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  white-space: pre;
   transition: all 0.3s ease;
 }
 
@@ -577,8 +576,10 @@ pre {
   padding: 1.2rem 1.3rem;
   margin: 1rem 0;
   overflow-x: auto;
+  scrollbar-width: none;
   transition: all 0.3s ease;
 }
+.highlight::-webkit-scrollbar { display: none; }
 
 .highlight pre {
   margin: 0; padding: 0; background: none; border: none; border-radius: 0;
@@ -834,24 +835,27 @@ pre { line-height: 125%; }
     <span class="n">model</span><span class="o">=</span><span class="n">MODEL</span><span class="p">,</span>
     <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">},</span>
-        <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span> <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/jpeg;base64,</span><span class="si">{</span><span class="n">base64_image</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;data:image/jpeg;base64,</span><span class="si">{</span><span class="n">base64_image</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
     <span class="p">]}],</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Based on the image provided, here are the details about the vehicle:
+<pre class="cell-output">Based on the image provided, here is the information about the vehicle:
 
-- **Make**: Toyota
-- **Model**: Highlander
-- **Type**: SUV
-- **Color**: Silver
-- **Estimated Year**: Early 2000s (likely around 2005-2010) 
-
-Let me know if you need any more information!</pre>
-<p>Awful, right?</p>
+- **Make:** Toyota
+- **Model:** Highlander
+- **Type:** SUV
+- **Color:** Gold/Silver
+- **Estimated Year:** Mid-2000s (around 2006-2008)</pre>
+<p>It's great, but... what if we want it in a CSV? What if we have 200 to do? What if we want to make <em>demands</em> and ask for <em>structure?</em></p>
 <h2>Structured output</h2>
-<p>An alternative is to send an image to an LLM and get back <strong>structured data</strong> — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop!</p>
+<p>An alternative is to send an image to an LLM and get back <strong>structured output</strong> — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop!</p>
 <p><strong><code>vision-llm/structured.py</code></strong> — Send one image to an LLM, get structured Pydantic data back</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
@@ -870,7 +874,9 @@ Let me know if you need any more information!</pre>
     <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Vehicle model name (e.g., Camry, F-150)&quot;</span><span class="p">)</span>
     <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Primary color of the vehicle&quot;</span><span class="p">)</span>
     <span class="n">year_estimate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Estimated model year (best guess)&quot;</span><span class="p">)</span>
-    <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sedan&quot;</span><span class="p">,</span> <span class="s2">&quot;SUV&quot;</span><span class="p">,</span> <span class="s2">&quot;truck&quot;</span><span class="p">,</span> <span class="s2">&quot;van&quot;</span><span class="p">,</span> <span class="s2">&quot;motorcycle&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of vehicle&quot;</span><span class="p">)</span>
+    <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+        <span class="s2">&quot;sedan&quot;</span><span class="p">,</span> <span class="s2">&quot;SUV&quot;</span><span class="p">,</span> <span class="s2">&quot;truck&quot;</span><span class="p">,</span> <span class="s2">&quot;van&quot;</span><span class="p">,</span> <span class="s2">&quot;motorcycle&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of vehicle&quot;</span><span class="p">)</span>
     <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Your confidence in this identification, 0.0 to 1.0&quot;</span><span class="p">)</span>
 
 <span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">Vehicle</span><span class="p">)</span>
@@ -882,9 +888,10 @@ Let me know if you need any more information!</pre>
 </pre></div>
 
 <pre class="cell-output">Vehicle(make=&#x27;Toyota&#x27;, model=&#x27;Highlander&#x27;, color=&#x27;gold&#x27;, year_estimate=2006, vehicle_type=&#x27;SUV&#x27;, confidence=0.9)</pre>
-<p>While there are a handful of ways to do this, we're specifically using a Python library called <strong>Pydantic</strong>. It gives you a lot of tools to describe what you're looking for: each field has a name, a type, and a description. AI fills in the fields. Easy peasy!</p>
+<p>While there are a handful of ways to do this, we're specifically using a Python library called <strong>Pydantic</strong>. It gives you a lot of tools to describe what you're looking for: each field has a name, a type, and a description. AI fills in the fields.</p>
+<p>Easy peasy!</p>
 <h2>Batch processing</h2>
-<p>Same thing, whole folder. But instead of one at a time, you get an entire CSV!</p>
+<p>Same thing as before, but we have <strong>a whole folder of images</strong>. And instead of one at a time, you can make an entire CSV!</p>
 <p><strong><code>vision-llm/batch.py</code></strong> — Process a folder of images into structured data -&gt; DataFrame -&gt; CSV</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -901,7 +908,9 @@ Let me know if you need any more information!</pre>
     <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Vehicle model name&quot;</span><span class="p">)</span>
     <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Primary color&quot;</span><span class="p">)</span>
     <span class="n">year_estimate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Estimated model year&quot;</span><span class="p">)</span>
-    <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;sedan&quot;</span><span class="p">,</span> <span class="s2">&quot;SUV&quot;</span><span class="p">,</span> <span class="s2">&quot;truck&quot;</span><span class="p">,</span> <span class="s2">&quot;van&quot;</span><span class="p">,</span> <span class="s2">&quot;motorcycle&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of vehicle&quot;</span><span class="p">)</span>
+    <span class="n">vehicle_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span>
+        <span class="s2">&quot;sedan&quot;</span><span class="p">,</span> <span class="s2">&quot;SUV&quot;</span><span class="p">,</span> <span class="s2">&quot;truck&quot;</span><span class="p">,</span> <span class="s2">&quot;van&quot;</span><span class="p">,</span> <span class="s2">&quot;motorcycle&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of vehicle&quot;</span><span class="p">)</span>
     <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Confidence in identification, 0.0 to 1.0&quot;</span><span class="p">)</span>
 
 <span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">Vehicle</span><span class="p">)</span>
@@ -953,11 +962,11 @@ Let me know if you need any more information!</pre>
       <th>0</th>
       <td>28246634.jpg</td>
       <td>Volkswagen</td>
-      <td>Transporter</td>
+      <td>Multivan</td>
       <td>black</td>
-      <td>2015</td>
+      <td>2020</td>
       <td>van</td>
-      <td>0.90</td>
+      <td>0.9</td>
     </tr>
     <tr>
       <th>1</th>
@@ -965,29 +974,29 @@ Let me know if you need any more information!</pre>
       <td>Toyota</td>
       <td>Camry</td>
       <td>Silver</td>
-      <td>2015</td>
+      <td>2012</td>
       <td>sedan</td>
-      <td>0.90</td>
+      <td>0.9</td>
     </tr>
     <tr>
       <th>2</th>
       <td>28262472.jpg</td>
       <td>Lexus</td>
-      <td>LX 570</td>
+      <td>LX</td>
       <td>black</td>
       <td>2020</td>
       <td>SUV</td>
-      <td>0.90</td>
+      <td>0.9</td>
     </tr>
     <tr>
       <th>3</th>
       <td>28262480.jpg</td>
       <td>Toyota</td>
       <td>Yaris</td>
-      <td>yellow</td>
-      <td>2020</td>
+      <td>Yellow</td>
+      <td>2018</td>
       <td>sedan</td>
-      <td>0.85</td>
+      <td>0.9</td>
     </tr>
     <tr>
       <th>4</th>
@@ -995,9 +1004,9 @@ Let me know if you need any more information!</pre>
       <td>Tesla</td>
       <td>Model Y</td>
       <td>white</td>
-      <td>2023</td>
+      <td>2022</td>
       <td>SUV</td>
-      <td>0.95</td>
+      <td>0.9</td>
     </tr>
   </tbody>
 </table>
@@ -1038,9 +1047,9 @@ Let me know if you need any more information!</pre>
 </pre></div>
 
 <pre class="cell-output">--- openai:gpt-4o-mini ---
-subject=&#x27;a landscape at sunset&#x27; setting=&#x27;a foggy field with flowers&#x27; mood=&#x27;tranquil and picturesque&#x27; details=[&#x27;the sky is painted with shades of orange and blue&#x27;, &#x27;there is a field of purple flowers in the foreground&#x27;, &#x27;a lone rock is situated near a fence line&#x27;, &#x27;the road in the background is partially obscured by mist&#x27;, &#x27;distant clouds linger low on the horizon&#x27;]</pre>
+subject=&#x27;Sunrise over a misty landscape&#x27; setting=&#x27;Open field with a road and wildflowers&#x27; mood=&#x27;Serene and calm&#x27; details=[&#x27;The sky is painted in pastel colors of orange and blue as the sun rises.&#x27;, &#x27;There is a layer of mist hovering over the ground.&#x27;, &#x27;Lupine flowers bloom prominently in the foreground, adding color to the landscape.&#x27;]</pre>
 <pre class="cell-output">--- google-gla:gemini-2.5-flash ---
-subject=&#x27;A scenic landscape at sunrise or sunset&#x27; setting=&#x27;A rural or natural area with a road, fields, and mist&#x27; mood=&#x27;Serene, tranquil, and ethereal&#x27; details=[&#x27;Vibrant sunset or sunrise sky with orange, yellow, and blue hues&#x27;, &#x27;A layer of mist or fog covering the lower landscape and the road&#x27;, &#x27;Rows of purple flowers lining the side of the road&#x27;, &#x27;A dark paved road winding through the landscape&#x27;, &#x27;Rolling grassy terrain with a large dark rock in the foreground&#x27;]</pre>
+subject=&#x27;A scenic landscape at sunset&#x27; setting=&#x27;An expansive open field with a road&#x27; mood=&#x27;Peaceful and serene&#x27; details=[&#x27;A vibrant sunset sky with orange, yellow, and blue hues&#x27;, &#x27;A layer of low-lying fog or mist across the distant landscape&#x27;, &#x27;A paved road bordered by fields of purple flowers&#x27;, &#x27;Vast grassy fields stretching into the distance&#x27;, &#x27;A large dark rock prominent in the mid-ground&#x27;]</pre>
 <p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts.</p>
 
 <footer>
