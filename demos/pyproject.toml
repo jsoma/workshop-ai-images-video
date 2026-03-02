@@ -37,6 +37,7 @@ dependencies = [
     # should be installed separately (ideally in a fresh venv):
     #   pip install whisperx          # word-level alignment + diarization
     #   pip install pyannote.audio    # standalone speaker diarization
+    #   pip install nemo_toolkit[asr]  # NVIDIA Parakeet transcription
     #   pip install rfdetr            # RT-DETR object detection
     "chromadb>=1.5.1",
 ]

@@ -832,14 +832,14 @@ pre { line-height: 125%; }
 [youtube] rDXubdQdJYs: Downloading webpage</pre>
 <pre class="cell-output">[youtube] rDXubdQdJYs: Downloading android vr player API JSON
 [youtube] rDXubdQdJYs: Downloading web safari player API JSON</pre>
-<pre class="cell-output">WARNING: [youtube] [pot:bgutil:http] Error reaching GET http://127.0.0.1:4416/ping (caused by TransportError). Please make sure that the server is reachable at http://127.0.0.1:4416.
-WARNING: [youtube] [jsc] Remote components challenge solver script (deno) and NPM package (deno) were skipped. These may be required to solve JS challenges. You can enable these downloads with  --remote-components ejs:github  (recommended) or  --remote-components ejs:npm , respectively. For more information and alternatives, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
-WARNING: [youtube] rDXubdQdJYs: n challenge solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS</pre>
+<pre class="cell-output">WARNING: [youtube] [pot:bgutil:http] Error reaching GET http://127.0.0.1:4416/ping (caused by TransportError). Please make sure that the server is reachable at http://127.0.0.1:4416.</pre>
 <pre class="cell-output">[youtube] rDXubdQdJYs: Downloading player 4eecba16-tv
 [youtube] [jsc:deno] Solving JS challenges using deno</pre>
 <pre class="cell-output">[info] rDXubdQdJYs: Downloading 1 format(s): 18
 [download] data/The CNN Presidential debate in 60 seconds [rDXubdQdJYs].mp4 has already been downloaded
 [download] 100% of    2.63MiB</pre>
+<pre class="cell-output">WARNING: [youtube] [jsc] Remote components challenge solver script (deno) and NPM package (deno) were skipped. These may be required to solve JS challenges. You can enable these downloads with  --remote-components ejs:github  (recommended) or  --remote-components ejs:npm , respectively. For more information and alternatives, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS
+WARNING: [youtube] rDXubdQdJYs: n challenge solving failed: Some formats may be missing. Ensure you have a supported JavaScript runtime and challenge solver script distribution installed. Review any warnings presented before this message. For more details, refer to  https://github.com/yt-dlp/yt-dlp/wiki/EJS</pre>
 <pre class="cell-output">CompletedProcess(args=[&#x27;yt-dlp&#x27;, &#x27;-o&#x27;, &#x27;data/%(title)s [%(id)s].%(ext)s&#x27;, &#x27;-f&#x27;, &#x27;best&#x27;, &#x27;--no-overwrites&#x27;, &#x27;https://www.youtube.com/watch?v=rDXubdQdJYs&#x27;], returncode=0)</pre>
 <h2>Extract frames</h2>
 <p>Decompose into one image per second. Now you have images — use the image tools.</p>
@@ -921,30 +921,12 @@ WARNING: [youtube] rDXubdQdJYs: n challenge solving failed: Some formats may be 
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Based on the video provided, **Joe Biden got more screen time.**
+<pre class="cell-output">Based on the video provided:
 
-Here&#x27;s an approximate breakdown:
+*   **Joe Biden** had approximately **35 seconds** of screen time.
+*   **Donald Trump** had approximately **25 seconds** of screen time.
 
-*   **Joe Biden:** Approximately **32 seconds**
-    *   0:01 - 0:03 (speaking)
-    *   0:06 - 0:07 (speaking)
-    *   0:12 - 0:16 (speaking)
-    *   0:20 - 0:29 (speaking)
-    *   0:34 - 0:38 (speaking)
-    *   0:41 - 0:47 (speaking)
-    *   0:52 - 0:58 (speaking)
-
-*   **Donald Trump:** Approximately **25 seconds**
-    *   0:03 - 0:06 (listening)
-    *   0:07 - 0:12 (speaking)
-    *   0:16 - 0:20 (speaking)
-    *   0:29 - 0:34 (speaking)
-    *   0:38 - 0:41 (listening)
-    *   0:47 - 0:52 (speaking)
-
-*   **Both (split screen):** Approximately **1 second** (0:00 - 0:01)
-
-The total video duration is 58 seconds.</pre>
+Therefore, **Joe Biden got more screen time** in this debate video excerpt.</pre>
 <p>You can't fact-check this. You can't show your editor the work. You can't catch errors. It's a vibe.</p>
 <h2>The right way</h2>
 <p>Classify each frame with an LLM. Produce an auditable CSV — every row links to a frame you can check.</p>
@@ -983,35 +965,35 @@ The total video duration is 58 seconds.</pre>
 </pre></div>
 
 <pre class="cell-output">frame-001.jpg: Joe Biden (0.80)</pre>
-<pre class="cell-output">frame-002.jpg: Biden (0.90)</pre>
+<pre class="cell-output">frame-002.jpg: Unknown (0.90)</pre>
 <pre class="cell-output">frame-003.jpg: Unknown (0.90)</pre>
-<pre class="cell-output">frame-004.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-005.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-006.jpg: Donald Trump (0.90)</pre>
-<pre class="cell-output">frame-007.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-004.jpg: unknown (0.00)</pre>
+<pre class="cell-output">frame-005.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-006.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-007.jpg: unknown (0.95)</pre>
 <pre class="cell-output">frame-008.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-009.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-009.jpg: Joe Biden (0.90)</pre>
 <pre class="cell-output">frame-010.jpg: unknown (0.50)</pre>
-<pre class="cell-output">frame-011.jpg: Unknown (0.00)</pre>
-<pre class="cell-output">frame-012.jpg: unknown (0.00)</pre>
-<pre class="cell-output">frame-013.jpg: Unknown (0.50)</pre>
+<pre class="cell-output">frame-011.jpg: unknown (0.50)</pre>
+<pre class="cell-output">frame-012.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-013.jpg: Speaking individual (0.85)</pre>
 <pre class="cell-output">frame-014.jpg: Joe Biden (0.90)</pre>
 <pre class="cell-output">frame-015.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-016.jpg: unknown (0.80)</pre>
-<pre class="cell-output">frame-017.jpg: Donald Trump (0.90)</pre>
-<pre class="cell-output">frame-018.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-019.jpg: Unknown (0.50)</pre>
-<pre class="cell-output">frame-020.jpg: unknown (0.50)</pre>
-<pre class="cell-output">frame-021.jpg: Unknown (0.00)</pre>
-<pre class="cell-output">frame-022.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-023.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-016.jpg: Donald Trump (0.90)</pre>
+<pre class="cell-output">frame-017.jpg: Unknown (0.50)</pre>
+<pre class="cell-output">frame-018.jpg: Unknown (0.70)</pre>
+<pre class="cell-output">frame-019.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-020.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-021.jpg: unknown (0.80)</pre>
+<pre class="cell-output">frame-022.jpg: Unknown (0.90)</pre>
+<pre class="cell-output">frame-023.jpg: Unknown (0.50)</pre>
 <pre class="cell-output">frame-024.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-025.jpg: Unknown (0.50)</pre>
-<pre class="cell-output">frame-026.jpg: Unknown (0.90)</pre>
-<pre class="cell-output">frame-027.jpg: Unknown (0.50)</pre>
-<pre class="cell-output">frame-028.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-029.jpg: Joe Biden (0.90)</pre>
-<pre class="cell-output">frame-030.jpg: unknown (0.50)
+<pre class="cell-output">frame-025.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-026.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-027.jpg: Unknown (0.30)</pre>
+<pre class="cell-output">frame-028.jpg: Biden (0.80)</pre>
+<pre class="cell-output">frame-029.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-030.jpg: Joe Biden (0.95)
 
 Saved to outputs/frame_classifications.csv</pre>
 <p><strong>Compare the two.</strong> Same question, same video. One gives you a number. The other gives you a spreadsheet with an audit trail. Even if the vibe answer is right, you can't verify it. That's the point.</p>

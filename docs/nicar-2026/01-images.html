@@ -846,13 +846,13 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Based on the image provided, here is the information about the vehicle:
+<pre class="cell-output">Based on the vehicle shown in the image, here are the details:
 
 - **Make:** Toyota
 - **Model:** Highlander
 - **Type:** SUV
-- **Color:** Gold/Silver
-- **Estimated Year:** Mid-2000s (around 2006-2008)</pre>
+- **Color:** Silver
+- **Estimated Year:** Early 2000s (around 2001-2007)</pre>
 <p>It's great, but... what if we want it in a CSV? What if we have 200 to do? What if we want to make <em>demands</em> and ask for <em>structure?</em></p>
 <h2>Structured output</h2>
 <p>An alternative is to send an image to an LLM and get back <strong>structured output</strong> — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop!</p>
@@ -962,21 +962,21 @@ pre { line-height: 125%; }
       <th>0</th>
       <td>28246634.jpg</td>
       <td>Volkswagen</td>
-      <td>Multivan</td>
+      <td>Transporter</td>
       <td>black</td>
-      <td>2020</td>
+      <td>2018</td>
       <td>van</td>
-      <td>0.9</td>
+      <td>0.85</td>
     </tr>
     <tr>
       <th>1</th>
       <td>28246768.jpg</td>
       <td>Toyota</td>
       <td>Camry</td>
-      <td>Silver</td>
-      <td>2012</td>
+      <td>silver</td>
+      <td>2015</td>
       <td>sedan</td>
-      <td>0.9</td>
+      <td>0.95</td>
     </tr>
     <tr>
       <th>2</th>
@@ -986,27 +986,27 @@ pre { line-height: 125%; }
       <td>black</td>
       <td>2020</td>
       <td>SUV</td>
-      <td>0.9</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>3</th>
       <td>28262480.jpg</td>
       <td>Toyota</td>
       <td>Yaris</td>
-      <td>Yellow</td>
+      <td>yellow</td>
       <td>2018</td>
       <td>sedan</td>
-      <td>0.9</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>4</th>
       <td>28266737.jpg</td>
       <td>Tesla</td>
       <td>Model Y</td>
-      <td>white</td>
-      <td>2022</td>
+      <td>White</td>
+      <td>2021</td>
       <td>SUV</td>
-      <td>0.9</td>
+      <td>0.90</td>
     </tr>
   </tbody>
 </table>
@@ -1047,9 +1047,9 @@ pre { line-height: 125%; }
 </pre></div>
 
 <pre class="cell-output">--- openai:gpt-4o-mini ---
-subject=&#x27;Sunrise over a misty landscape&#x27; setting=&#x27;Open field with a road and wildflowers&#x27; mood=&#x27;Serene and calm&#x27; details=[&#x27;The sky is painted in pastel colors of orange and blue as the sun rises.&#x27;, &#x27;There is a layer of mist hovering over the ground.&#x27;, &#x27;Lupine flowers bloom prominently in the foreground, adding color to the landscape.&#x27;]</pre>
+subject=&#x27;A sunset landscape&#x27; setting=&#x27;An open field near a road&#x27; mood=&#x27;Serene and tranquil&#x27; details=[&#x27;The sky is painted in pastel colors, with soft pinks and oranges as the sun sets.&#x27;, &#x27;In the foreground, there are blooming purple flowers, likely lupines, creating a colorful border.&#x27;, &#x27;A light mist covers the ground, adding a mystical quality to the scene.&#x27;, &#x27;There is a single large rock on the left side of the image, contributing to the natural feel.&#x27;, &#x27;Power lines are visible in the distance along the road, hinting at the rural setting.&#x27;]</pre>
 <pre class="cell-output">--- google-gla:gemini-2.5-flash ---
-subject=&#x27;A scenic landscape at sunset&#x27; setting=&#x27;An expansive open field with a road&#x27; mood=&#x27;Peaceful and serene&#x27; details=[&#x27;A vibrant sunset sky with orange, yellow, and blue hues&#x27;, &#x27;A layer of low-lying fog or mist across the distant landscape&#x27;, &#x27;A paved road bordered by fields of purple flowers&#x27;, &#x27;Vast grassy fields stretching into the distance&#x27;, &#x27;A large dark rock prominent in the mid-ground&#x27;]</pre>
+subject=&#x27;A vast landscape with a sunset over a foggy horizon&#x27; setting=&#x27;A rural landscape at sunrise or sunset with a road, fields, and a distant foggy horizon&#x27; mood=&#x27;Serene and peaceful, with a touch of mystery from the fog&#x27; details=[&#x27;A vibrant sunset with orange and yellow hues dominates the right side of the sky.&#x27;, &#x27;A thick layer of fog or mist blankets the distant horizon and parts of the landscape.&#x27;, &#x27;Extensive patches of purple flowers are visible in the foreground and along the roadside.&#x27;, &#x27;A winding road cuts through the landscape, disappearing into the fog.&#x27;, &#x27;Grassy fields with some darker, bare patches of earth and a large rock in the foreground.&#x27;]</pre>
 <p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts.</p>
 
 <footer>

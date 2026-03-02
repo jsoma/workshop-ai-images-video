@@ -1,10 +1,10 @@
 # WhisperX segment-level aligned transcription
 from pathlib import Path
-import warnings
-import logging
-warnings.filterwarnings("ignore")
-logging.getLogger("whisperx").setLevel(logging.ERROR)
-logging.getLogger("pyannote").setLevel(logging.ERROR)
+import warnings  # hidden
+import logging  # hidden
+warnings.filterwarnings("ignore")  # hidden
+logging.getLogger("whisperx").setLevel(logging.ERROR)  # hidden
+logging.getLogger("pyannote").setLevel(logging.ERROR)  # hidden
 import torch
 import whisperx
 

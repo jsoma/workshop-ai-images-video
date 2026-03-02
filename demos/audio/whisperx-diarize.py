@@ -3,11 +3,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 import os
-import warnings
-import logging
-warnings.filterwarnings("ignore")
-logging.getLogger("whisperx").setLevel(logging.ERROR)
-logging.getLogger("pyannote").setLevel(logging.ERROR)
+import warnings  # hidden
+import logging  # hidden
+warnings.filterwarnings("ignore")  # hidden
+logging.getLogger("whisperx").setLevel(logging.ERROR)  # hidden
+logging.getLogger("pyannote").setLevel(logging.ERROR)  # hidden
 from collections import defaultdict
 import torch, whisperx
 from whisperx.diarize import DiarizationPipeline

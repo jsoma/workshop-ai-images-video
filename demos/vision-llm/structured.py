@@ -18,7 +18,9 @@ class Vehicle(BaseModel):
     model: str = Field(description="Vehicle model name (e.g., Camry, F-150)")
     color: str = Field(description="Primary color of the vehicle")
     year_estimate: int = Field(description="Estimated model year (best guess)")
-    vehicle_type: Literal["sedan", "SUV", "truck", "van", "motorcycle", "other"] = Field(description="Type of vehicle")
+    vehicle_type: Literal[
+        "sedan", "SUV", "truck", "van", "motorcycle", "other"
+    ] = Field(description="Type of vehicle")
     confidence: float = Field(description="Your confidence in this identification, 0.0 to 1.0")
 
 agent = Agent(MODEL, output_type=Vehicle)

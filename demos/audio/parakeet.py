@@ -1,8 +1,8 @@
 # Parakeet transcription via NeMo (NVIDIA Parakeet TDT with timestamps)
 from pathlib import Path
-import logging
-from nemo.utils import logging as nemo_logging
-nemo_logging.setLevel(logging.ERROR)
+import logging  # hidden
+from nemo.utils import logging as nemo_logging  # hidden
+nemo_logging.setLevel(logging.ERROR)  # hidden
 import nemo.collections.asr as nemo_asr
 
 DATA = Path(__file__).parent.parent / "data"
