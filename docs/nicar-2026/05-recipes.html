@@ -824,14 +824,17 @@ pre { line-height: 125%; }
     <span class="n">primary_subject</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Who is primarily on screen (name or description)&quot;</span><span class="p">)</span>
     <span class="n">scene_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;&#39;close-up&#39;, &#39;wide shot&#39;, &#39;split screen&#39;, &#39;graphic&#39;, &#39;audience&#39;, &#39;other&#39;&quot;</span><span class="p">)</span>
     <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1"># --- Step 1: Discover frames ---</span>
-<span class="n">frames_dir</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;debate&quot;</span>
+<h2>Step 1: Discover frames</h2>
+<div class="highlight"><pre><span></span><span class="n">frames_dir</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;debate&quot;</span>
 <span class="n">frames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">frames_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.webp&quot;</span><span class="p">})</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1"># --- Step 2: Classify each frame ---</span>
-<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">FrameClassification</span><span class="p">)</span>
+<pre class="cell-output">Found 30 frames</pre>
+<h2>Step 2: Classify each frame</h2>
+<div class="highlight"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">FrameClassification</span><span class="p">)</span>
 <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
     <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d+)&quot;</span><span class="p">,</span> <span class="n">fpath</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span> <span class="k">else</span> <span class="mi">0</span>
@@ -844,9 +847,11 @@ pre { line-height: 125%; }
                  <span class="s2">&quot;primary_subject&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">primary_subject</span><span class="p">,</span> <span class="s2">&quot;scene_type&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">scene_type</span><span class="p">,</span>
                  <span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">confidence</span><span class="p">})</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Classified </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1"># --- Step 3: Build summary ---</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;frame_number&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<pre class="cell-output">Classified 30 frames</pre>
+<h2>Step 3: Build summary</h2>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;frame_number&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">summary</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;primary_subject&quot;</span><span class="p">)</span>
     <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;primary_subject&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">),</span>
@@ -860,70 +865,77 @@ pre { line-height: 125%; }
 <span class="n">df</span>
 </pre></div>
 
-<pre class="cell-output">Found 30 frames</pre>
-<pre class="cell-output">Classified 30 frames
-                                                    frames  total_seconds  \
+<pre class="cell-output">                                                    frames  total_seconds  \
 primary_subject                                                             
-unknown                                                  6            6.0   
-a political figure                                       4            4.0   
+unknown                                                  5            5.0   
 Donald Trump                                             3            3.0   
-Joe Biden                                                2            2.0   
-a speaker in a political debate                          2            2.0   
-a man with short, light hair and a serious expr...       1            1.0   
-two candidates in a political debate                     1            1.0   
-person speaking in political debate                      1            1.0   
-an individual speaking during a political debate         1            1.0   
-a person speaking in a political debate                  1            1.0   
-A male speaker during a political debate                 1            1.0   
+not known                                                2            2.0   
+a politician                                             2            2.0   
+a political figure                                       2            2.0   
+a person in a political debate                           1            1.0   
+person speaking in a political debate                    1            1.0   
+a politician speaking in a debate                        1            1.0   
+a politician in a debate                                 1            1.0   
+a politician during a debate                             1            1.0   
+a person speaking during a political debate              1            1.0   
+A man with light hair and a blue suit, speaking...       1            1.0   
 A politician speaking at a debate                        1            1.0   
-a male politician                                        1            1.0   
-Not known                                                1            1.0   
-Not identified                                           1            1.0   
-I don&#x27;t know who they are                                1            1.0   
-An individual participating in a political debate        1            1.0   
-a man in a suit with light hair                          1            1.0   
+a man speaking in a suit and tie, likely a poli...       1            1.0   
+a man speaking at a debate                               1            1.0   
+Unknown                                                  1            1.0   
+Two politicians appearing at a debate                    1            1.0   
+Not identifiable                                         1            1.0   
+Joe Biden                                                1            1.0   
+Biden                                                    1            1.0   
+a man with light hair and a blue tie                     1            1.0   
 
                                                     avg_confidence  \
 primary_subject                                                      
-unknown                                                   0.083333   
-a political figure                                        0.825000   
-Donald Trump                                              0.933333   
-Joe Biden                                                 0.925000   
-a speaker in a political debate                           0.800000   
-a man with short, light hair and a serious expr...        0.800000   
-two candidates in a political debate                      0.900000   
-person speaking in political debate                       0.900000   
-an individual speaking during a political debate          0.900000   
-a person speaking in a political debate                   0.850000   
-A male speaker during a political debate                  0.900000   
-A politician speaking at a debate                         0.850000   
-a male politician                                         0.800000   
-Not known                                                 0.000000   
-Not identified                                            0.000000   
-I don&#x27;t know who they are                                 0.800000   
-An individual participating in a political debate         0.700000   
-a man in a suit with light hair                           0.800000   
+unknown                                                       0.00   
+Donald Trump                                                  0.95   
+not known                                                     0.45   
+a politician                                                  0.90   
+a political figure                                            0.85   
+a person in a political debate                                0.85   
+person speaking in a political debate                         0.80   
+a politician speaking in a debate                             0.90   
+a politician in a debate                                      0.80   
+a politician during a debate                                  0.80   
+a person speaking during a political debate                   0.90   
+A man with light hair and a blue suit, speaking...            0.80   
+A politician speaking at a debate                             0.90   
+a man speaking in a suit and tie, likely a poli...            0.80   
+a man speaking at a debate                                    0.80   
+Unknown                                                       0.00   
+Two politicians appearing at a debate                         0.85   
+Not identifiable                                              0.00   
+Joe Biden                                                     0.90   
+Biden                                                         0.90   
+a man with light hair and a blue tie                          0.80   
 
                                                     pct_of_total  
 primary_subject                                                   
-unknown                                                     20.0  
-a political figure                                          13.3  
+unknown                                                     16.7  
 Donald Trump                                                10.0  
-Joe Biden                                                    6.7  
-a speaker in a political debate                              6.7  
-a man with short, light hair and a serious expr...           3.3  
-two candidates in a political debate                         3.3  
-person speaking in political debate                          3.3  
-an individual speaking during a political debate             3.3  
-a person speaking in a political debate                      3.3  
-A male speaker during a political debate                     3.3  
+not known                                                    6.7  
+a politician                                                 6.7  
+a political figure                                           6.7  
+a person in a political debate                               3.3  
+person speaking in a political debate                        3.3  
+a politician speaking in a debate                            3.3  
+a politician in a debate                                     3.3  
+a politician during a debate                                 3.3  
+a person speaking during a political debate                  3.3  
+A man with light hair and a blue suit, speaking...           3.3  
 A politician speaking at a debate                            3.3  
-a male politician                                            3.3  
-Not known                                                    3.3  
-Not identified                                               3.3  
-I don&#x27;t know who they are                                    3.3  
-An individual participating in a political debate            3.3  
-a man in a suit with light hair                              3.3</pre>
+a man speaking in a suit and tie, likely a poli...           3.3  
+a man speaking at a debate                                   3.3  
+Unknown                                                      3.3  
+Two politicians appearing at a debate                        3.3  
+Not identifiable                                             3.3  
+Joe Biden                                                    3.3  
+Biden                                                        3.3  
+a man with light hair and a blue tie                         3.3</pre>
 <div class="cell-output"><div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
@@ -956,16 +968,16 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-001.jpg</td>
       <td>1</td>
       <td>1.0</td>
-      <td>two candidates in a political debate</td>
+      <td>Two politicians appearing at a debate</td>
       <td>split screen</td>
-      <td>0.90</td>
+      <td>0.85</td>
     </tr>
     <tr>
       <th>1</th>
       <td>frame-002.jpg</td>
       <td>2</td>
       <td>2.0</td>
-      <td>Joe Biden</td>
+      <td>A politician speaking at a debate</td>
       <td>close-up</td>
       <td>0.90</td>
     </tr>
@@ -974,25 +986,25 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-003.jpg</td>
       <td>3</td>
       <td>3.0</td>
-      <td>unknown</td>
+      <td>Donald Trump</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.95</td>
     </tr>
     <tr>
       <th>3</th>
       <td>frame-004.jpg</td>
       <td>4</td>
       <td>4.0</td>
-      <td>Not identified</td>
+      <td>a political figure</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>4</th>
       <td>frame-005.jpg</td>
       <td>5</td>
       <td>5.0</td>
-      <td>Donald Trump</td>
+      <td>not known</td>
       <td>close-up</td>
       <td>0.90</td>
     </tr>
@@ -1010,25 +1022,25 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-007.jpg</td>
       <td>7</td>
       <td>7.0</td>
-      <td>unknown</td>
+      <td>Donald Trump</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>7</th>
       <td>frame-008.jpg</td>
       <td>8</td>
       <td>8.0</td>
-      <td>Not known</td>
+      <td>a man speaking in a suit and tie, likely a pol...</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>8</th>
       <td>frame-009.jpg</td>
       <td>9</td>
       <td>9.0</td>
-      <td>a male politician</td>
+      <td>A man with light hair and a blue suit, speakin...</td>
       <td>close-up</td>
       <td>0.80</td>
     </tr>
@@ -1037,34 +1049,34 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-010.jpg</td>
       <td>10</td>
       <td>10.0</td>
-      <td>unknown</td>
+      <td>a politician in a debate</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>10</th>
       <td>frame-011.jpg</td>
       <td>11</td>
       <td>11.0</td>
-      <td>a man in a suit with light hair</td>
+      <td>Biden</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>11</th>
       <td>frame-012.jpg</td>
       <td>12</td>
       <td>12.0</td>
-      <td>a political figure</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.70</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>12</th>
       <td>frame-013.jpg</td>
       <td>13</td>
       <td>13.0</td>
-      <td>a man with short, light hair and a serious exp...</td>
+      <td>a man speaking at a debate</td>
       <td>close-up</td>
       <td>0.80</td>
     </tr>
@@ -1073,25 +1085,25 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-014.jpg</td>
       <td>14</td>
       <td>14.0</td>
-      <td>Joe Biden</td>
+      <td>a politician</td>
       <td>close-up</td>
-      <td>0.95</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>14</th>
       <td>frame-015.jpg</td>
       <td>15</td>
       <td>15.0</td>
-      <td>a political figure</td>
+      <td>Not identifiable</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>15</th>
       <td>frame-016.jpg</td>
       <td>16</td>
       <td>16.0</td>
-      <td>a political figure</td>
+      <td>a politician speaking in a debate</td>
       <td>close-up</td>
       <td>0.90</td>
     </tr>
@@ -1100,79 +1112,79 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-017.jpg</td>
       <td>17</td>
       <td>17.0</td>
-      <td>Donald Trump</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>17</th>
       <td>frame-018.jpg</td>
       <td>18</td>
       <td>18.0</td>
-      <td>a person speaking in a political debate</td>
+      <td>a man with light hair and a blue tie</td>
       <td>close-up</td>
-      <td>0.85</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>18</th>
       <td>frame-019.jpg</td>
       <td>19</td>
       <td>19.0</td>
-      <td>A politician speaking at a debate</td>
+      <td>a politician</td>
       <td>close-up</td>
-      <td>0.85</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>19</th>
       <td>frame-020.jpg</td>
       <td>20</td>
       <td>20.0</td>
-      <td>unknown</td>
+      <td>a political figure</td>
       <td>close-up</td>
-      <td>0.50</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>20</th>
       <td>frame-021.jpg</td>
       <td>21</td>
       <td>21.0</td>
-      <td>a political figure</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>21</th>
       <td>frame-022.jpg</td>
       <td>22</td>
       <td>22.0</td>
-      <td>unknown</td>
+      <td>a politician during a debate</td>
       <td>close-up</td>
-      <td>0.00</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>22</th>
       <td>frame-023.jpg</td>
       <td>23</td>
       <td>23.0</td>
-      <td>a speaker in a political debate</td>
+      <td>Unknown</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>23</th>
       <td>frame-024.jpg</td>
       <td>24</td>
       <td>24.0</td>
-      <td>person speaking in political debate</td>
+      <td>a person in a political debate</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.85</td>
     </tr>
     <tr>
       <th>24</th>
       <td>frame-025.jpg</td>
       <td>25</td>
       <td>25.0</td>
-      <td>a speaker in a political debate</td>
+      <td>person speaking in a political debate</td>
       <td>close-up</td>
       <td>0.80</td>
     </tr>
@@ -1190,34 +1202,34 @@ a man in a suit with light hair                              3.3</pre>
       <td>frame-027.jpg</td>
       <td>27</td>
       <td>27.0</td>
-      <td>A male speaker during a political debate</td>
+      <td>unknown</td>
       <td>close-up</td>
-      <td>0.90</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>27</th>
       <td>frame-028.jpg</td>
       <td>28</td>
       <td>28.0</td>
-      <td>An individual participating in a political debate</td>
+      <td>not known</td>
       <td>close-up</td>
-      <td>0.70</td>
+      <td>0.00</td>
     </tr>
     <tr>
       <th>28</th>
       <td>frame-029.jpg</td>
       <td>29</td>
       <td>29.0</td>
-      <td>I don't know who they are</td>
+      <td>Joe Biden</td>
       <td>close-up</td>
-      <td>0.80</td>
+      <td>0.90</td>
     </tr>
     <tr>
       <th>29</th>
       <td>frame-030.jpg</td>
       <td>30</td>
       <td>30.0</td>
-      <td>an individual speaking during a political debate</td>
+      <td>a person speaking during a political debate</td>
       <td>close-up</td>
       <td>0.90</td>
     </tr>

@@ -17,12 +17,14 @@ class FrameClassification(BaseModel):
     scene_type: str = Field(description="'close-up', 'wide shot', 'split screen', 'graphic', 'audience', 'other'")
     confidence: float = Field(ge=0.0, le=1.0)
 
-# --- Step 1: Discover frames ---
+# --- cell ---
+# ## Step 1: Discover frames
 frames_dir = DATA / "debate"
 frames = sorted(p for p in frames_dir.iterdir() if p.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"})
 print(f"Found {len(frames)} frames")
 
-# --- Step 2: Classify each frame ---
+# --- cell ---
+# ## Step 2: Classify each frame
 agent = Agent(MODEL, output_type=FrameClassification)
 rows = []
 for fpath in frames:
@@ -37,7 +39,8 @@ for fpath in frames:
                  "confidence": r.output.confidence})
 print(f"Classified {len(rows)} frames")
 
-# --- Step 3: Build summary ---
+# --- cell ---
+# ## Step 3: Build summary
 df = pd.DataFrame(rows).sort_values("frame_number").reset_index(drop=True)
 summary = (
     df.groupby("primary_subject")
