@@ -3,6 +3,10 @@ install:
   - natural-pdf[ai]
 data_files:
   - "city.png"
+  - "flock-scan.png"
+  - "letter.png"
+  - "letter.pdf"
+  - "natural-pdf.png"
 ---
 # Documents
 

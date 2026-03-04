@@ -1,5 +1,6 @@
 ---
 install:
+  - torchvision
   - whisperx
 
 env_keys:

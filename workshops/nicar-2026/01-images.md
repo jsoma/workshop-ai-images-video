@@ -4,6 +4,7 @@ data_files:
   - "sky.jpg"
   - "coffee.jpg"
   - "cars/*.jpg"
+  - "city.png"
 ---
 # Images
 

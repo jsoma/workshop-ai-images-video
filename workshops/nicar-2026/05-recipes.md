@@ -1,7 +1,9 @@
 ---
 install:
+  - torchvision
   - ffmpeg-python
   - whisperx
+  - "yt-dlp[default]"
 env_keys:
   - HF_TOKEN
 data_files:

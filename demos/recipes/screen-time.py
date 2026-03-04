@@ -28,7 +28,7 @@ frames_dir.mkdir(exist_ok=True)
 (
     ffmpeg.input(video_path)
     .filter("fps", fps=1/SECONDS_PER_FRAME)
-    .output(str(frames_dir / "frame_%04d.jpg"), start_number=0)
+    .output(str(frames_dir / "frame-%03d.jpg"))
     .overwrite_output()
     .run(quiet=True)
 )
