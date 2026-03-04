@@ -2,6 +2,7 @@
 data_files:
   - "car.jpg"
   - "sky.jpg"
+  - "coffee.jpg"
   - "cars/*.jpg"
 ---
 # Images
@@ -68,4 +69,23 @@ vision-llm/providers.py
 
 OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts. And if you're feeling especially wild, you can even try out [openrouter](https://openrouter.ai/), which gives you a menu of *way more* than just the Big Three.
 
-**Up next:** PDFs are just images with text in them. Same pattern, higher stakes.
+## Object detection
+
+Up above we've been *describing* photos, but there's also **object detection** - finding the locations of specific things inside of them - faces, cars, signs, whatever. Below we use [YOLOE](https://docs.ultralytics.com/models/yoloe/), an "open-vocabulary object detection model:" you tell it what to look for, and it finds it (historically they could only find things they'd already been taught to look for).
+
+Another difference between YOLOE and the above is that we *aren't using the cloud*, we're using a model which just sits on your own machine. Both faster and more private!
+
+
+```show
+data/coffee.jpg
+```
+
+```script{log=error}
+detection/yoloe-coffee.py
+```
+
+Notice there are *two* blue pencils marked, but with very different confidences. And one is definitely not a blue pencil!
+
+Nothing fancy, just "find these things in this image" and a second later you have it! The open vocabulary is the key difference from "classic" YOLO: instead of being limited to 80 pre-trained categories, you describe what you want in plain English.
+
+**Up next:** PDFs are just images with text in them.

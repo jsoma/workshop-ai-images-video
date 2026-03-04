@@ -13,7 +13,10 @@ HF_TOKEN = os.environ["HF_TOKEN"]
 
 import torchaudio
 waveform, sample_rate = torchaudio.load(str(AUDIO))
-pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-community-1", token=HF_TOKEN)
+pipeline = Pipeline.from_pretrained(
+    "pyannote/speaker-diarization-community-1",
+    token=HF_TOKEN
+)
 diarization = pipeline({"waveform": waveform, "sample_rate": sample_rate})
 
 for turn, speaker in diarization.speaker_diarization:

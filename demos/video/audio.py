@@ -10,9 +10,9 @@ OUTPUT.mkdir(parents=True, exist_ok=True)
 (
     ffmpeg
     .input(str(VIDEO))
-    .output(str(OUTPUT / "rDXubdQdJYs.wav"), ar=16000, ac=1, acodec="pcm_s16le", vn=None)
+    .output(str(OUTPUT / "rDXubdQdJYs.mp3"), acodec="libmp3lame", vn=None)
     .overwrite_output()
     .run(quiet=True)
 )
 
-print(f"Audio saved to {OUTPUT / 'rDXubdQdJYs.wav'}")
+print(f"Audio saved to {OUTPUT / 'rDXubdQdJYs.mp3'}")

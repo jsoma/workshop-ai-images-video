@@ -10,6 +10,7 @@ default_install:
   - python-dotenv
   - pydantic-ai
 env_keys:
+  - OPENAI_API_KEY
   - GOOGLE_API_KEY
 newsletter_embed: |
   <div style="text-align: center; margin: 2rem 0;">

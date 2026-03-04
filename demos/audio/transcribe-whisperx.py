@@ -26,7 +26,7 @@ text = " ".join(seg["text"].strip() for seg in result["segments"])
 print(text)
 
 # --- cell ---
-# ### Alignment
+# ### Getting exact timestamps
 # The basic transcription gives you **segment-level timestamps**. Alignment refines those to **word-level** timestamps — useful for speaker identification, precise clip cutting, or word-by-word subtitles.
 model_a, metadata = whisperx.load_align_model(language_code=LANGUAGE, device=device)
 result = whisperx.align(

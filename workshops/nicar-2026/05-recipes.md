@@ -11,7 +11,7 @@ data_files:
 ---
 # The full pipeline
 
-## What's happening?
+## Let's snag some content from a meeting
 
 Transcription isn't perfect, and summaries aren't either. But if you plug one into the other... it's definitely tempting. Let's try it with a city council meeting.
 
@@ -25,9 +25,11 @@ It's 2.5 hours long, which is *far too long* for us to sit through ourselves (ri
 recipes/meeting-minutes.py
 ```
 
-Something interesting about this is that I also tried [to do the same thing with Google Opal](https://developers.google.com/opal), and it just *hallucinated every single aspect of the meeting*. I don't even think it was working from a transcript, despite the fact that Google owns YouTube. Weird!
+We could have done this other ways: pass the entire thing to Gemini, use local models for the summarization/extraction, all kinds of options. But it's a good starting point!
 
-**Trust but verify!**
+> I also tried [to do the same thing with Google Opal](https://developers.google.com/opal), and it just *hallucinated every single aspect of the meeting*. I don't even think [the end result](https://opal.google/edit/1k6P7domgII6AZ6edCprG34Bn9v0dh25e) was working from a transcript, despite the fact that Google owns YouTube. Weird!
+
+Trust but verify!
 
 ## Cost
 

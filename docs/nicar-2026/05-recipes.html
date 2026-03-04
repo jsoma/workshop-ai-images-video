@@ -859,7 +859,7 @@ pre { line-height: 125%; }
 <div class="colab-bar"><a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/05-recipes.ipynb" class="colab-btn">Open this notebook in Colab</a></div>
 
 <h1>The full pipeline</h1>
-<h2>What's happening?</h2>
+<h2>Let's snag some content from a meeting</h2>
 <p>Transcription isn't perfect, and summaries aren't either. But if you plug one into the other... it's definitely tempting. Let's try it with a city council meeting.</p>
 <div class="show-media show-youtube"><iframe width="500" height="281" src="https://www.youtube.com/embed/buEGUxrz8ho" frameborder="0" allowfullscreen></iframe></div>
 <p>It's 2.5 hours long, which is <em>far too long</em> for us to sit through ourselves (right?). Instead, we'll see if we can get to do all the work.</p>
@@ -984,91 +984,71 @@ pre { line-height: 125%; }
 
 <pre class="cell-output"># Lewiston City Council Meeting Summary
 
-The Lewiston City Council meeting covered a wide range of topics, including the acceptance of meeting minutes and presentations honoring former councilors and the homeless shelter committee. Major discussions and votes included rejecting a proposed AI data center, approving an amendment to the Lowell Street Omnibus TIF, setting a license fee for syringe service programs, and condemning a dangerous building. The council also requested a review of an incoming councilor&#x27;s qualifications and received updates from the Lewiston Housing Authority.
+The Lewiston City Council meeting covered a wide range of topics, including the recognition of outgoing councilors and committee members, an extensive debate and unanimous rejection of a proposed AI data center, and the approval of an amendment to the Lowell Street TIF District for a new housing development. Public concern was high regarding the data center and the qualifications of a councilor-elect, while progress on various housing and community initiatives was also highlighted.
 
 ## Agenda Items
-  [10:05] Acceptance of minutes from the December 2nd council meeting.
-  [10:30] Presentations honoring former Councilors Aaron M. Sowell and Timothy J. Gallant for their dedicated service.
-  [13:35] Proclamation recognizing the City Council Ad Hoc Committee on establishing a homeless shelter.
-  [17:28] Public comment period for non-agenda items.
-  [25:58] Report on the Downtown Lewiston Association&#x27;s affiliate status, Holiday at the Plaza success, upcoming public safety listening session, and a marketing/rebranding project for the city.
-  [28:46] Discussion of upcoming agenda items for January, including the public health director position, FOIA training, and creation of standing committees for public safety and economic development.
-  [29:28] Announcement of a city staff-wide employee appreciation event on December 18th.
-  [30:23] Consideration of six items on the consent agenda, including fund transfers for water main replacement, library carpet replacement, armory emergency generator, and disposition of properties.
-  [31:47] Order approving a joint development agreement with MIL Compute LLC for an artificial intelligence data and technology center in Bates Mill 3.
-  [76:17] Amendment to the city business license fee schedule policy to add the syringe service program license.
-  [79:26] Public hearing and adoption of order approving the first amendment to the Lowell Street Omnibus Tax Increment Financing District and Development Program.
-  [100:17] Condemnation hearing for the building located at 102 Pierce Street.
+  [10:05] Acceptance of the minutes from the December 2nd council meeting.
+  [10:30] Presentations of plaques to outgoing Councilors Aaron M. Sowell and Timothy J. Galant for their dedicated service to the city.
+  [13:00] Proclamation recognizing the City Council Ad Hoc Committee on Establishing a Homeless Shelter for their work and recommendations.
+  [31:47] Consideration of a joint development agreement with MIL Compute LLC to develop a Tier 3 artificial intelligence data and technology center in Bates Mill 3.
+  [76:17] Amendment to the city business license fee schedule policy to add a license for syringe service programs.
+  [79:26] Public hearing and adoption of an order approving the first amendment to the Lowell Street Omnibus Tax Increment Financing District and Development Program for a housing project.
+  [100:17] Condemnation hearing for the building located at 102 Pierce Street to determine if it meets dangerous building statutes.
   [139:52] Order authorizing a six-month extension to a purchase and sale agreement with the Lewiston Auburn Community Market Incorporated.
-  [144:13] Resolve to request a review of the qualifications of counselor elect Iman Osman pursuant to the city charter.
+  [144:13] Resolve to request a review of the qualifications of Councilor-Elect Iman Osman pursuant to the city charter to hold the city council seat representing Ward 5.
   [167:24] Update from the Lewiston Housing Authority on various housing projects and programs.
-  [184:46] Second public comment period.
-  [191:37] Reports and updates from councilors, including the public health committee and bus kiosk relocation.
-  [194:19] New business, including farewell remarks from outgoing councilors.
-  [201:25] Executive session to discuss labor negotiations regarding the International Association of Firefighters, local 785.
 
 ## Votes
-  [10:25] Acceptance of minutes of the December 2nd council meeting. — Passed by vote of seven to zero.
-  [31:38] Passage of all six items on the consent agenda. — Passed by vote of seven to zero.
-  [76:01] Order approving the joint development agreement with MIL Compute LLC to develop a tier three artificial intelligence data and technology center in Bates Mill 3. — Motion failed by a vote of zero to seven.
-  [79:23] Amendment to the city business license fee scheduled policy to add the syringe service program license. — Passed by vote of seven to zero.
-  [100:12] Adoption of the order approving the first amendment to the Lowell Street Omnibus Tax Increment Financing District and Development Program. — Passed by vote of seven to zero.
-  [131:08] Adoption of the findings of fact, conclusions of law and order proposed by the city planning and code enforcement department regarding 102 Pierce Street, establishing corrective action for the property owner. — Passed by vote of six to one.
-  [144:01] Order authorizing a six-month extension to a purchase and sale agreement with the Lewiston Auburn Community Market Incorporated. — Passed by vote of seven to zero.
-  [167:16] Resolve to request a review of the qualifications of counselor elect Iman Osman. — Passed by vote of seven and zero.
-  [202:06] Motion to enter into an executive session to discuss labor negotiations. — Passed by vote of seven to zero.
+  [10:25] Minutes of the December 2nd council meeting — Passed by vote of seven to zero.
+  [76:01] Joint development agreement with MIL Compute LLC for an AI data center — Failed by a vote of zero to seven.
+  [79:23] Amendment to the city business license fee schedule to add the syringe service program license — Passed by vote of seven to zero.
+  [100:12] First amendment to the Lowell Street Omnibus Tax Increment Financing District and Development Program — Passed by vote of seven to zero.
+  [131:08] Findings of fact, conclusions of law, and order for the dangerous building at 102 Pierce Street (authorizing corrective action or demolition) — Passed by vote of six to one.
+  [144:01] Six-month extension to a purchase and sale agreement with the Lewiston Auburn Community Market Incorporated — Passed by vote of seven to zero.
+  [167:16] Resolve to request a review of the qualifications of Councilor-Elect Iman Osman — Passed by vote of seven and zero.
+  [202:06] Enter into an executive session to discuss labor negotiations — Passed by vote of seven to zero.
 
 ## Public Comments
-  [18:05] Lisa Jones: Misuse of mass shooting victim funds, alleged nonprofit fraud, and increasing gun violence in the community. (Against the current handling of funds and lack of accountability.)
-  [21:11] Catherine Ryder: Gratitude for the council&#x27;s work on the syringe service and harm reduction programs. (Supportive and grateful.)
-  [23:26] Melissa Dunn: Concerns about public comment submissions leading to personal information being used for stalking, harassment, and manufacturing narratives, especially by white nationalists. (Concerned about safety and lack of disclaimer.)
-  [38:26] Matt Rory: Disappointment with the timing and process of the AI data center proposal compared to the syringe ordinance, and concerns about the developer&#x27;s lack of track record. (Against the AI data center proposal and critical of council&#x27;s governance structure.)
-  [41:16] Kyle Matevier: Critique of the AI data center project&#x27;s economic benefits, tax breaks, and placement in a dense downtown area, citing lack of community value. (Against the AI data center proposal.)
-  [44:37] Hunter Bouchard: Environmental concerns (water usage, pollution) and negative impact on Lewiston&#x27;s art community by the AI data center. (Against the AI data center proposal.)
-  [47:38] Stephen Lwell: Concerns about increased electricity rates, the installation of a natural gas electric generation plant, and lack of local job creation from the AI data center. (Opposed to the AI data center proposal.)
-  [50:08] Jay Zimmerman: The AI data center being a poor use of a major asset, making downtown less livable, and contradicting the Riverfront Island Master Plan. (Against the AI data center proposal.)
-  [52:09] Zoe Lidstrom: Support for the council&#x27;s rejection of the data center and a call for a public process to envision alternative, community-focused development for the mill building. (Supportive of rejection, advocating for alternative development.)
-  [53:18] Sean O&#x27;Connell: Concerns about the massive water usage of the AI data center and its potential to undo efforts to clean the Androscoggin River. (Against the AI data center proposal.)
-  [54:56] Unnamed speaker from Africa/Lewiston resident: Homelessness in Lewiston and perceived inaction by the mayor and council, linking it to his own experience and humanitarian concerns. (Critical of the council&#x27;s approach to homelessness.)
-  [58:10] Kieran Maduris Collins: Call for a moratorium on all AI data centers in Lewiston, stating they contribute nothing, destroy the environment, and hurt the economy. (Strongly against AI data centers.)
-  [58:47] Ciri Cressy: Concerns about negative health impacts from AI data centers, potential pollution of Lake Auburn&#x27;s water supply, and the historical &#x27;dirty loo&#x27; nickname of Lewiston. (Against the AI data center proposal.)
-  [61:50] Cecile Thornton: Thanks the council for listening to public input regarding the AI data center. (Supportive of the council&#x27;s decision.)
-  [62:23] Abby Roman: Concerns about increased local air pollution and health impacts from the CHP plant associated with the data center, advocating for zero-emission energy generation. (Against the CHP plant aspect of the data center, advocating for renewable energy.)
-  [64:26] Gus Goodwin: Thanks the council for listening and raises concerns about the potential use of PFAS chemicals for cooling in data centers. (Supportive of listening to public, raising additional environmental concern.)
-  [66:50] Marty Young: Skepticism about the promise of technology companies filling upper floors of Bates Mill 3, advocating for filling buildings with residents, companies, and businesses that benefit the community. (Against the AI data center proposal, advocating for other uses of mill buildings.)
-  [66:55] Luke Jensen: Appalled by the lack of transparency, lack of information on developers, and proposed tax breaks for the AI data center project, suggesting a focus on small businesses and a public vote on the project. (Strongly against the AI data center project and critical of the process.)
-  [149:02] Matt Roy: Comments on the non-binding nature of the resolve, stating the new council already has the power to judge qualifications, and criticizing the timing. (Critical of the resolve and its redundancy.)
-  [148:00] Matthew Eggren: Believes the resolve is the correct step to end the controversy surrounding the councilor-elect&#x27;s qualifications with a full, transparent investigation. (Supportive of the resolve for transparency.)
-  [149:02] Catherine Truett: Opposes the resolve, stating qualifications should have been reviewed earlier and that the future council can decide this for themselves. (Against the resolve, deeming it unnecessary.)
-  [149:58] Kira Kiefer: Supports the resolve for transparency and to ensure proper representation in Ward 5. (Supportive of the resolve.)
-  [150:35] Shukri Abdrahman: Strongly opposes the resolve, characterizing it as a targeted harassment campaign rooted in racism and xenophobia against a duly elected official, and calls for respect and an end to such attacks. (Strongly against the resolve, citing racism and harassment.)
-  [153:55] Matthew Agrin: Emphasizes the severity of theft charges against the individual and the importance of due diligence, especially for a ward with high gun violence. (Supportive of the investigation into the councilor-elect&#x27;s qualifications.)
-  [155:01] Bob McCarthy: Claims the councilor-elect&#x27;s claimed residence was never a legal apartment, making his residency claim fictitious, and criticizes the delay in addressing the issue. (Against the councilor-elect&#x27;s qualification, citing residency issues.)
-  [156:21] Jay Zimmerman: Reminds the council that it&#x27;s not their job to assess guilt or innocence and that the councilor-elect is entitled to due process. (Neutral on the investigation, emphasizing due process.)
-  [156:46] Marcella Clerk: Urges a unanimous vote for investigation into Mr. Osman, believing he has no place in city or state government. (Supportive of the investigation.)
-  [157:34] Melissa Dunn: Describes the investigation as &#x27;white nationalist, unnecessary terrorizing&#x27; and a &#x27;manufactured public lynching&#x27; against an African Muslim man, citing coercive violence and election intimidation. (Strongly against the investigation, alleging racism and harassment.)
-  [185:53] Marcella Claire: Publicly requests consideration for her nomination for school committee for Ward 5 and thanks Council Gallant and Councillor Sowell&#x27;s wife. (Requesting consideration for nomination, expressing thanks.)
-  [186:27] Matthew Agrin: Calls for unity in Lewiston to address city improvements, suggests changes to policing and public health, and expresses concerns about flock cameras and transparency in local government. (Advocating for various city improvements and transparency.)
-  [189:00] Matt Roy: Discusses the potential for a charter commission and recall provisions for elected officials, highlighting the city&#x27;s archaic charter. (Advocating for a charter commission and recall provisions.)
-  [181:37] Louise Sampson: Thanks Lewiston Housing Authority for their work on tree street development, expresses desire for Martel School project to be completed soon, and asks about open houses. (Grateful for LHA&#x27;s work, eager for project completion.)
-  [183:03] Matthew Agrin: Asks about alternative methods for seniors who don&#x27;t use computers to get on housing interest lists. (Seeking clarity on accessibility for seniors.)
+  [18:05] Lisa Jones: Misuse of mass shooting victim funds and lack of transparency, increasing gunfire in the community. (Against the handling of funds)
+  [21:11] Catherine Ryder: Gratitude for the council&#x27;s work on the syringe service and harm reduction programs ordinance. (For)
+  [23:26] Melissa Dunn: Concerns about public comment process leading to personal information misuse, stalking, and incitement to violence, particularly by white nationalists. (Neutral/Concerned)
+  [38:26] Matt Rory: Criticism of the council&#x27;s governance structure, the rushed process for the AI data center project, and the developer&#x27;s lack of track record. (Against)
+  [41:16] Kyle Matevier: Economic concerns regarding the AI data center, arguing Lewiston would receive minimal benefit compared to the developer and associated risks. (Against)
+  [44:37] Hunter Bouchard: Environmental concerns (water usage, pollution, energy consumption) and cultural impact (harm to artists) of the proposed AI data center. (Against)
+  [47:38] Stephen Lwell: Concerns about increased electricity rates, the installation of a natural gas electric generation plant, and the lack of local job creation from the AI data center. (Against)
+  [50:08] Jay Zimmerman: The AI data center being a poor use of a historic building, making downtown less livable, and conflicting with the Riverfront Island Master Plan. (Against)
+  [52:09] Zoe Lidstrom: Support for rejecting the AI data center and advocating for a public process to develop Mill 3 in line with the Riverfront Island Master Plan. (Against)
+  [53:18] Sean O&#x27;Connell: High water usage of the AI data center, potential stress on the wastewater system, and risk of pollution to the Androscoggin River. (Against)
+  [54:56] Unnamed Speaker (from Africa): Lack of water and housing for homeless people in Lewiston, criticizing the council&#x27;s priorities. (Critical of council&#x27;s priorities)
+  [58:10] Kieran Maduris Collins: Calling for a moratorium on AI data centers in Lewiston, citing environmental and economic destruction. (Against)
+  [58:47] Ciri Cressy: Negative impacts of AI data centers on health and water quality, expressing concerns about Lake Auburn and the city&#x27;s environmental history. (Against)
+  [61:50] Cecile Thornton: Thanking the council for listening to public comments. (Neutral/Appreciative)
+  [62:23] Abby Roman: Concerns about the CHP plant in the AI data center proposal increasing local air pollution and advocating for zero-emission energy sources. (Against)
+  [64:26] Gus Goodwin: Warning about the potential use of PFAS chemicals for cooling in data centers and advocating for environmental protection. (Against)
+  [65:28] Marty Young: Skepticism about the promised benefits of the AI data center for filling mill vacancies and advocating for businesses that give back to the community. (Against)
+  [66:55] Luke Jensen: Lack of transparency and public input regarding the AI data center project, questioning the developer&#x27;s credentials and the proposed tax break. (Strongly Against)
+  [181:37] Louise Sampson: Expressing appreciation for housing development and urging timely completion of the Martel School Project for seniors. (For)
+  [183:03] Matthew Agrin: Questioning how seniors without computer access can apply for housing and advocating for more accessible communication. (Concerned/For)
+  [185:53] Marcella Claire: Publicly requesting consideration for a school committee nomination and thanking councilors. (Neutral/Personal)
+  [186:27] Matthew Agrin: Calling for unity, cross-party collaboration, better local policing, a public health officer, small business support, and improved government transparency; also raising concerns about Flock cameras. (For)
+  [189:38] Matt Rory: Discussing the need for a charter commission and potential recall provisions for elected officials. (For)
 
 ## Notable Quotes
-  &quot;Motion passed by vote of seven to zero.&quot;
-  &quot;Motion failed by a vote of zero to seven.&quot;
-  &quot;Your voice was heard loud and clear. Facebook, social media, um, emails. We are listening. We are all listening, we are all seeing, we are all you know, paying attention to your your thoughts.&quot;
-  &quot;Lewiston captures less than a percent of the economic value created while bearing long-term land use infrastructure and public risk implications for a business whose entire model is that no other businesses need to be near them in order to function.&quot;
-  &quot;If what Mill Compute LLC&#x27;s business plan is saying is that they cannot make this project work without massive multi-decade tax breaks, then what I&#x27;m saying is that you don&#x27;t have a business plan yet. You have a GoFundMe that you&#x27;re asking the residents of Lewiston to contribute to.&quot;
-  &quot;Lewiston, a city with strong art culture supporting a project that directly hurts artists, and lastly, a project that takes necessary resources from people who are already struggling to have enough.&quot;
+  &quot;This had the potential for being a great project. It may still have, but not within the time frames and the constraints that have been imposed on it.&quot;
   &quot;Our greatest threat in our community is white people.&quot;
-  &quot;It&#x27;s not a question of whether or not we should give the give the tith. It&#x27;s this project doesn&#x27;t move forward unless we do.&quot;
-  &quot;I&#x27;m sorry. I don&#x27;t think it&#x27;s angry. So for that, so I&#x27;m gonna go take care of that. I&#x27;m not mad. Sometimes a fact. If you want to be a politician, well, get up. We&#x27;re gonna alley. This one, my mom told me. If you want to be a minute now, we&#x27;re gonna alley and pay attention. And don&#x27;t let this care. So I&#x27;m too tall. Don&#x27;t let this care come out of your mind. You all be rent for your rest of your life. So, what are you gonna do? For a citizen right here though, homeless. You never do nothing about it except that woman right there. What you gonna do by that? That&#x27;s it, United State of America. And you know what? Let me tell you my background too. Yes, I make a doctor, yes. I did. Did I lost my life? But it doesn&#x27;t mean that I cannot do humanity. So we have to work together. It doesn&#x27;t mean I&#x27;m black. Are you white? We did the same thing. Mr. Meyer. Your people need a help. That&#x27;s time, thank you.&quot;
-  &quot;The more that you look into it, the more you got to see that he has no place in city or state government.&quot;
-  &quot;This alarming pattern is particularly concerning given that the councillor-elect Osman represents Ward 5, the only area with a significant population of people of color, immigrant residents.&quot;
-  &quot;This is not about an issue of racism. It&#x27;s not about the color of a man&#x27;s skin or the mosque or church or cathedral he worships in. It&#x27;s not about any of those things, it&#x27;s about whether or not an individual lives in the ward he is elected to represent.&quot;
-  &quot;When I first sat in this seat, I was terrified. I had a rough start, but fast forward two years, and it&#x27;s still terrifying because Lewis and you are a very tough crowd. But I truly love this city, and I love being a part of this of this team. Something bigger than myself. I wanted to make a difference. I don&#x27;t know if I did. But I&#x27;m proud of what I&#x27;ve done. I&#x27;m proud of what I&#x27;ve accomplished. And I&#x27;m proud of what we&#x27;ve all accomplished together. It&#x27;s been an honor to serve with this council. Even you, Mr. Mayor.&quot;</pre>
-<p>Something interesting about this is that I also tried <a href="https://developers.google.com/opal">to do the same thing with Google Opal</a>, and it just <em>hallucinated every single aspect of the meeting</em>. I don't even think it was working from a transcript, despite the fact that Google owns YouTube. Weird!</p>
-<p><strong>Trust but verify!</strong></p>
+  &quot;If what Mill Compute LLC&#x27;s business plan is saying is that they cannot make this project work without massive multi-decade tax breaks, then what I&#x27;m saying is that you don&#x27;t have a business plan yet. You have a GoFundMe that you&#x27;re asking the residents of Lewiston to contribute to.&quot;
+  &quot;The Riverfront... master plan affirms my belief that the downtown should be for people, not machines.&quot;
+  &quot;Your people need a help. That&#x27;s time.&quot;
+  &quot;This is not about an issue of racism... It&#x27;s about whether or not an individual lives in the ward he is elected to represent.&quot;
+  &quot;Iman Osman should resign.&quot;
+  &quot;Please don&#x27;t raise my taxes. And I will see you in 2028.&quot;
+  &quot;Without you, we can&#x27;t do our jobs. Anybody says otherwise don&#x27;t know what you&#x27;re talking about.&quot;
+  &quot;Tim Gallant signing off.&quot;</pre>
+<p>We could have done this other ways: pass the entire thing to Gemini, use local models for the summarization/extraction, all kinds of options. But it's a good starting point!</p>
+<blockquote>
+<p>I also tried <a href="https://developers.google.com/opal">to do the same thing with Google Opal</a>, and it just <em>hallucinated every single aspect of the meeting</em>. I don't even think <a href="https://opal.google/edit/1k6P7domgII6AZ6edCprG34Bn9v0dh25e">the end result</a> was working from a transcript, despite the fact that Google owns YouTube. Weird!</p>
+</blockquote>
+<p>Trust but verify!</p>
 <h2>Cost</h2>
 <p>Before you run a big batch: how much will it cost? Images × tokens × price = receipt. I would <em>not</em> trust the below, but it'll give you a general idea of what processing 500 images might look like, and the variation across different models.</p>
 <p><strong><code>recipes/cost.py</code></strong> — Estimate API cost for a batch of images. No API key needed.</p>

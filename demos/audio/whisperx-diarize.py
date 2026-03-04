@@ -26,7 +26,10 @@ result = model.transcribe(audio, batch_size=16)
 
 # Step 2: Align
 model_a, metadata = whisperx.load_align_model(language_code=LANGUAGE, device=device)
-result = whisperx.align(result["segments"], model_a, metadata, audio, device, return_char_alignments=False)
+result = whisperx.align(
+    result["segments"], model_a, metadata, audio, device, 
+    return_char_alignments=False,
+)
 
 # Step 3: Diarize (split speakers)
 diarize_model = DiarizationPipeline(token=HF_TOKEN, device=device)

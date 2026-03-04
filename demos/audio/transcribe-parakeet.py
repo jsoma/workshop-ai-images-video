@@ -32,7 +32,10 @@ import os
 
 HF_TOKEN = os.environ["HF_TOKEN"]
 waveform, sample_rate = torchaudio.load(str(AUDIO))
-pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-community-1", token=HF_TOKEN)
+pipeline = Pipeline.from_pretrained(
+    "pyannote/speaker-diarization-community-1",
+    token=HF_TOKEN
+)
 diarization = pipeline({"waveform": waveform, "sample_rate": sample_rate})
 
 # --- cell ---
@@ -51,5 +54,5 @@ sentences[:5]
 # --- cell ---
 # ### Display results
 import pandas as pd
-df = pd.DataFrame(sentences[:20])
+df = pd.DataFrame(sentences[:15])
 df

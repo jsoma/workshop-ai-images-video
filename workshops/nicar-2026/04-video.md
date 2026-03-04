@@ -34,15 +34,18 @@ Same thing for the audio. Now you have audio: use the audio tools!
 video/audio.py
 ```
 
-## The slightly risky way
+## Answering quetsions the slightly risky way
 
-Ask Gemini a question about the video. Get a confident answer... that regrettably has little to no evidence.
+Just like you can ask AI about images, you can also ask about videos! ...at least, for some of the models. Gemini is probably the best: ask a question about the video, get a confident answer. It... may or may not be accurate.
 
 ```script
 video/vibe-answer.py
 ```
 
-While it's *convenient*, using Gemini is slightly more difficult to fact-check. It's harder to show your editor the work. Errors are a little more hidden. It's a vibe, for better or worse. (Gemini's raw API docs: [video](https://ai.google.dev/gemini-api/docs/video-understanding), [audio](https://ai.google.dev/gemini-api/docs/audio).)
+> Gemini's raw API docs: [video](https://ai.google.dev/gemini-api/docs/video-understanding), [audio](https://ai.google.dev/gemini-api/docs/audio).
+
+While it's *convenient*, using Gemini is slightly more difficult to fact-check. It's harder to show your editor the work, errors are hidden behind a wall of "just trust me!" It's a vibe, for better or worse. 
+
 
 ## The boring (auditable) way
 
@@ -52,11 +55,15 @@ Instead of getting Gemini to go whole-hog on the video analysis, we use our othe
 video/decompose-classify.py
 ```
 
-Even if the vibe answer was right, sometimes verification is more important than speed.
+```show{cols=5 rows=3}
+data/debate/*.jpg
+```
+
+Even if the vibe answer was right, sometimes verification is more important than ease of use.
 
 ## What's this for?
 
-These are the pipelines behind real investigations.
+These are the pipelines behind real investigations!
 
 - [Documented examined hundreds of TikTok videos](https://pulitzercenter.org/misinformation-tiktok-how-documented-examined-hundreds-videos-different-languages): download, extract audio, transcribe with Whisper.
 - [Público processed 7,616 TikTok health videos](https://www.publico.pt/interactivos/tiktok-desinformacao-saude-pernas-compridas) the same way, then used GPT-4o to extract verifiable claims from the transcripts.

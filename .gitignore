@@ -2,6 +2,7 @@
 old/
 outputs/
 .build-cache/
+.mcp.json
 
 # Large/generated data (users download separately)
 data/tattoos/
@@ -15,6 +16,7 @@ data/*.zip
 
 # Model weights
 *.pt
+*.ts
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,jupyternotebooks,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode,jupyternotebooks,macos
