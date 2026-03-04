@@ -8,7 +8,7 @@ SOURCE_IMAGE = DATA / "city.png"
 SEARCH_IMAGE = DATA / "city.png"
 
 # Auto-crop a reference object from the source image using YOLO
-detector = YOLO("yolo11n.pt")
+detector = YOLO("yolo26n")
 detections = detector(str(SOURCE_IMAGE), verbose=False)
 box = detections[0].boxes[0]
 x1, y1, x2, y2 = [int(v) for v in box.xyxy[0].tolist()]

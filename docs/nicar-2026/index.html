@@ -152,7 +152,8 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: var(--color-accent); }
+a:hover { color: var(--color-accent-hover); }
 
 /* --- Grain overlay --- */
 .grain {
@@ -588,7 +589,7 @@ a { color: inherit; text-decoration: none; }
       <span class="module-number">02</span>
       <div class="module-body">
         <h2>Documents</h2>
-        <p>PDFs are images too. Text trapped in a scan, a photo of a posted notice, a 500-page FOIA dump — these are all "images with text in them."</p>
+        <p>You just extracted structured data from photos. PDFs are the same problem — images with text trapped in them. A scan, a posted notice, a 500-page FOIA dump.</p>
       </div>
       <div class="module-actions">
         <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/02-documents.ipynb" class="colab-btn">Open in Colab</a>
@@ -598,7 +599,7 @@ a { color: inherit; text-decoration: none; }
       <span class="module-number">03</span>
       <div class="module-body">
         <h2>Audio</h2>
-        <p>What can you do with audio? Turn it into text, then do text things. Split it by speaker.</p>
+        <p>Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it.</p>
       </div>
       <div class="module-actions">
         <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/03-audio.ipynb" class="colab-btn">Open in Colab</a>
@@ -608,7 +609,7 @@ a { color: inherit; text-decoration: none; }
       <span class="module-number">04</span>
       <div class="module-body">
         <h2>Video</h2>
-        <p>What can you do with a video? It's images + audio + time. Decompose it, then use the tools you already have.</p>
+        <p>You've got image tools and audio tools. Video is both — frames and a soundtrack — so you already have everything you need! Yes, you could send it to Gemini or another LLM (which we do at the end), but you can also just decompose it and reuse what you've learned.</p>
       </div>
       <div class="module-actions">
         <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/04-video.ipynb" class="colab-btn">Open in Colab</a>
@@ -618,7 +619,7 @@ a { color: inherit; text-decoration: none; }
       <span class="module-number">05</span>
       <div class="module-body">
         <h2>The full pipeline</h2>
-        <p>Frames → classify → per-subject screen time with percentages. This is the deliverable you'd bring to an editor meeting.</p>
+        <p>Transcription isn't perfect, and summaries aren't either. But if you plug one into the other... it's definitely tempting. Let's try it with a city council meeting.</p>
       </div>
       <div class="module-actions">
         <a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/05-recipes.ipynb" class="colab-btn">Open in Colab</a>

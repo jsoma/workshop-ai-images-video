@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent
 from typing import Literal
 
-MODEL = "openai:gpt-4o-mini"
+MODEL = "openai:gpt-5-nano"
 DATA = Path(__file__).parent.parent / "data"
 
 class Vehicle(BaseModel):
@@ -22,6 +22,9 @@ class Vehicle(BaseModel):
     confidence: float = Field(description="Confidence in identification, 0.0 to 1.0")
 
 agent = Agent(MODEL, output_type=Vehicle)
+
+# --- cell ---
+# Now let's process the images one by one
 rows = []
 image_paths = sorted((DATA / "cars").glob("*.jpg"))
 for image_path in image_paths:
@@ -29,8 +32,13 @@ for image_path in image_paths:
         "Analyze the vehicle in this image. Fill in all fields.",
         BinaryContent(data=image_path.read_bytes(), media_type="image/jpeg"),
     ])
-    rows.append({"filename": image_path.name, **result.output.model_dump()})
+    row = result.output.model_dump()
+    row["filename"] = image_path.name
+    rows.append(row)
+print(f"Processed {len(rows)} images.")
 
+# --- cell ---
+# That loop just processed every image in the folder. Now we have a spreadsheet!
 df = pd.DataFrame(rows)
 output = Path(__file__).parent / "outputs" / "cars_analysis.csv"
 output.parent.mkdir(parents=True, exist_ok=True)

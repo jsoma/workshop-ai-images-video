@@ -212,7 +212,8 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: var(--color-accent); }
+a:hover { color: var(--color-accent-hover); }
 img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
 
 /* Grain */
@@ -536,18 +537,70 @@ strong { font-weight: 500; }
 }
 
 .show-image img {
+  max-width: 80%;
   border: var(--border-w) solid var(--color-border);
   border-radius: var(--radius);
 }
 
+.show-audio {
+  background: var(--color-surface);
+  border: var(--border-w) solid var(--color-border);
+  border-radius: 0;
+  padding: 1rem 1.2rem;
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.show-audio-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
 .show-audio audio {
   width: 100%;
-  max-width: 500px;
 }
 
 .show-video video {
   border: var(--border-w) solid var(--color-border);
   border-radius: var(--radius);
+}
+
+.show-youtube {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.show-youtube iframe {
+  border: var(--border-w) solid var(--color-border);
+}
+
+.show-grid {
+  display: grid;
+  gap: 10px;
+  margin: 1.5rem 0;
+}
+
+.show-grid-item {
+  margin: 0;
+  text-align: center;
+}
+
+.show-grid-item img {
+  width: 100%;
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.show-grid-item figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.3rem;
 }
 
 /* --- Code blocks --- */
@@ -806,438 +859,218 @@ pre { line-height: 125%; }
 <div class="colab-bar"><a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/05-recipes.ipynb" class="colab-btn">Open this notebook in Colab</a></div>
 
 <h1>The full pipeline</h1>
-<h2>Screen time</h2>
-<p>Frames → classify → per-subject screen time with percentages. This is the deliverable you'd bring to an editor meeting.</p>
-<p><strong><code>recipes/screen-time.py</code></strong> — Classify pre-extracted debate frames → per-subject screen time summary.</p>
-<div class="highlight"><pre><span></span><span class="c1"># Audit trail: every frame gets a row, not a vibe answer.</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">mimetypes</span><span class="o">,</span><span class="w"> </span><span class="nn">re</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<h2>What's happening?</h2>
+<p>Transcription isn't perfect, and summaries aren't either. But if you plug one into the other... it's definitely tempting. Let's try it with a city council meeting.</p>
+<div class="show-media show-youtube"><iframe width="500" height="281" src="https://www.youtube.com/embed/buEGUxrz8ho" frameborder="0" allowfullscreen></iframe></div>
+<p>It's 2.5 hours long, which is <em>far too long</em> for us to sit through ourselves (right?). Instead, we'll see if we can get to do all the work.</p>
+<p><strong><code>recipes/meeting-minutes.py</code></strong> — Download a public meeting, transcribe it, summarize with Gemini.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yt_dlp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">BinaryContent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span>
 
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
-<span class="n">MODEL</span><span class="p">,</span> <span class="n">SECONDS_PER_FRAME</span> <span class="o">=</span> <span class="s2">&quot;openai:gpt-4o-mini&quot;</span><span class="p">,</span> <span class="mf">1.0</span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">FrameClassification</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">primary_subject</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Who is primarily on screen (name or description)&quot;</span><span class="p">)</span>
-    <span class="n">scene_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;&#39;close-up&#39;, &#39;wide shot&#39;, &#39;split screen&#39;, &#39;graphic&#39;, &#39;audience&#39;, &#39;other&#39;&quot;</span><span class="p">)</span>
-    <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;https://www.youtube.com/watch?v=buEGUxrz8ho&quot;</span>
+<span class="n">VIDEO_ID</span> <span class="o">=</span> <span class="s2">&quot;buEGUxrz8ho&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span>
 </pre></div>
 
-<h2>Step 1: Discover frames</h2>
-<div class="highlight"><pre><span></span><span class="n">frames_dir</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;debate&quot;</span>
-<span class="n">frames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">frames_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;.jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="s2">&quot;.webp&quot;</span><span class="p">})</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+<p>We'll start by downloading the audio.</p>
+<div class="highlight"><pre><span></span><span class="n">audio_path</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">VIDEO_ID</span><span class="si">}</span><span class="s2">.mp3&quot;</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">audio_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="n">ydl_opts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;outtmpl&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;</span><span class="si">%(id)s</span><span class="s2">.</span><span class="si">%(ext)s</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;bestaudio/best&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;postprocessors&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;FFmpegExtractAudio&quot;</span><span class="p">,</span> <span class="s2">&quot;preferredcodec&quot;</span><span class="p">:</span> <span class="s2">&quot;mp3&quot;</span><span class="p">}],</span>
+        <span class="s2">&quot;quiet&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;no_warnings&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="n">yt_dlp</span><span class="o">.</span><span class="n">YoutubeDL</span><span class="p">(</span><span class="n">ydl_opts</span><span class="p">)</span> <span class="k">as</span> <span class="n">ydl</span><span class="p">:</span>
+        <span class="n">ydl</span><span class="o">.</span><span class="n">download</span><span class="p">([</span><span class="n">URL</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Audio ready: </span><span class="si">{</span><span class="n">audio_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Found 30 frames</pre>
-<h2>Step 2: Classify each frame</h2>
-<div class="highlight"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">FrameClassification</span><span class="p">)</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
-    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="o">:=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d+)&quot;</span><span class="p">,</span> <span class="n">fpath</span><span class="o">.</span><span class="n">stem</span><span class="p">))</span> <span class="k">else</span> <span class="mi">0</span>
-    <span class="n">mime</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mimetypes</span><span class="o">.</span><span class="n">guess_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fpath</span><span class="p">))</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span>
-        <span class="s2">&quot;This is a frame from a political debate. Identify who is on screen.&quot;</span><span class="p">,</span>
-        <span class="n">BinaryContent</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">fpath</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">(),</span> <span class="n">media_type</span><span class="o">=</span><span class="n">mime</span> <span class="ow">or</span> <span class="s2">&quot;image/jpeg&quot;</span><span class="p">),</span>
-    <span class="p">])</span>
-    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">fpath</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;frame_number&quot;</span><span class="p">:</span> <span class="n">num</span><span class="p">,</span> <span class="s2">&quot;timestamp_sec&quot;</span><span class="p">:</span> <span class="n">num</span> <span class="o">*</span> <span class="n">SECONDS_PER_FRAME</span><span class="p">,</span>
-                 <span class="s2">&quot;primary_subject&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">primary_subject</span><span class="p">,</span> <span class="s2">&quot;scene_type&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">scene_type</span><span class="p">,</span>
-                 <span class="s2">&quot;confidence&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">confidence</span><span class="p">})</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Classified </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames&quot;</span><span class="p">)</span>
+<pre class="cell-output">Audio ready: buEGUxrz8ho.mp3</pre>
+<p>Now we'll transcribe. I know we talked about Whisper this and Whisper that, but there's a new model from NVIDIA called Parakeet, and the <a href="https://github.com/senstella/parakeet-mlx">Parakeet MLX</a> implementation is super super fast on macOS. I transcribed this entire 2.5 hour meeting in about a minute. In the code below it first tries Parakeet, but if you don't have it (or are on Colab or Windows) it falls back to WhisperX.</p>
+<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">parakeet_mlx</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_pretrained</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading parakeet-mlx...&quot;</span><span class="p">)</span>
+    <span class="n">parakeet</span> <span class="o">=</span> <span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;mlx-community/parakeet-tdt-0.6b-v3&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transcribing (chunked for long audio)...&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">parakeet</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">audio_path</span><span class="p">),</span> <span class="n">chunk_duration</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">overlap_duration</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">text</span><span class="p">}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">sentences</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transcribed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span><span class="si">}</span><span class="s2"> segments (parakeet-mlx)&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">whisperx</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+    <span class="n">compute_type</span> <span class="o">=</span> <span class="s2">&quot;float16&quot;</span> <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">else</span> <span class="s2">&quot;int8&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading whisperx turbo...&quot;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;turbo&quot;</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">compute_type</span><span class="o">=</span><span class="n">compute_type</span><span class="p">)</span>
+    <span class="n">audio</span> <span class="o">=</span> <span class="n">whisperx</span><span class="o">.</span><span class="n">load_audio</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">audio_path</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transcribing...&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;segments&quot;</span><span class="p">]]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transcribed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span><span class="si">}</span><span class="s2"> segments (whisperx)&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Classified 30 frames</pre>
-<h2>Step 3: Build summary</h2>
-<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;frame_number&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;primary_subject&quot;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;primary_subject&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">),</span>
-         <span class="n">total_seconds</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;timestamp_sec&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">SECONDS_PER_FRAME</span><span class="p">),</span>
-         <span class="n">avg_confidence</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;confidence&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">))</span>
-    <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;total_seconds&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<pre class="cell-output">Loading parakeet-mlx...</pre>
+<pre class="cell-output">Transcribing (chunked for long audio)...</pre>
+<pre class="cell-output">Transcribed 2039 segments (parakeet-mlx)</pre>
+<p><strong>What do we want to know from the meeting?</strong> Maybe agenda items, votes, public comments, and some vague general details.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">AgendaItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;One-sentence summary of what was discussed&quot;</span><span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Approximate timestamp, MM:SS&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Vote</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">item</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;What was voted on&quot;</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Passed/failed/tabled and vote count if stated&quot;</span><span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;MM:SS&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PublicComment</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">speaker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of commenter, if stated&quot;</span><span class="p">)</span>
+    <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;What they spoke about&quot;</span><span class="p">)</span>
+    <span class="n">stance</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;For/against/neutral&quot;</span><span class="p">)</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;MM:SS&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MeetingMinutes</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Short title for the meeting&quot;</span><span class="p">)</span>
+    <span class="n">overall_summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;2-3 sentence summary of the meeting&quot;</span><span class="p">)</span>
+    <span class="n">agenda_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AgendaItem</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Major agenda items discussed&quot;</span><span class="p">)</span>
+    <span class="n">votes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Vote</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Votes taken and their outcomes&quot;</span><span class="p">)</span>
+    <span class="n">public_comments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PublicComment</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Public comments from residents&quot;</span><span class="p">)</span>
+    <span class="n">notable_quotes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Direct quotes that stood out, with speaker name&quot;</span><span class="p">)</span>
+</pre></div>
+
+<p>Now we can send the transcript to Gemini for all the details.</p>
+<div class="highlight"><pre><span></span><span class="n">transcript_with_timestamps</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">//</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">%</span><span class="mi">60</span><span class="p">)</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">seg</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">segments</span>
 <span class="p">)</span>
-<span class="n">summary</span><span class="p">[</span><span class="s2">&quot;pct_of_total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">summary</span><span class="p">[</span><span class="s2">&quot;total_seconds&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">summary</span><span class="p">[</span><span class="s2">&quot;total_seconds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
 
-<span class="n">df</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sending transcript to Gemini for summarization...&quot;</span><span class="p">)</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">MeetingMinutes</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Summarize this city council meeting transcript. Extract agenda items, &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;votes and outcomes, public comments, and notable quotes. &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;Use timestamps from the transcript.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">transcript_with_timestamps</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">                                                    frames  total_seconds  \
-primary_subject                                                             
-unknown                                                  5            5.0   
-Donald Trump                                             3            3.0   
-not known                                                2            2.0   
-a politician                                             2            2.0   
-a political figure                                       2            2.0   
-a person in a political debate                           1            1.0   
-person speaking in a political debate                    1            1.0   
-a politician speaking in a debate                        1            1.0   
-a politician in a debate                                 1            1.0   
-a politician during a debate                             1            1.0   
-a person speaking during a political debate              1            1.0   
-A man with light hair and a blue suit, speaking...       1            1.0   
-A politician speaking at a debate                        1            1.0   
-a man speaking in a suit and tie, likely a poli...       1            1.0   
-a man speaking at a debate                               1            1.0   
-Unknown                                                  1            1.0   
-Two politicians appearing at a debate                    1            1.0   
-Not identifiable                                         1            1.0   
-Joe Biden                                                1            1.0   
-Biden                                                    1            1.0   
-a man with light hair and a blue tie                     1            1.0   
+<pre class="cell-output">Sending transcript to Gemini for summarization...</pre>
+<p>And here's our structured meeting minutes.</p>
+<div class="highlight"><pre><span></span><span class="n">minutes</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">output</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">minutes</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minutes</span><span class="o">.</span><span class="n">overall_summary</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-                                                    avg_confidence  \
-primary_subject                                                      
-unknown                                                       0.00   
-Donald Trump                                                  0.95   
-not known                                                     0.45   
-a politician                                                  0.90   
-a political figure                                            0.85   
-a person in a political debate                                0.85   
-person speaking in a political debate                         0.80   
-a politician speaking in a debate                             0.90   
-a politician in a debate                                      0.80   
-a politician during a debate                                  0.80   
-a person speaking during a political debate                   0.90   
-A man with light hair and a blue suit, speaking...            0.80   
-A politician speaking at a debate                             0.90   
-a man speaking in a suit and tie, likely a poli...            0.80   
-a man speaking at a debate                                    0.80   
-Unknown                                                       0.00   
-Two politicians appearing at a debate                         0.85   
-Not identifiable                                              0.00   
-Joe Biden                                                     0.90   
-Biden                                                         0.90   
-a man with light hair and a blue tie                          0.80   
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;## Agenda Items&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">minutes</span><span class="o">.</span><span class="n">agenda_items</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">summary</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-                                                    pct_of_total  
-primary_subject                                                   
-unknown                                                     16.7  
-Donald Trump                                                10.0  
-not known                                                    6.7  
-a politician                                                 6.7  
-a political figure                                           6.7  
-a person in a political debate                               3.3  
-person speaking in a political debate                        3.3  
-a politician speaking in a debate                            3.3  
-a politician in a debate                                     3.3  
-a politician during a debate                                 3.3  
-a person speaking during a political debate                  3.3  
-A man with light hair and a blue suit, speaking...           3.3  
-A politician speaking at a debate                            3.3  
-a man speaking in a suit and tie, likely a poli...           3.3  
-a man speaking at a debate                                   3.3  
-Unknown                                                      3.3  
-Two politicians appearing at a debate                        3.3  
-Not identifiable                                             3.3  
-Joe Biden                                                    3.3  
-Biden                                                        3.3  
-a man with light hair and a blue tie                         3.3</pre>
-<div class="cell-output"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">## Votes&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">minutes</span><span class="o">.</span><span class="n">votes</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">item</span><span class="si">}</span><span class="s2"> — </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">## Public Comments&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">minutes</span><span class="o">.</span><span class="n">public_comments</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [</span><span class="si">{</span><span class="n">pc</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">pc</span><span class="o">.</span><span class="n">speaker</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">pc</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">pc</span><span class="o">.</span><span class="n">stance</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>filename</th>
-      <th>frame_number</th>
-      <th>timestamp_sec</th>
-      <th>primary_subject</th>
-      <th>scene_type</th>
-      <th>confidence</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>frame-001.jpg</td>
-      <td>1</td>
-      <td>1.0</td>
-      <td>Two politicians appearing at a debate</td>
-      <td>split screen</td>
-      <td>0.85</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>frame-002.jpg</td>
-      <td>2</td>
-      <td>2.0</td>
-      <td>A politician speaking at a debate</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>frame-003.jpg</td>
-      <td>3</td>
-      <td>3.0</td>
-      <td>Donald Trump</td>
-      <td>close-up</td>
-      <td>0.95</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>frame-004.jpg</td>
-      <td>4</td>
-      <td>4.0</td>
-      <td>a political figure</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>frame-005.jpg</td>
-      <td>5</td>
-      <td>5.0</td>
-      <td>not known</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>frame-006.jpg</td>
-      <td>6</td>
-      <td>6.0</td>
-      <td>Donald Trump</td>
-      <td>close-up</td>
-      <td>1.00</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>frame-007.jpg</td>
-      <td>7</td>
-      <td>7.0</td>
-      <td>Donald Trump</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>frame-008.jpg</td>
-      <td>8</td>
-      <td>8.0</td>
-      <td>a man speaking in a suit and tie, likely a pol...</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>frame-009.jpg</td>
-      <td>9</td>
-      <td>9.0</td>
-      <td>A man with light hair and a blue suit, speakin...</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>frame-010.jpg</td>
-      <td>10</td>
-      <td>10.0</td>
-      <td>a politician in a debate</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>frame-011.jpg</td>
-      <td>11</td>
-      <td>11.0</td>
-      <td>Biden</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>frame-012.jpg</td>
-      <td>12</td>
-      <td>12.0</td>
-      <td>unknown</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>frame-013.jpg</td>
-      <td>13</td>
-      <td>13.0</td>
-      <td>a man speaking at a debate</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>frame-014.jpg</td>
-      <td>14</td>
-      <td>14.0</td>
-      <td>a politician</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>frame-015.jpg</td>
-      <td>15</td>
-      <td>15.0</td>
-      <td>Not identifiable</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>frame-016.jpg</td>
-      <td>16</td>
-      <td>16.0</td>
-      <td>a politician speaking in a debate</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>frame-017.jpg</td>
-      <td>17</td>
-      <td>17.0</td>
-      <td>unknown</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>frame-018.jpg</td>
-      <td>18</td>
-      <td>18.0</td>
-      <td>a man with light hair and a blue tie</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>frame-019.jpg</td>
-      <td>19</td>
-      <td>19.0</td>
-      <td>a politician</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>frame-020.jpg</td>
-      <td>20</td>
-      <td>20.0</td>
-      <td>a political figure</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>frame-021.jpg</td>
-      <td>21</td>
-      <td>21.0</td>
-      <td>unknown</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>frame-022.jpg</td>
-      <td>22</td>
-      <td>22.0</td>
-      <td>a politician during a debate</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>frame-023.jpg</td>
-      <td>23</td>
-      <td>23.0</td>
-      <td>Unknown</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>frame-024.jpg</td>
-      <td>24</td>
-      <td>24.0</td>
-      <td>a person in a political debate</td>
-      <td>close-up</td>
-      <td>0.85</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>frame-025.jpg</td>
-      <td>25</td>
-      <td>25.0</td>
-      <td>person speaking in a political debate</td>
-      <td>close-up</td>
-      <td>0.80</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>frame-026.jpg</td>
-      <td>26</td>
-      <td>26.0</td>
-      <td>unknown</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>frame-027.jpg</td>
-      <td>27</td>
-      <td>27.0</td>
-      <td>unknown</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>frame-028.jpg</td>
-      <td>28</td>
-      <td>28.0</td>
-      <td>not known</td>
-      <td>close-up</td>
-      <td>0.00</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>frame-029.jpg</td>
-      <td>29</td>
-      <td>29.0</td>
-      <td>Joe Biden</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>frame-030.jpg</td>
-      <td>30</td>
-      <td>30.0</td>
-      <td>a person speaking during a political debate</td>
-      <td>close-up</td>
-      <td>0.90</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">## Notable Quotes&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">minutes</span><span class="o">.</span><span class="n">notable_quotes</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="se">\&quot;</span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output"># Lewiston City Council Meeting Summary
+
+The Lewiston City Council meeting covered a wide range of topics, including the acceptance of meeting minutes and presentations honoring former councilors and the homeless shelter committee. Major discussions and votes included rejecting a proposed AI data center, approving an amendment to the Lowell Street Omnibus TIF, setting a license fee for syringe service programs, and condemning a dangerous building. The council also requested a review of an incoming councilor&#x27;s qualifications and received updates from the Lewiston Housing Authority.
+
+## Agenda Items
+  [10:05] Acceptance of minutes from the December 2nd council meeting.
+  [10:30] Presentations honoring former Councilors Aaron M. Sowell and Timothy J. Gallant for their dedicated service.
+  [13:35] Proclamation recognizing the City Council Ad Hoc Committee on establishing a homeless shelter.
+  [17:28] Public comment period for non-agenda items.
+  [25:58] Report on the Downtown Lewiston Association&#x27;s affiliate status, Holiday at the Plaza success, upcoming public safety listening session, and a marketing/rebranding project for the city.
+  [28:46] Discussion of upcoming agenda items for January, including the public health director position, FOIA training, and creation of standing committees for public safety and economic development.
+  [29:28] Announcement of a city staff-wide employee appreciation event on December 18th.
+  [30:23] Consideration of six items on the consent agenda, including fund transfers for water main replacement, library carpet replacement, armory emergency generator, and disposition of properties.
+  [31:47] Order approving a joint development agreement with MIL Compute LLC for an artificial intelligence data and technology center in Bates Mill 3.
+  [76:17] Amendment to the city business license fee schedule policy to add the syringe service program license.
+  [79:26] Public hearing and adoption of order approving the first amendment to the Lowell Street Omnibus Tax Increment Financing District and Development Program.
+  [100:17] Condemnation hearing for the building located at 102 Pierce Street.
+  [139:52] Order authorizing a six-month extension to a purchase and sale agreement with the Lewiston Auburn Community Market Incorporated.
+  [144:13] Resolve to request a review of the qualifications of counselor elect Iman Osman pursuant to the city charter.
+  [167:24] Update from the Lewiston Housing Authority on various housing projects and programs.
+  [184:46] Second public comment period.
+  [191:37] Reports and updates from councilors, including the public health committee and bus kiosk relocation.
+  [194:19] New business, including farewell remarks from outgoing councilors.
+  [201:25] Executive session to discuss labor negotiations regarding the International Association of Firefighters, local 785.
+
+## Votes
+  [10:25] Acceptance of minutes of the December 2nd council meeting. — Passed by vote of seven to zero.
+  [31:38] Passage of all six items on the consent agenda. — Passed by vote of seven to zero.
+  [76:01] Order approving the joint development agreement with MIL Compute LLC to develop a tier three artificial intelligence data and technology center in Bates Mill 3. — Motion failed by a vote of zero to seven.
+  [79:23] Amendment to the city business license fee scheduled policy to add the syringe service program license. — Passed by vote of seven to zero.
+  [100:12] Adoption of the order approving the first amendment to the Lowell Street Omnibus Tax Increment Financing District and Development Program. — Passed by vote of seven to zero.
+  [131:08] Adoption of the findings of fact, conclusions of law and order proposed by the city planning and code enforcement department regarding 102 Pierce Street, establishing corrective action for the property owner. — Passed by vote of six to one.
+  [144:01] Order authorizing a six-month extension to a purchase and sale agreement with the Lewiston Auburn Community Market Incorporated. — Passed by vote of seven to zero.
+  [167:16] Resolve to request a review of the qualifications of counselor elect Iman Osman. — Passed by vote of seven and zero.
+  [202:06] Motion to enter into an executive session to discuss labor negotiations. — Passed by vote of seven to zero.
+
+## Public Comments
+  [18:05] Lisa Jones: Misuse of mass shooting victim funds, alleged nonprofit fraud, and increasing gun violence in the community. (Against the current handling of funds and lack of accountability.)
+  [21:11] Catherine Ryder: Gratitude for the council&#x27;s work on the syringe service and harm reduction programs. (Supportive and grateful.)
+  [23:26] Melissa Dunn: Concerns about public comment submissions leading to personal information being used for stalking, harassment, and manufacturing narratives, especially by white nationalists. (Concerned about safety and lack of disclaimer.)
+  [38:26] Matt Rory: Disappointment with the timing and process of the AI data center proposal compared to the syringe ordinance, and concerns about the developer&#x27;s lack of track record. (Against the AI data center proposal and critical of council&#x27;s governance structure.)
+  [41:16] Kyle Matevier: Critique of the AI data center project&#x27;s economic benefits, tax breaks, and placement in a dense downtown area, citing lack of community value. (Against the AI data center proposal.)
+  [44:37] Hunter Bouchard: Environmental concerns (water usage, pollution) and negative impact on Lewiston&#x27;s art community by the AI data center. (Against the AI data center proposal.)
+  [47:38] Stephen Lwell: Concerns about increased electricity rates, the installation of a natural gas electric generation plant, and lack of local job creation from the AI data center. (Opposed to the AI data center proposal.)
+  [50:08] Jay Zimmerman: The AI data center being a poor use of a major asset, making downtown less livable, and contradicting the Riverfront Island Master Plan. (Against the AI data center proposal.)
+  [52:09] Zoe Lidstrom: Support for the council&#x27;s rejection of the data center and a call for a public process to envision alternative, community-focused development for the mill building. (Supportive of rejection, advocating for alternative development.)
+  [53:18] Sean O&#x27;Connell: Concerns about the massive water usage of the AI data center and its potential to undo efforts to clean the Androscoggin River. (Against the AI data center proposal.)
+  [54:56] Unnamed speaker from Africa/Lewiston resident: Homelessness in Lewiston and perceived inaction by the mayor and council, linking it to his own experience and humanitarian concerns. (Critical of the council&#x27;s approach to homelessness.)
+  [58:10] Kieran Maduris Collins: Call for a moratorium on all AI data centers in Lewiston, stating they contribute nothing, destroy the environment, and hurt the economy. (Strongly against AI data centers.)
+  [58:47] Ciri Cressy: Concerns about negative health impacts from AI data centers, potential pollution of Lake Auburn&#x27;s water supply, and the historical &#x27;dirty loo&#x27; nickname of Lewiston. (Against the AI data center proposal.)
+  [61:50] Cecile Thornton: Thanks the council for listening to public input regarding the AI data center. (Supportive of the council&#x27;s decision.)
+  [62:23] Abby Roman: Concerns about increased local air pollution and health impacts from the CHP plant associated with the data center, advocating for zero-emission energy generation. (Against the CHP plant aspect of the data center, advocating for renewable energy.)
+  [64:26] Gus Goodwin: Thanks the council for listening and raises concerns about the potential use of PFAS chemicals for cooling in data centers. (Supportive of listening to public, raising additional environmental concern.)
+  [66:50] Marty Young: Skepticism about the promise of technology companies filling upper floors of Bates Mill 3, advocating for filling buildings with residents, companies, and businesses that benefit the community. (Against the AI data center proposal, advocating for other uses of mill buildings.)
+  [66:55] Luke Jensen: Appalled by the lack of transparency, lack of information on developers, and proposed tax breaks for the AI data center project, suggesting a focus on small businesses and a public vote on the project. (Strongly against the AI data center project and critical of the process.)
+  [149:02] Matt Roy: Comments on the non-binding nature of the resolve, stating the new council already has the power to judge qualifications, and criticizing the timing. (Critical of the resolve and its redundancy.)
+  [148:00] Matthew Eggren: Believes the resolve is the correct step to end the controversy surrounding the councilor-elect&#x27;s qualifications with a full, transparent investigation. (Supportive of the resolve for transparency.)
+  [149:02] Catherine Truett: Opposes the resolve, stating qualifications should have been reviewed earlier and that the future council can decide this for themselves. (Against the resolve, deeming it unnecessary.)
+  [149:58] Kira Kiefer: Supports the resolve for transparency and to ensure proper representation in Ward 5. (Supportive of the resolve.)
+  [150:35] Shukri Abdrahman: Strongly opposes the resolve, characterizing it as a targeted harassment campaign rooted in racism and xenophobia against a duly elected official, and calls for respect and an end to such attacks. (Strongly against the resolve, citing racism and harassment.)
+  [153:55] Matthew Agrin: Emphasizes the severity of theft charges against the individual and the importance of due diligence, especially for a ward with high gun violence. (Supportive of the investigation into the councilor-elect&#x27;s qualifications.)
+  [155:01] Bob McCarthy: Claims the councilor-elect&#x27;s claimed residence was never a legal apartment, making his residency claim fictitious, and criticizes the delay in addressing the issue. (Against the councilor-elect&#x27;s qualification, citing residency issues.)
+  [156:21] Jay Zimmerman: Reminds the council that it&#x27;s not their job to assess guilt or innocence and that the councilor-elect is entitled to due process. (Neutral on the investigation, emphasizing due process.)
+  [156:46] Marcella Clerk: Urges a unanimous vote for investigation into Mr. Osman, believing he has no place in city or state government. (Supportive of the investigation.)
+  [157:34] Melissa Dunn: Describes the investigation as &#x27;white nationalist, unnecessary terrorizing&#x27; and a &#x27;manufactured public lynching&#x27; against an African Muslim man, citing coercive violence and election intimidation. (Strongly against the investigation, alleging racism and harassment.)
+  [185:53] Marcella Claire: Publicly requests consideration for her nomination for school committee for Ward 5 and thanks Council Gallant and Councillor Sowell&#x27;s wife. (Requesting consideration for nomination, expressing thanks.)
+  [186:27] Matthew Agrin: Calls for unity in Lewiston to address city improvements, suggests changes to policing and public health, and expresses concerns about flock cameras and transparency in local government. (Advocating for various city improvements and transparency.)
+  [189:00] Matt Roy: Discusses the potential for a charter commission and recall provisions for elected officials, highlighting the city&#x27;s archaic charter. (Advocating for a charter commission and recall provisions.)
+  [181:37] Louise Sampson: Thanks Lewiston Housing Authority for their work on tree street development, expresses desire for Martel School project to be completed soon, and asks about open houses. (Grateful for LHA&#x27;s work, eager for project completion.)
+  [183:03] Matthew Agrin: Asks about alternative methods for seniors who don&#x27;t use computers to get on housing interest lists. (Seeking clarity on accessibility for seniors.)
+
+## Notable Quotes
+  &quot;Motion passed by vote of seven to zero.&quot;
+  &quot;Motion failed by a vote of zero to seven.&quot;
+  &quot;Your voice was heard loud and clear. Facebook, social media, um, emails. We are listening. We are all listening, we are all seeing, we are all you know, paying attention to your your thoughts.&quot;
+  &quot;Lewiston captures less than a percent of the economic value created while bearing long-term land use infrastructure and public risk implications for a business whose entire model is that no other businesses need to be near them in order to function.&quot;
+  &quot;If what Mill Compute LLC&#x27;s business plan is saying is that they cannot make this project work without massive multi-decade tax breaks, then what I&#x27;m saying is that you don&#x27;t have a business plan yet. You have a GoFundMe that you&#x27;re asking the residents of Lewiston to contribute to.&quot;
+  &quot;Lewiston, a city with strong art culture supporting a project that directly hurts artists, and lastly, a project that takes necessary resources from people who are already struggling to have enough.&quot;
+  &quot;Our greatest threat in our community is white people.&quot;
+  &quot;It&#x27;s not a question of whether or not we should give the give the tith. It&#x27;s this project doesn&#x27;t move forward unless we do.&quot;
+  &quot;I&#x27;m sorry. I don&#x27;t think it&#x27;s angry. So for that, so I&#x27;m gonna go take care of that. I&#x27;m not mad. Sometimes a fact. If you want to be a politician, well, get up. We&#x27;re gonna alley. This one, my mom told me. If you want to be a minute now, we&#x27;re gonna alley and pay attention. And don&#x27;t let this care. So I&#x27;m too tall. Don&#x27;t let this care come out of your mind. You all be rent for your rest of your life. So, what are you gonna do? For a citizen right here though, homeless. You never do nothing about it except that woman right there. What you gonna do by that? That&#x27;s it, United State of America. And you know what? Let me tell you my background too. Yes, I make a doctor, yes. I did. Did I lost my life? But it doesn&#x27;t mean that I cannot do humanity. So we have to work together. It doesn&#x27;t mean I&#x27;m black. Are you white? We did the same thing. Mr. Meyer. Your people need a help. That&#x27;s time, thank you.&quot;
+  &quot;The more that you look into it, the more you got to see that he has no place in city or state government.&quot;
+  &quot;This alarming pattern is particularly concerning given that the councillor-elect Osman represents Ward 5, the only area with a significant population of people of color, immigrant residents.&quot;
+  &quot;This is not about an issue of racism. It&#x27;s not about the color of a man&#x27;s skin or the mosque or church or cathedral he worships in. It&#x27;s not about any of those things, it&#x27;s about whether or not an individual lives in the ward he is elected to represent.&quot;
+  &quot;When I first sat in this seat, I was terrified. I had a rough start, but fast forward two years, and it&#x27;s still terrifying because Lewis and you are a very tough crowd. But I truly love this city, and I love being a part of this of this team. Something bigger than myself. I wanted to make a difference. I don&#x27;t know if I did. But I&#x27;m proud of what I&#x27;ve done. I&#x27;m proud of what I&#x27;ve accomplished. And I&#x27;m proud of what we&#x27;ve all accomplished together. It&#x27;s been an honor to serve with this council. Even you, Mr. Mayor.&quot;</pre>
+<p>Something interesting about this is that I also tried <a href="https://developers.google.com/opal">to do the same thing with Google Opal</a>, and it just <em>hallucinated every single aspect of the meeting</em>. I don't even think it was working from a transcript, despite the fact that Google owns YouTube. Weird!</p>
+<p><strong>Trust but verify!</strong></p>
 <h2>Cost</h2>
-<p>Before you run a big batch: how much will it cost? Images × tokens × price = receipt.</p>
+<p>Before you run a big batch: how much will it cost? Images × tokens × price = receipt. I would <em>not</em> trust the below, but it'll give you a general idea of what processing 500 images might look like, and the variation across different models.</p>
 <p><strong><code>recipes/cost.py</code></strong> — Estimate API cost for a batch of images. No API key needed.</p>
 <div class="highlight"><pre><span></span><span class="c1"># USD per million tokens (Feb 2026)</span>
 <span class="n">PRICE_TABLE</span> <span class="o">=</span> <span class="p">{</span>
@@ -1252,30 +1085,69 @@ a man with light hair and a blue tie                         3.3</pre>
 <span class="p">}</span>
 
 <span class="n">NUM_IMAGES</span> <span class="o">=</span> <span class="mi">500</span>
-<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o-mini&quot;</span>
 <span class="n">INPUT_TOKENS_PER_IMAGE</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">OUTPUT_TOKENS_PER_IMAGE</span> <span class="o">=</span> <span class="mi">200</span>
 
-<span class="c1"># --- Calculate ---</span>
-<span class="n">input_price</span><span class="p">,</span> <span class="n">output_price</span> <span class="o">=</span> <span class="n">PRICE_TABLE</span><span class="p">[</span><span class="n">MODEL</span><span class="p">]</span>
-<span class="n">total_input</span> <span class="o">=</span> <span class="n">NUM_IMAGES</span> <span class="o">*</span> <span class="n">INPUT_TOKENS_PER_IMAGE</span>
-<span class="n">total_output</span> <span class="o">=</span> <span class="n">NUM_IMAGES</span> <span class="o">*</span> <span class="n">OUTPUT_TOKENS_PER_IMAGE</span>
-<span class="n">input_cost</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_input</span> <span class="o">/</span> <span class="mi">1_000_000</span><span class="p">)</span> <span class="o">*</span> <span class="n">input_price</span>
-<span class="n">output_cost</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_output</span> <span class="o">/</span> <span class="mi">1_000_000</span><span class="p">)</span> <span class="o">*</span> <span class="n">output_price</span>
-<span class="n">total_cost</span> <span class="o">=</span> <span class="n">input_cost</span> <span class="o">+</span> <span class="n">output_cost</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model:       </span><span class="si">{</span><span class="n">MODEL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Images:      </span><span class="si">{</span><span class="n">NUM_IMAGES</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input cost:  $</span><span class="si">{</span><span class="n">input_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">total_input</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> tokens @ $</span><span class="si">{</span><span class="n">input_price</span><span class="si">}</span><span class="s2">/M)&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output cost: $</span><span class="si">{</span><span class="n">output_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">total_output</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> tokens @ $</span><span class="si">{</span><span class="n">output_price</span><span class="si">}</span><span class="s2">/M)&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TOTAL:       $</span><span class="si">{</span><span class="n">total_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">PRICE_TABLE</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">input_price</span><span class="p">,</span> <span class="n">output_price</span> <span class="o">=</span> <span class="n">PRICE_TABLE</span><span class="p">[</span><span class="n">model</span><span class="p">]</span>
+
+    <span class="c1"># --- Calculate ---</span>
+    <span class="n">total_input</span> <span class="o">=</span> <span class="n">NUM_IMAGES</span> <span class="o">*</span> <span class="n">INPUT_TOKENS_PER_IMAGE</span>
+    <span class="n">total_output</span> <span class="o">=</span> <span class="n">NUM_IMAGES</span> <span class="o">*</span> <span class="n">OUTPUT_TOKENS_PER_IMAGE</span>
+    <span class="n">input_cost</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_input</span> <span class="o">/</span> <span class="mi">1_000_000</span><span class="p">)</span> <span class="o">*</span> <span class="n">input_price</span>
+    <span class="n">output_cost</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_output</span> <span class="o">/</span> <span class="mi">1_000_000</span><span class="p">)</span> <span class="o">*</span> <span class="n">output_price</span>
+    <span class="n">total_cost</span> <span class="o">=</span> <span class="n">input_cost</span> <span class="o">+</span> <span class="n">output_cost</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model:       </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input cost:  $</span><span class="si">{</span><span class="n">input_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">total_input</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> tokens @ $</span><span class="si">{</span><span class="n">input_price</span><span class="si">}</span><span class="s2">/M)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output cost: $</span><span class="si">{</span><span class="n">output_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">total_output</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> tokens @ $</span><span class="si">{</span><span class="n">output_price</span><span class="si">}</span><span class="s2">/M)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TOTAL:       $</span><span class="si">{</span><span class="n">total_cost</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Model:       gpt-4o-mini
-Images:      500
+<pre class="cell-output">Images:      500
+Model:       gpt-4o-mini
 Input cost:  $0.0750  (500,000 tokens @ $0.15/M)
 Output cost: $0.0600  (100,000 tokens @ $0.6/M)
-TOTAL:       $0.1350</pre>
+TOTAL:       $0.1350
+----------------------------------------
+Model:       gpt-4o
+Input cost:  $1.2500  (500,000 tokens @ $2.5/M)
+Output cost: $1.0000  (100,000 tokens @ $10.0/M)
+TOTAL:       $2.2500
+----------------------------------------
+Model:       gpt-5-nano
+Input cost:  $0.0250  (500,000 tokens @ $0.05/M)
+Output cost: $0.0200  (100,000 tokens @ $0.2/M)
+TOTAL:       $0.0450
+----------------------------------------
+Model:       gemini-2.5-flash
+Input cost:  $0.0500  (500,000 tokens @ $0.1/M)
+Output cost: $0.0400  (100,000 tokens @ $0.4/M)
+TOTAL:       $0.0900
+----------------------------------------
+Model:       gemini-2.5-pro
+Input cost:  $0.6250  (500,000 tokens @ $1.25/M)
+Output cost: $0.5000  (100,000 tokens @ $5.0/M)
+TOTAL:       $1.1250
+----------------------------------------
+Model:       claude-3-5-haiku
+Input cost:  $0.4000  (500,000 tokens @ $0.8/M)
+Output cost: $0.4000  (100,000 tokens @ $4.0/M)
+TOTAL:       $0.8000
+----------------------------------------
+Model:       claude-3-5-sonnet
+Input cost:  $1.5000  (500,000 tokens @ $3.0/M)
+Output cost: $1.5000  (100,000 tokens @ $15.0/M)
+TOTAL:       $3.0000
+----------------------------------------
+Model:       ollama
+Input cost:  $0.0000  (500,000 tokens @ $0.0/M)
+Output cost: $0.0000  (100,000 tokens @ $0.0/M)
+TOTAL:       $0.0000
+----------------------------------------</pre>
 
 <footer>
   <a href="04-video.html">&larr; Video</a>

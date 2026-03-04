@@ -1,55 +1,74 @@
 # Classify pre-extracted debate frames → per-subject screen time summary.
 # Audit trail: every frame gets a row, not a vibe answer.
 from pathlib import Path
-import mimetypes, re
 import pandas as pd
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent
 from dotenv import load_dotenv
+import ffmpeg
+from typing import Literal
 
 DATA = Path(__file__).parent.parent / "data"
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
-MODEL, SECONDS_PER_FRAME = "openai:gpt-4o-mini", 1.0
+MODEL, SECONDS_PER_FRAME = "openai:gpt-5-nano", 2.0
 
 class FrameClassification(BaseModel):
-    primary_subject: str = Field(description="Who is primarily on screen (name or description)")
+    primary_subject: Literal[
+        "Donald Trump", "Joe Biden", "neither/other/both"
+    ] = Field(description="Who is primarily on screen, Donald Trump, Joe Biden, or neither/other?")
     scene_type: str = Field(description="'close-up', 'wide shot', 'split screen', 'graphic', 'audience', 'other'")
     confidence: float = Field(ge=0.0, le=1.0)
 
 # --- cell ---
+# ## Step 0: Extract frames from video
+video_path = DATA / "debate.mp4"
+frames_dir = DATA / "debate"
+frames_dir.mkdir(exist_ok=True)
+(
+    ffmpeg.input(video_path)
+    .filter("fps", fps=1/SECONDS_PER_FRAME)
+    .output(str(frames_dir / "frame_%04d.jpg"), start_number=0)
+    .overwrite_output()
+    .run(quiet=True)
+)
+
+# --- cell ---
 # ## Step 1: Discover frames
+# Now we just have to collect the frames we just generated
 frames_dir = DATA / "debate"
 frames = sorted(p for p in frames_dir.iterdir() if p.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"})
 print(f"Found {len(frames)} frames")
 
 # --- cell ---
 # ## Step 2: Classify each frame
+# While we could do this in a fancy way, we're going to be simple: just ask the LLM who is on screen.
 agent = Agent(MODEL, output_type=FrameClassification)
 rows = []
-for fpath in frames:
-    num = int(m.group(1)) if (m := re.search(r"(\d+)", fpath.stem)) else 0
-    mime, _ = mimetypes.guess_type(str(fpath))
+for i, fpath in enumerate(frames):
     r = agent.run_sync([
-        "This is a frame from a political debate. Identify who is on screen.",
-        BinaryContent(data=fpath.read_bytes(), media_type=mime or "image/jpeg"),
+        "This is a frame from a political debate. Identify who is on screen: Donald Trump or Joe Biden",
+        BinaryContent(data=fpath.read_bytes(), media_type="image/jpeg"),
     ])
-    rows.append({"filename": fpath.name, "frame_number": num, "timestamp_sec": num * SECONDS_PER_FRAME,
-                 "primary_subject": r.output.primary_subject, "scene_type": r.output.scene_type,
-                 "confidence": r.output.confidence})
+    rows.append({
+        "frame": i,
+        "timestamp_sec": i * SECONDS_PER_FRAME,
+        "primary_subject": r.output.primary_subject,
+        "scene_type": r.output.scene_type,
+        "confidence": r.output.confidence,
+    })
 print(f"Classified {len(rows)} frames")
 
 # --- cell ---
 # ## Step 3: Build summary
-df = pd.DataFrame(rows).sort_values("frame_number").reset_index(drop=True)
-summary = (
-    df.groupby("primary_subject")
-    .agg(frames=("primary_subject", "count"),
-         total_seconds=("timestamp_sec", lambda x: len(x) * SECONDS_PER_FRAME),
-         avg_confidence=("confidence", "mean"))
-    .sort_values("total_seconds", ascending=False)
+# Count frames per subject → screen time
+df = pd.DataFrame(rows)
+summary = df.groupby("primary_subject").agg(
+    frames=("frame", "count"),
+    avg_confidence=("confidence", "mean"),
 )
-summary["pct_of_total"] = (summary["total_seconds"] / summary["total_seconds"].sum() * 100).round(1)
-print(summary)
+summary["seconds"] = summary["frames"] * SECONDS_PER_FRAME
+summary["pct"] = (summary["seconds"] / summary["seconds"].sum() * 100).round(1)
+print(summary.sort_values("seconds", ascending=False))
 
 df

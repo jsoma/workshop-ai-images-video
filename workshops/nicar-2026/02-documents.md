@@ -6,25 +6,43 @@ data_files:
 ---
 # Documents
 
-PDFs are images too. Text trapped in a scan, a photo of a posted notice, a 500-page FOIA dump — these are all "images with text in them."
+You just extracted structured data from photos. PDFs are the same problem — images with text trapped in them. A scan, a posted notice, a 500-page FOIA dump.
 
 ## OCR with an LLM
 
-Send a photo (of a document or otherwise) to an LLM. Get structured text back.
+OCR stands for **Optical Character Recognition**, which just means "get the text out of an image." Send a photo (of a document or otherwise) to an LLM. Get structured text back.
+
+Let's try with a PNG of a letter.
 
 ```show
 data/flock-scan.png
 ```
 
+It's not an ideal scan - off angles, a little fuzzy, weird lines going through it. How will it do?
+
 ```script
 documents/llm-ocr.py
 ```
 
+Wonderful!
+
+## OCR a PDF
+
+But as a journalist, you almost never need to recognize text in images - it's almost always in PDFs. The workflow that goes from PDF->LLM->OCR is a little more difficult than it should be, so I made a library called [Natural PDF](https://github.com/jsoma/natural-pdf) to help you do that.
+
+```show
+data/letter.png
+```
+
+While you [can use an LLM for OCR with Natural PDF](https://jsoma.github.io/natural-pdf-workshop/natural-pdf/02-ocr-and-ai-magic-ANSWERS.html) you don't need to! Using one fo the built-in OCR engines usually works pretty well.
+
+```script{log=error}
+documents/pdf-ocr.py
+```
+
 ## Extract structured data from PDFs
 
-The workflow that goes from PDF->LLM->structured data is a little more difficult than it should be, so I made a library called [Natural PDF](https://github.com/jsoma/natural-pdf) to help you do that.
-
-In this example, we pull specific fields from a document page. Visual citations show exactly where on the page each answer came from — you can see what the model looked at.
+[Natural PDF](https://github.com/jsoma/natural-pdf) can also help you extract **structured data** from PDFs. In this example, we pull specific fields from a document page. Visual citations show exactly where on the page each answer came from — you can see what the model looked at.
 
 ```show
 data/natural-pdf.png
@@ -48,6 +66,8 @@ If you're trying to put content in rough categories, there are models that can d
 
 Got hundreds of pages from a FOIA? Classify every page as diagram, text, invoice, blank — no API key needed. Then filter to just the ones you want.
 
-```script
+```script{log=error}
 documents/classify-pages.py
 ```
+
+**Up next:** Audio. Same idea — turn it into text, then do text things.

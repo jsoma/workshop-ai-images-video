@@ -6,11 +6,11 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, VideoUrl
-from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.providers.google import GoogleProvider
 
 DATA = Path(__file__).parent.parent / "data"
 VIDEO = DATA / "rDXubdQdJYs.mp4"
+MODEL = "google-gla:gemini-2.5-flash"
 
 class Scene(BaseModel):
     start: str = Field(description="Start timestamp MM:SS")
@@ -26,7 +26,7 @@ while video_file.state.name == "PROCESSING":
     time.sleep(5)
     video_file = provider.client.files.get(name=video_file.name)
 
-agent = Agent(GoogleModel("gemini-2.5-flash", provider=provider), output_type=list[Scene])
+agent = Agent(MODEL, output_type=list[Scene])
 result = agent.run_sync([
     "Break this video into scenes. For each scene identify timestamps, "
     "what happens, who is visible, and any text on screen.",
@@ -38,4 +38,3 @@ for s in result.output:
         print(f"  People: {', '.join(s.people_visible)}")
     if s.text_on_screen:
         print(f"  Text: {s.text_on_screen}")
-provider.client.files.delete(name=video_file.name)

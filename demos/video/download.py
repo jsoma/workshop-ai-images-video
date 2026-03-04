@@ -1,15 +1,17 @@
-# Download a video from a URL using yt-dlp
-import subprocess
+# Download a video from YouTube with yt-dlp
 from pathlib import Path
+import yt_dlp
 
 DATA = Path(__file__).parent.parent / "data"
 URL = "https://www.youtube.com/watch?v=rDXubdQdJYs"
 
 DATA.mkdir(parents=True, exist_ok=True)
-subprocess.run([
-    "yt-dlp",
-    "-o", str(DATA / "%(title)s [%(id)s].%(ext)s"),
-    "-f", "best",
-    "--no-overwrites",
-    URL,
-])
+
+ydl_opts = {
+    "outtmpl": str(DATA / "%(id)s.%(ext)s"),
+    "quiet": True,
+    "no_warnings": True,
+}
+
+with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    ydl.download([URL])

@@ -5,7 +5,7 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 from pydantic_ai import Agent, BinaryContent
 
-MODEL = "openai:gpt-4o-mini"
+MODEL = "openai:gpt-5-nano"
 DATA = Path(__file__).parent.parent / "data"
 
 image_data = (DATA / "car.jpg").read_bytes()

@@ -3197,7 +3197,7 @@ wheels = [
 
 [[package]]
 name = "natural-pdf"
-version = "0.5.0"
+version = "0.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colormath2" },
@@ -3222,9 +3222,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/54/86/237299816296c0c89921ccbd5f6364d2eff9efaf9ca91c3192d181000de3/natural_pdf-0.5.0.tar.gz", hash = "sha256:da424c69b2a9d44adacb0c141317f421556dc4feb630752435fc91ca8458fab1", size = 1587690, upload-time = "2026-03-01T22:20:35.818Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7f/6c/b392748bd9197b1c0a479d5bedc482f1af09780da8e837d6e61c133fadf5/natural_pdf-0.5.1.tar.gz", hash = "sha256:581e1c0be50cb141f441fbb3c173160bb9d0a0cb1a607fae0dedc1fab2cfd0d8", size = 1591906, upload-time = "2026-03-04T00:19:44.217Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/74/170c24a53fd70128f5926172e29654e304503710e3a48d94d7361a927c51/natural_pdf-0.5.0-py3-none-any.whl", hash = "sha256:d3616b5a41a4914899720d3223abefd30b66cf298fcef7485de0092b1a62d1dd", size = 819510, upload-time = "2026-03-01T22:20:33.784Z" },
+    { url = "https://files.pythonhosted.org/packages/28/31/434ee99ecaba9003ac783ee4b96cdde372729a453088524a60891d3ff23d/natural_pdf-0.5.1-py3-none-any.whl", hash = "sha256:347f4bdf3877fd36e73d59c40a42b583a2bea2111e2c7670d572904a174c63c6", size = 821966, upload-time = "2026-03-04T00:19:42.06Z" },
 ]
 
 [package.optional-dependencies]
@@ -3374,7 +3374,7 @@ requires-dist = [
     { name = "ipykernel" },
     { name = "markdown" },
     { name = "matplotlib" },
-    { name = "natural-pdf", extras = ["ai", "export"], specifier = ">=0.5.0" },
+    { name = "natural-pdf", extras = ["ai", "export"], specifier = ">=0.5.1" },
     { name = "nbconvert" },
     { name = "nbformat" },
     { name = "nest-asyncio" },

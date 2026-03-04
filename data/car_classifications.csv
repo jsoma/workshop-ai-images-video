@@ -1,0 +1,6 @@
+category,color,description,confidence,filename
+van,black,"A black van with a large metal ladder rack attached to the rear, parked on a city street.",0.85,28246634.jpg
+sedan,silver,"A silver Toyota sedan parked on a street in front of a building, with a front grille and headlights visible.",0.88,28246768.jpg
+SUV,black,A black SUV with a bicycle mounted on a rear hitch rack.,0.82,28262472.jpg
+sedan,yellow,Bright yellow sedan taxi/ride-hailing car (Grab) on the road.,0.85,28262480.jpg
+SUV,white,White Tesla Model Y electric SUV with distinctive blue wheels.,0.85,28266737.jpg

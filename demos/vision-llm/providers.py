@@ -15,11 +15,13 @@ class ImageDescription(BaseModel):
     mood: str = Field(description="Overall mood or feeling of the image")
     details: list[str] = Field(description="3-5 notable details")
 
+# --- cell ---
+# You can see a list of available providers and models [here](https://ai.pydantic.dev/api/models/base/). The "ollama" one below doesn't even use the internet: it runs on your own machine!
 models = [
-    "openai:gpt-4o-mini",
+    "openai:gpt-5-nano",
     "google-gla:gemini-2.5-flash",
     # "anthropic:claude-3-5-haiku-latest",
-    # "ollama:qwen2-vl",
+    # "ollama:qwen3-vl",
 ]
 for model in models:
     agent = Agent(model, output_type=ImageDescription)

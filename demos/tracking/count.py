@@ -8,7 +8,7 @@ DATA = Path(__file__).parent.parent / "data"
 VIDEO = DATA / "rDXubdQdJYs.mp4"
 MAX_FRAMES = 300
 
-model = YOLO("yolo11n.pt")
+model = YOLO("yolo26n")
 tracker = sv.ByteTrack()
 
 cap = cv2.VideoCapture(str(VIDEO))

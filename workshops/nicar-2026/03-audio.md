@@ -1,7 +1,7 @@
 ---
 install:
   - whisperx
-  - nemo_toolkit[asr]
+
 env_keys:
   - HF_TOKEN
 data_files:
@@ -9,51 +9,68 @@ data_files:
 ---
 # Audio
 
-What can you do with audio? Turn it into text, then do text things. Split it by speaker.
+Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it.
 
-## Transcribe
+## Transcription with Whisper
 
-Once upon a time OpenAI released an *open model* named Whisper. It's actually great! There are newer models out there - like [Parakeet](https://parakeettdt.com/), which is super quick - but Whisper is very easy to use so everyone runs it.
+Once upon a time OpenAI released an open model [named Whisper](https://github.com/openai/whisper/). It's great! Very very popular.
 
+There are newer models out there — [parakeet-mlx](https://github.com/senstella/parakeet-mlx) is blazing fast on Macs — but Whisper is very easy to use so everyone (and I mean *everyone*) uses it.
+
+When you use Whisper, you have to make some decisions:
+
+* **Which packaging of Whisper:** Whisper is free to distribute, so a zillion tools are built on top of it. Below we're using **WhisperX** which is a feature-packed tool built on top of Whisper.
+* **Which version of the model:** Like tiny, base, large... bigger is better, but slower! **Turbo** is the best combination of speed and accuracy. 
+
+Let's practice on this Trump/Biden debate clip.
 
 ```show
 data/rDXubdQdJYs.mp3
 ```
 
-There are different versions of the model - like tiny, base, large - but **turbo** is the best combination of speed and accuracy. Below we're using **WhisperX** which is a feature-packed tool built on top of Whisper.
-
-```script
-audio/whisperx.py
+```script{log=error}
+audio/transcribe-whisperx.py
 ```
 
-## Transcribe
+## A faster option: Parakeet
 
-Here's Parakeet! If you're on a mac, use [parakeet-mlx](https://github.com/senstella/parakeet-mlx). I'm specifically using the *most complicated possible version of Parakeet* because it's the best.
+NVIDIA's [Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) is a newer speech model that's significantly faster than Whisper — especially on Macs via [parakeet-mlx](https://github.com/senstella/parakeet-mlx). It also gives you cleaner sentence-level output without needing a separate alignment step.
 
-```script
-audio/parakeet.py
+Here we combine Parakeet for transcription with **pyannote** for speaker diarization — "who said what?"
+
+**Setup:** Diarization requires a free Hugging Face token (`HF_TOKEN`) and accepting the model licenses at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1). It's kind of a pain to jump through the hoops but if you're vaguely technical it's definitely worth it.
+
+```script{log=error}
+audio/transcribe-parakeet.py
 ```
 
-## Transcribe and diarize (local)
+## Transcription and speaker identification (WhisperX)
 
-Along with transcribing, WhisperX transcribes the audio *and identifies who said what*. Free, runs locally (on your own computer), your audio never leaves your machine.
+WhisperX can do the same thing — transcribe **and** separate speakers. It's slower than Parakeet but widely used and runs everywhere.
 
-**Setup:** Diarization requires a free Hugging Face token (`HF_TOKEN`) and accepting the model licenses at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1).
-
-```script
+```script{log=error}
 audio/whisperx-diarize.py
 ```
 
-"Speaker 1 said X at 0:42, Speaker 2 said Y at 1:15." Now you have a searchable, speaker-labeled transcript.
+"Speaker 1 said X at 0:42, Speaker 2 said Y at 1:15." Now you have a searchable, speaker-labeled transcript!
 
 If you'd prefer to not write code (lol), try [MacWhisper](https://goodsnooze.gumroad.com/l/macwhisper), [Handy](https://handy.computer/), [VoiceInk](https://tryvoiceink.com/), [Buzz](https://buzzcaptions.com/).
 
-## Structured transcription (cloud)
+## Using the cloud
 
-Sometimes your computer is slow, or you don't care about privacy or cost, and you just want something to get *done*. Here's the same audio, but Gemini returns structured data — each utterance as a typed object with speaker, timestamps, and text. Same Pydantic AI pattern as the image notebooks.
+Sometimes your computer is slow, or you don't care about privacy or cost, and you just want something to get *done*. Here's the same audio, but using Gemini (Google's LLM). We make it send back structured data — each utterance gets a speaker, timestamps, text, *and* some sentiment to mix it up a bit. Same Pydantic AI pattern as the image notebooks!
 
 ```script
 audio/gemini-diarize.py
 ```
 
 Cloud tradeoff: faster, structured output built-in, but your audio goes to Google. Most newsrooms will use both local and cloud depending on the sensitivity of the material.
+
+This is how real investigations work:
+
+- [Documented examined hundreds of TikTok videos](https://pulitzercenter.org/misinformation-tiktok-how-documented-examined-hundreds-videos-different-languages) by extracting audio and transcribing with Whisper. 
+- [Público did the same with 7,616 health TikToks](https://www.publico.pt/interactivos/tiktok-desinformacao-saude-pernas-compridas), then used an LLM to pull verifiable claims from the transcripts.
+- [Hearst built Assembly](https://ryanserpi.co/projects/assembly/) to transcribe 13,000+ hours of government meetings with Whisper and surface keywords via alerts.
+- [Chalkbeat uses LocalLens](https://www.niemanlab.org/2025/03/local-newsrooms-are-using-ai-to-listen-in-on-public-meetings/) to monitor 80 school districts across 30 states the same way.
+
+**Up next:** Video is just images + audio + time. Decompose it, then use the tools you already have.

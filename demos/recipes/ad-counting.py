@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 DATA = Path(__file__).parent.parent / "data"
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
-VIDEO, MODEL, INTERVAL = DATA / "rDXubdQdJYs.mp4", "openai:gpt-4o-mini", 3
+VIDEO, MODEL, INTERVAL = DATA / "rDXubdQdJYs.mp4", "openai:gpt-5-nano", 3
 
 class FrameType(BaseModel):
     classification: str = Field(description="'advertisement','sponsored_content','logo_bug','editorial_content','transition','other'")

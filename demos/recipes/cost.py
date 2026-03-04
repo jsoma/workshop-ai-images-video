@@ -13,20 +13,23 @@ PRICE_TABLE = {
 }
 
 NUM_IMAGES = 500
-MODEL = "gpt-4o-mini"
 INPUT_TOKENS_PER_IMAGE = 1000
 OUTPUT_TOKENS_PER_IMAGE = 200
 
-# --- Calculate ---
-input_price, output_price = PRICE_TABLE[MODEL]
-total_input = NUM_IMAGES * INPUT_TOKENS_PER_IMAGE
-total_output = NUM_IMAGES * OUTPUT_TOKENS_PER_IMAGE
-input_cost = (total_input / 1_000_000) * input_price
-output_cost = (total_output / 1_000_000) * output_price
-total_cost = input_cost + output_cost
-
-print(f"Model:       {MODEL}")
 print(f"Images:      {NUM_IMAGES:,}")
-print(f"Input cost:  ${input_cost:.4f}  ({total_input:,} tokens @ ${input_price}/M)")
-print(f"Output cost: ${output_cost:.4f}  ({total_output:,} tokens @ ${output_price}/M)")
-print(f"TOTAL:       ${total_cost:.4f}")
+
+for model in PRICE_TABLE.keys():
+    input_price, output_price = PRICE_TABLE[model]
+
+    # --- Calculate ---
+    total_input = NUM_IMAGES * INPUT_TOKENS_PER_IMAGE
+    total_output = NUM_IMAGES * OUTPUT_TOKENS_PER_IMAGE
+    input_cost = (total_input / 1_000_000) * input_price
+    output_cost = (total_output / 1_000_000) * output_price
+    total_cost = input_cost + output_cost
+
+    print(f"Model:       {model}")
+    print(f"Input cost:  ${input_cost:.4f}  ({total_input:,} tokens @ ${input_price}/M)")
+    print(f"Output cost: ${output_cost:.4f}  ({total_output:,} tokens @ ${output_price}/M)")
+    print(f"TOTAL:       ${total_cost:.4f}")
+    print("-" * 40)

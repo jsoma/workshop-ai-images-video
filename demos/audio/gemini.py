@@ -3,15 +3,16 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
-from google import genai
+from pydantic_ai import Agent, BinaryContent
 
 DATA = Path(__file__).parent.parent / "data"
 AUDIO = DATA / "rDXubdQdJYs.mp3"
-MODEL = "gemini-2.5-flash"
+MODEL = "google-gla:gemini-2.5-flash"
 PROMPT = "Transcribe this audio. Then list key topics, names, and numbers mentioned."
 
-client = genai.Client()
-audio_file = client.files.upload(file=str(AUDIO))
-response = client.models.generate_content(model=MODEL, contents=[PROMPT, audio_file])
-print(response.text)
-client.files.delete(name=audio_file.name)
+agent = Agent(MODEL)
+result = agent.run_sync([
+    PROMPT,
+    BinaryContent(data=AUDIO.read_bytes(), media_type="audio/mpeg"),
+])
+print(result.output)

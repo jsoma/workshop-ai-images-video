@@ -212,7 +212,8 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: var(--color-accent); }
+a:hover { color: var(--color-accent-hover); }
 img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
 
 /* Grain */
@@ -536,18 +537,70 @@ strong { font-weight: 500; }
 }
 
 .show-image img {
+  max-width: 80%;
   border: var(--border-w) solid var(--color-border);
   border-radius: var(--radius);
 }
 
+.show-audio {
+  background: var(--color-surface);
+  border: var(--border-w) solid var(--color-border);
+  border-radius: 0;
+  padding: 1rem 1.2rem;
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.show-audio-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
 .show-audio audio {
   width: 100%;
-  max-width: 500px;
 }
 
 .show-video video {
   border: var(--border-w) solid var(--color-border);
   border-radius: var(--radius);
+}
+
+.show-youtube {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.show-youtube iframe {
+  border: var(--border-w) solid var(--color-border);
+}
+
+.show-grid {
+  display: grid;
+  gap: 10px;
+  margin: 1.5rem 0;
+}
+
+.show-grid-item {
+  margin: 0;
+  text-align: center;
+}
+
+.show-grid-item img {
+  width: 100%;
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.show-grid-item figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.3rem;
 }
 
 /* --- Code blocks --- */
@@ -817,7 +870,7 @@ pre { line-height: 125%; }
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
 
-<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;gpt-4o-mini&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;gpt-5-nano&quot;</span>
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">()</span>
@@ -846,13 +899,11 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Based on the vehicle shown in the image, here are the details:
-
-- **Make:** Toyota
-- **Model:** Highlander
-- **Type:** SUV
-- **Color:** Silver
-- **Estimated Year:** Early 2000s (around 2001-2007)</pre>
+<pre class="cell-output">- Make: Toyota
+- Model: Land Cruiser (100-series)
+- Type: SUV
+- Color: Beige/gold
+- Estimated year: Early 2000s (approximately 2000–2005)</pre>
 <p>It's great, but... what if we want it in a CSV? What if we have 200 to do? What if we want to make <em>demands</em> and ask for <em>structure?</em></p>
 <h2>Structured output</h2>
 <p>An alternative is to send an image to an LLM and get back <strong>structured output</strong> — fields you can sort, filter, and verify. Not prose. This is the pattern for everything else in the workshop!</p>
@@ -862,9 +913,8 @@ pre { line-height: 125%; }
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">BinaryContent</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
-<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;openai:gpt-4o-mini&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;openai:gpt-5-nano&quot;</span>
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
 <span class="n">image_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;car.jpg&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">()</span>
@@ -878,8 +928,10 @@ pre { line-height: 125%; }
         <span class="s2">&quot;sedan&quot;</span><span class="p">,</span> <span class="s2">&quot;SUV&quot;</span><span class="p">,</span> <span class="s2">&quot;truck&quot;</span><span class="p">,</span> <span class="s2">&quot;van&quot;</span><span class="p">,</span> <span class="s2">&quot;motorcycle&quot;</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span>
     <span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Type of vehicle&quot;</span><span class="p">)</span>
     <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Your confidence in this identification, 0.0 to 1.0&quot;</span><span class="p">)</span>
+</pre></div>
 
-<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">Vehicle</span><span class="p">)</span>
+<p>Each field has a name, a type, and a description. The AI fills them in.</p>
+<div class="highlight"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">Vehicle</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span>
     <span class="s2">&quot;Analyze the vehicle in this image. Fill in all fields accurately.&quot;</span><span class="p">,</span>
     <span class="n">BinaryContent</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">image_data</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="s2">&quot;image/jpeg&quot;</span><span class="p">),</span>
@@ -887,11 +939,12 @@ pre { line-height: 125%; }
 <span class="n">result</span><span class="o">.</span><span class="n">output</span>
 </pre></div>
 
-<pre class="cell-output">Vehicle(make=&#x27;Toyota&#x27;, model=&#x27;Highlander&#x27;, color=&#x27;gold&#x27;, year_estimate=2006, vehicle_type=&#x27;SUV&#x27;, confidence=0.9)</pre>
-<p>While there are a handful of ways to do this, we're specifically using a Python library called <strong>Pydantic</strong>. It gives you a lot of tools to describe what you're looking for: each field has a name, a type, and a description. AI fills in the fields.</p>
+<pre class="cell-output">Vehicle(make=&#x27;Toyota&#x27;, model=&#x27;Sequoia&#x27;, color=&#x27;Beige&#x27;, year_estimate=2005, vehicle_type=&#x27;SUV&#x27;, confidence=0.6)</pre>
+<p>While there are a handful of ways to do this, we're specifically using a Python library called <strong><a href="https://ai.pydantic.dev/">Pydantic AI</a></strong>. It gives you a lot of tools to describe what you're looking for: each field has a name, a type, and a description. AI fills in the fields. It works with <a href="https://ai.pydantic.dev/models/">all the major providers</a> and handles <a href="https://ai.pydantic.dev/input/">images, audio, video, and documents</a>.</p>
 <p>Easy peasy!</p>
 <h2>Batch processing</h2>
 <p>Same thing as before, but we have <strong>a whole folder of images</strong>. And instead of one at a time, you can make an entire CSV!</p>
+<div class="show-grid" style="grid-template-columns:repeat(3, 1fr)"><figure class="show-grid-item"><img src="../data/cars/28246634.jpg"><figcaption>28246634.jpg</figcaption></figure><figure class="show-grid-item"><img src="../data/cars/28246768.jpg"><figcaption>28246768.jpg</figcaption></figure><figure class="show-grid-item"><img src="../data/cars/28262472.jpg"><figcaption>28262472.jpg</figcaption></figure><figure class="show-grid-item"><img src="../data/cars/28262480.jpg"><figcaption>28262480.jpg</figcaption></figure><figure class="show-grid-item"><img src="../data/cars/28266737.jpg"><figcaption>28266737.jpg</figcaption></figure></div>
 <p><strong><code>vision-llm/batch.py</code></strong> — Process a folder of images into structured data -&gt; DataFrame -&gt; CSV</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -900,7 +953,7 @@ pre { line-height: 125%; }
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">BinaryContent</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
-<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;openai:gpt-4o-mini&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;openai:gpt-5-nano&quot;</span>
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Vehicle</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -914,16 +967,25 @@ pre { line-height: 125%; }
     <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Confidence in identification, 0.0 to 1.0&quot;</span><span class="p">)</span>
 
 <span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">Vehicle</span><span class="p">)</span>
-<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+<p>Now let's process the images one by one</p>
+<div class="highlight"><pre><span></span><span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">image_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">((</span><span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;cars&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.jpg&quot;</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="n">image_paths</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span>
         <span class="s2">&quot;Analyze the vehicle in this image. Fill in all fields.&quot;</span><span class="p">,</span>
         <span class="n">BinaryContent</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">image_path</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">(),</span> <span class="n">media_type</span><span class="o">=</span><span class="s2">&quot;image/jpeg&quot;</span><span class="p">),</span>
     <span class="p">])</span>
-    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">image_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()})</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+    <span class="n">row</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_path</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> images.&quot;</span><span class="p">)</span>
+</pre></div>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+<pre class="cell-output">Processed 5 images.</pre>
+<p>That loop just processed every image in the folder. Now we have a spreadsheet!</p>
+<div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;cars_analysis.csv&quot;</span>
 <span class="n">output</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -948,73 +1010,75 @@ pre { line-height: 125%; }
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>filename</th>
       <th>make</th>
       <th>model</th>
       <th>color</th>
       <th>year_estimate</th>
       <th>vehicle_type</th>
       <th>confidence</th>
+      <th>filename</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>28246634.jpg</td>
       <td>Volkswagen</td>
-      <td>Transporter</td>
-      <td>black</td>
-      <td>2018</td>
+      <td>Multivan</td>
+      <td>Dark blue</td>
+      <td>2014</td>
       <td>van</td>
-      <td>0.85</td>
+      <td>0.66</td>
+      <td>28246634.jpg</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>28246768.jpg</td>
       <td>Toyota</td>
       <td>Camry</td>
-      <td>silver</td>
-      <td>2015</td>
+      <td>Silver</td>
+      <td>2013</td>
       <td>sedan</td>
-      <td>0.95</td>
+      <td>0.68</td>
+      <td>28246768.jpg</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>28262472.jpg</td>
       <td>Lexus</td>
-      <td>LX</td>
-      <td>black</td>
-      <td>2020</td>
+      <td>LX 570</td>
+      <td>Black</td>
+      <td>2013</td>
       <td>SUV</td>
-      <td>0.90</td>
+      <td>0.73</td>
+      <td>28262472.jpg</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>28262480.jpg</td>
       <td>Toyota</td>
-      <td>Yaris</td>
-      <td>yellow</td>
-      <td>2018</td>
+      <td>Corolla Altis</td>
+      <td>Yellow</td>
+      <td>2015</td>
       <td>sedan</td>
-      <td>0.90</td>
+      <td>0.75</td>
+      <td>28262480.jpg</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>28266737.jpg</td>
       <td>Tesla</td>
       <td>Model Y</td>
       <td>White</td>
-      <td>2021</td>
+      <td>2020</td>
       <td>SUV</td>
-      <td>0.90</td>
+      <td>0.84</td>
+      <td>28266737.jpg</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 <p>Open the output CSV. Spot-check a few rows against the source images. Does the make match what you see? Does the color? That's verification — not trusting the model, checking its work.</p>
+<p>This is the same approach DW used to <a href="https://www.dw.com/en/betting-ads-swamp-brazilian-football-as-addiction-spikes/a-72941493">measure betting ads in Brazilian football</a> — a <a href="https://universe.roboflow.com/menegat/brasileirao-pitch-ads">custom model</a> classified thousands of frames to count how often each brand appeared on screen.</p>
 <h2>Swap providers</h2>
 <p>There are a ton of different providers of LLM <em>stuff</em> and they each have strengths and weaknesses. if you get married to ChatGPT or Claude, you'll never be able to use Gemini's document-processing powers! So instead of using the <a href="https://github.com/googleapis/python-genai">genai library from Google</a> or the <a href="https://github.com/openai/openai-python">OpenAI library</a> we use Pydantic AI, which allows you a bit more flexibility in swapping between providers.</p>
-<p>If you're feeling especially wild, you can even try out <a href="https://openrouter.ai/">openrouter</a>, which gives you a menu of <em>way more</em> than just the Big Three.</p>
+<p>Let's see how they describe this photograph.</p>
+<div class="show-image"><img src="../data/city.png"></div>
 <p><strong><code>vision-llm/providers.py</code></strong> — Same structured-output task with different LLM providers</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -1029,12 +1093,14 @@ pre { line-height: 125%; }
     <span class="n">setting</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Where the image appears to be taken&quot;</span><span class="p">)</span>
     <span class="n">mood</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Overall mood or feeling of the image&quot;</span><span class="p">)</span>
     <span class="n">details</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;3-5 notable details&quot;</span><span class="p">)</span>
+</pre></div>
 
-<span class="n">models</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;openai:gpt-4o-mini&quot;</span><span class="p">,</span>
+<p>You can see a list of available providers and models <a href="https://ai.pydantic.dev/api/models/base/">here</a>. The "ollama" one below doesn't even use the internet: it runs on your own machine!</p>
+<div class="highlight"><pre><span></span><span class="n">models</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;openai:gpt-5-nano&quot;</span><span class="p">,</span>
     <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span><span class="p">,</span>
     <span class="c1"># &quot;anthropic:claude-3-5-haiku-latest&quot;,</span>
-    <span class="c1"># &quot;ollama:qwen2-vl&quot;,</span>
+    <span class="c1"># &quot;ollama:qwen3-vl&quot;,</span>
 <span class="p">]</span>
 <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
     <span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="n">ImageDescription</span><span class="p">)</span>
@@ -1046,11 +1112,12 @@ pre { line-height: 125%; }
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">--- openai:gpt-4o-mini ---
-subject=&#x27;A sunset landscape&#x27; setting=&#x27;An open field near a road&#x27; mood=&#x27;Serene and tranquil&#x27; details=[&#x27;The sky is painted in pastel colors, with soft pinks and oranges as the sun sets.&#x27;, &#x27;In the foreground, there are blooming purple flowers, likely lupines, creating a colorful border.&#x27;, &#x27;A light mist covers the ground, adding a mystical quality to the scene.&#x27;, &#x27;There is a single large rock on the left side of the image, contributing to the natural feel.&#x27;, &#x27;Power lines are visible in the distance along the road, hinting at the rural setting.&#x27;]</pre>
+<pre class="cell-output">--- openai:gpt-5-nano ---
+subject=&#x27;Sunrise over a rural landscape with lavender along a fence&#x27; setting=&#x27;Rolling countryside with a fence, lavender border, and a distant road veiled in fog&#x27; mood=&#x27;peaceful, serene, slightly mystical&#x27; details=[&#x27;Pastel sunrise with warm orange and pink hues across the sky&#x27;, &#x27;Lavender blooms lining the right-hand fence and field&#x27;, &#x27;A winding fence and a large boulder in the foreground&#x27;, &#x27;A road on the right edge with a sign, fading into morning mist&#x27;, &#x27;Low-lying fog over the horizon and soft, expansive clouds&#x27;]</pre>
 <pre class="cell-output">--- google-gla:gemini-2.5-flash ---
-subject=&#x27;A vast landscape with a sunset over a foggy horizon&#x27; setting=&#x27;A rural landscape at sunrise or sunset with a road, fields, and a distant foggy horizon&#x27; mood=&#x27;Serene and peaceful, with a touch of mystery from the fog&#x27; details=[&#x27;A vibrant sunset with orange and yellow hues dominates the right side of the sky.&#x27;, &#x27;A thick layer of fog or mist blankets the distant horizon and parts of the landscape.&#x27;, &#x27;Extensive patches of purple flowers are visible in the foreground and along the roadside.&#x27;, &#x27;A winding road cuts through the landscape, disappearing into the fog.&#x27;, &#x27;Grassy fields with some darker, bare patches of earth and a large rock in the foreground.&#x27;]</pre>
-<p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts.</p>
+subject=&#x27;A vast, open landscape&#x27; setting=&#x27;An expansive field or moor with a road, under a low-lying mist&#x27; mood=&#x27;Serene, peaceful, and slightly mysterious&#x27; details=[&#x27;A vibrant sunset or sunrise painting the sky with orange and yellow hues&#x27;, &#x27;Thick fog or mist covering the distant landscape and parts of the road&#x27;, &#x27;A paved road stretching into the misty horizon on the right&#x27;, &#x27;Large patches of purple flowers (possibly lupines) growing alongside the road&#x27;, &#x27;A fence running through the grassy landscape on the left side&#x27;]</pre>
+<p>OpenAI, Google, Anthropic, Ollama — the code is identical except for the model name. Pick whichever fits your newsroom's budget, privacy needs, or existing accounts. And if you're feeling especially wild, you can even try out <a href="https://openrouter.ai/">openrouter</a>, which gives you a menu of <em>way more</em> than just the Big Three.</p>
+<p><strong>Up next:</strong> PDFs are just images with text in them. Same pattern, higher stakes.</p>
 
 <footer>
   <span></span>

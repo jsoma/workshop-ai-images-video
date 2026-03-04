@@ -7,7 +7,7 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 from openai import OpenAI
 
-MODEL = "gpt-4o-mini"
+MODEL = "gpt-5-nano"
 DATA = Path(__file__).parent.parent / "data"
 
 client = OpenAI()

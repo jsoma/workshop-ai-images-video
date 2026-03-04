@@ -23,10 +23,12 @@ compute_type = "float16" if device == "cuda" else "int8"
 model = whisperx.load_model(MODEL, device, compute_type=compute_type)
 audio = whisperx.load_audio(str(AUDIO))
 result = model.transcribe(audio, batch_size=16)
+
 # Step 2: Align
 model_a, metadata = whisperx.load_align_model(language_code=LANGUAGE, device=device)
 result = whisperx.align(result["segments"], model_a, metadata, audio, device, return_char_alignments=False)
-# Step 3: Diarize
+
+# Step 3: Diarize (split speakers)
 diarize_model = DiarizationPipeline(token=HF_TOKEN, device=device)
 result = whisperx.assign_word_speakers(diarize_model(audio), result)
 
@@ -41,17 +43,9 @@ for seg in result["segments"]:
     end = f"{int(seg['end']//60):02d}:{seg['end']%60:05.2f}"
     print(f"  [{start} - {end}] {seg['text'].strip()}")
 
-# Speaker time summary
-speaker_time = defaultdict(float)
-for seg in result["segments"]:
-    speaker_time[seg.get("speaker", "UNKNOWN")] += seg["end"] - seg["start"]
-total = sum(speaker_time.values())
-print(f"\n{'Speaker':<12} {'Time':>8} {'%':>6}")
-for spk in sorted(speaker_time):
-    t = speaker_time[spk]
-    print(f"  {spk:<10} {t/60:>6.1f}m {t/total*100:>5.1f}%")
-
 # --- cell ---
+# It isn't perfect, as you can tell!
+# We probably want them split up beautifully though, right?
 import pandas as pd
 df = pd.DataFrame(result["segments"])
 df

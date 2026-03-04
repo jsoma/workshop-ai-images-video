@@ -6,9 +6,8 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent
-from typing import Literal
 
-MODEL = "openai:gpt-4o-mini"
+MODEL = "openai:gpt-5-nano"
 DATA = Path(__file__).parent.parent / "data"
 
 image_data = (DATA / "car.jpg").read_bytes()
@@ -23,6 +22,8 @@ class Vehicle(BaseModel):
     ] = Field(description="Type of vehicle")
     confidence: float = Field(description="Your confidence in this identification, 0.0 to 1.0")
 
+# --- cell ---
+# Each field has a name, a type, and a description. The AI fills them in.
 agent = Agent(MODEL, output_type=Vehicle)
 result = agent.run_sync([
     "Analyze the vehicle in this image. Fill in all fields accurately.",

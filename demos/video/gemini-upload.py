@@ -4,24 +4,21 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
-from google import genai
+from pydantic_ai import Agent, VideoUrl
+from pydantic_ai.providers.google import GoogleProvider
 
 DATA = Path(__file__).parent.parent / "data"
 VIDEO = DATA / "rDXubdQdJYs.mp4"
 PROMPT = "Describe what happens in this video."
-MODEL = "gemini-2.5-flash"
+MODEL = "google-gla:gemini-2.5-flash"
 
-client = genai.Client()
-
-video_file = client.files.upload(file=str(VIDEO), config={"display_name": VIDEO.name})
+provider = GoogleProvider()
+video_file = provider.client.files.upload(file=str(VIDEO))
 
 while video_file.state.name == "PROCESSING":
     time.sleep(5)
-    video_file = client.files.get(name=video_file.name)
+    video_file = provider.client.files.get(name=video_file.name)
 
-response = client.models.generate_content(
-    model=MODEL,
-    contents=[PROMPT, video_file],
-)
-
-print(response.text)
+agent = Agent(MODEL)
+result = agent.run_sync([PROMPT, VideoUrl(url=video_file.uri, media_type=video_file.mime_type)])
+print(result.output)

@@ -1,6 +1,6 @@
 # Detect scene boundaries and extract mid-scene frames with PySceneDetect
-import csv
 import cv2
+import pandas as pd
 from pathlib import Path
 from scenedetect import open_video, SceneManager, ContentDetector
 
@@ -15,11 +15,12 @@ scene_manager.add_detector(ContentDetector(threshold=27.0))
 scene_manager.detect_scenes(video)
 scene_list = scene_manager.get_scene_list()
 
-with open(OUTPUT / "scene_list.csv", "w", newline="") as f:
-    writer = csv.writer(f)
-    writer.writerow(["scene", "start_time", "end_time", "duration_sec"])
-    for i, (start, end) in enumerate(scene_list, 1):
-        writer.writerow([i, start.get_timecode(), end.get_timecode(), f"{(end - start).get_seconds():.2f}"])
+rows = []
+for i, (start, end) in enumerate(scene_list, 1):
+    rows.append({"scene": i, "start_time": start.get_timecode(), "end_time": end.get_timecode(),
+                 "duration_sec": round((end - start).get_seconds(), 2)})
+df = pd.DataFrame(rows)
+df.to_csv(OUTPUT / "scene_list.csv", index=False)
 
 cap = cv2.VideoCapture(str(VIDEO))
 fps = cap.get(cv2.CAP_PROP_FPS)

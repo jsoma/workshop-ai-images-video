@@ -9,7 +9,7 @@ VIDEO = DATA / "rDXubdQdJYs.mp4"
 OUTPUT = Path(__file__).parent / "outputs"
 OUTPUT.mkdir(exist_ok=True)
 
-model = YOLO("yolo11n.pt")
+model = YOLO("yolo26n")
 tracker = sv.ByteTrack()
 cap = cv2.VideoCapture(str(VIDEO))
 fps, w, h = cap.get(cv2.CAP_PROP_FPS), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))

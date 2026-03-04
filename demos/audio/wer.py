@@ -5,9 +5,16 @@ import whisper
 
 DATA = Path(__file__).parent.parent / "data"
 AUDIO = DATA / "rDXubdQdJYs.mp3"
-MODELS = ["tiny", "base", "turbo", "large-v3"]
-REFERENCE = """This is a placeholder reference transcript. Replace with a manually
-verified transcript of a segment of your audio file.""".strip()
+MODELS = ["tiny", "turbo"]
+REFERENCE = """relative to what we're going to do with more 
+border patrol and more asylum officers. President Trump? 
+I really don't know what he said at the end of that sentence. 
+I don't think he knows what he said either.  The only person 
+on this stage is a convicted felon is the man I'm looking at 
+right now. But when he talks about a convicted felon, his son 
+is a convicted felon. What are you talking about? You have 
+the morals of an alley cat. My son was not a loser, was not 
+a sucker.""".strip()
 
 def normalize(text):
     text = text.lower()

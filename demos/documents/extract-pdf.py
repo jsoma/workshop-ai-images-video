@@ -18,7 +18,15 @@ pdf = PDF(URL)
 page = pdf.pages[0]
 
 fields = ["site", "date", "violation count", "inspection service", "summary", "city", "state"]
-results = page.extract(fields, client=client, model="gemini-2.5-flash")
+results = page.extract(
+    fields,
+    client=client,
+    model="gemini-2.5-flash",
+    citations=True)
 print(results.to_dict())
 
-results.show()
+# --- cell ---
+# Here we go with some **visual citations,** highlights on the PDF show where each answer came from.
+from IPython.display import display
+
+display(results.show())

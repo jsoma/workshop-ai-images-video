@@ -33,6 +33,20 @@ AUDIO/VIDEO via Gemini:
 - YouTube: `VideoUrl(url="https://youtube.com/...")`
 - Token usage: `result.usage()` after any run. `UsageLimits` for caps. No provider-specific `count_tokens`.
 
+NAMING — do NOT shadow package names:
+- Never name a script the same as an installed package (e.g. `whisperx.py`, `pyannote.py`).
+- Use prefixed names instead: `transcribe-whisperx.py`, `diarize-pyannote.py`.
+- The `audio/` dir runs from the demos root, so any `foo.py` there shadows `import foo`.
+
+HIDDEN LINES — lines ending with `# hidden` are stripped by patchwork-builder:
+- Use for suppressing warnings/logging in demos that would clutter notebook output.
+- Example: `import warnings  # hidden`
+
+CELL BREAKS — `# --- cell ---` splits a script into multiple notebook cells:
+- Use to show intermediate output between steps.
+- A bare expression (e.g. `df`, `result.output`) at end of a cell section gets auto-displayed.
+- A line starting with `#` immediately after `# --- cell ---` becomes a markdown cell.
+
 FOLDER STRUCTURE:
 - vision-llm/ — LLM + image
 - detection/ — object detection (YOLO, YOLOE, Grounding DINO)
@@ -43,3 +57,26 @@ FOLDER STRUCTURE:
 - tracking/ — object tracking
 - search/ — semantic image search (CLIP + ChromaDB)
 - recipes/ — multi-step workflows combining the above
+
+ENVIRONMENT SETUP:
+- The venv lives at `ai-images-video/.venv` (Python 3.12). NOT `demos/.venv`.
+- `demos/.venv` is a leftover stripped-down venv — do not use it.
+- Dependencies are in `demos/pyproject.toml`. Audio packages (whisperx, nemo, pyannote) are
+  NOT in pyproject.toml — they are installed separately via `uv pip install` into the root venv.
+- API keys (OPENAI_API_KEY, GOOGLE_API_KEY, ANTHROPIC_API_KEY, HF_TOKEN) live in `ai-images-video/.env`.
+- `demos/.env` is a symlink to `../.env`.
+
+RUNNING SCRIPTS:
+- From `demos/` directory: `../. venv/bin/python vision-llm/basic.py`
+- Or: `/path/to/ai-images-video/.venv/bin/python demos/vision-llm/basic.py`
+- First run on Dropbox can be extremely slow (minutes) due to .pyc bytecache writes triggering sync.
+  Warm cache first: `.venv/bin/python -m compileall -q .venv/lib/`
+
+BUILDING NOTEBOOKS (patchwork-builder):
+- Tool lives at `~/Development/patchwork-builder`. Installed via `uv tool install -e .`
+- Workshop .md files in `workshops/` reference scripts via ```script blocks.
+- Build: `patchwork-build workshops/nicar-2026/`
+- Build + execute: `patchwork-build workshops/nicar-2026/ --execute` (calls APIs, costs money)
+- Output: `notebooks/` (generated .ipynb) and `docs/` (generated HTML). Do NOT edit these directly.
+- The builder strips `load_dotenv` lines, rewrites `Path(__file__)` paths, strips `# hidden` lines,
+  and splits on `# --- cell ---` markers.
