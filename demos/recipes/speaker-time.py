@@ -4,6 +4,8 @@ from pathlib import Path
 import os
 
 import pandas as pd
+import os
+os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
 import torch
 import whisperx
 from whisperx.diarize import DiarizationPipeline

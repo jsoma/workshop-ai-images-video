@@ -42,6 +42,8 @@ try:
     segments = [{"start": s.start, "text": s.text} for s in result.sentences]
     print(f"Transcribed {len(segments)} segments (parakeet-mlx)")
 except ImportError:
+    import os
+    os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
     import torch
     import whisperx
     device = "cuda" if torch.cuda.is_available() else "cpu"

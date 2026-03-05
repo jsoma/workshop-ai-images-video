@@ -5,6 +5,8 @@ import logging  # hidden
 warnings.filterwarnings("ignore")  # hidden
 logging.getLogger("whisperx").setLevel(logging.ERROR)  # hidden
 logging.getLogger("pyannote").setLevel(logging.ERROR)  # hidden
+import os
+os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
 import torch
 import whisperx
 

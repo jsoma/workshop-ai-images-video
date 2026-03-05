@@ -7,7 +7,8 @@ from pydantic import BaseModel
 from pydantic_ai import Agent, BinaryContent
 
 DATA = Path(__file__).parent.parent / "data"
-MODEL = "openai:gpt-5-nano"
+MODEL = "google-gla:gemini-2.5-flash"
+# MODEL = "openai:gpt-5-nano"
 FRAMES_DIR = DATA / "debate"
 OUTPUT = Path(__file__).parent / "outputs" / "frame_classifications.csv"
 

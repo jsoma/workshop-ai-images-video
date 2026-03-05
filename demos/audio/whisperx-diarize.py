@@ -9,7 +9,10 @@ warnings.filterwarnings("ignore")  # hidden
 logging.getLogger("whisperx").setLevel(logging.ERROR)  # hidden
 logging.getLogger("pyannote").setLevel(logging.ERROR)  # hidden
 from collections import defaultdict
-import torch, whisperx
+import os
+os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
+import torch
+import whisperx
 from whisperx.diarize import DiarizationPipeline
 
 DATA = Path(__file__).parent.parent / "data"
