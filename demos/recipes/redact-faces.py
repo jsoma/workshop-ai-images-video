@@ -6,7 +6,7 @@ from ultralytics import YOLO
 
 DATA = Path(__file__).parent.parent / "data"
 
-IMAGE = DATA / "city.png"
+IMAGE = DATA / "city.jpg"
 BLUR_STRENGTH = 99
 CONFIDENCE = 0.25
 

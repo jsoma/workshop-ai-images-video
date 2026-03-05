@@ -8,7 +8,7 @@ MODEL_ID = "IDEA-Research/grounding-dino-base"
 LABELS = ["car", "building", "tree", "person", "traffic light"]
 
 detector = pipeline("zero-shot-object-detection", model=MODEL_ID)
-image = Image.open(DATA / "city.png").convert("RGB")
+image = Image.open(DATA / "city.jpg").convert("RGB")
 
 results = detector(image, candidate_labels=LABELS, threshold=0.3)
 

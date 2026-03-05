@@ -6,7 +6,7 @@ data_files:
   - "sky.jpg"
   - "coffee.jpg"
   - "cars/*.jpg"
-  - "city.png"
+  - "city.jpg"
 ---
 # Images
 
@@ -63,7 +63,7 @@ There are a ton of different providers of LLM *stuff* and they each have strengt
 Let's see how they describe this photograph.
 
 ```show
-data/city.png
+data/city.jpg
 ```
 
 ```script

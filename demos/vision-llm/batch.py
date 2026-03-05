@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent
 from typing import Literal
 
+
 MODEL = "openai:gpt-5-nano"
 DATA = Path(__file__).parent.parent / "data"
 

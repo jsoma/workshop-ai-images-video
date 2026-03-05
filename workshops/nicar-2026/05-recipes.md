@@ -1,5 +1,6 @@
 ---
 install:
+  - "torchaudio<2.9"
   - torchvision
   - ffmpeg-python
   - whisperx

@@ -6,7 +6,7 @@ from PIL import Image
 import supervision as sv
 
 DATA = Path(__file__).parent.parent / "data"
-IMAGE = DATA / "city.png"
+IMAGE = DATA / "city.jpg"
 MODEL_ID = "microsoft/Florence-2-base"
 TASK = "<OCR_WITH_REGION>"
 

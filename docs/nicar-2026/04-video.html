@@ -870,17 +870,23 @@ pre { line-height: 125%; }
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;https://www.youtube.com/watch?v=rDXubdQdJYs&quot;</span>
 
 <span class="n">DATA</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">VIDEO_ID</span> <span class="o">=</span> <span class="n">URL</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;v=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="n">ydl_opts</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;outtmpl&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;</span><span class="si">%(id)s</span><span class="s2">.</span><span class="si">%(ext)s</span><span class="s2">&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;quiet&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;no_warnings&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="k">with</span> <span class="n">yt_dlp</span><span class="o">.</span><span class="n">YoutubeDL</span><span class="p">(</span><span class="n">ydl_opts</span><span class="p">)</span> <span class="k">as</span> <span class="n">ydl</span><span class="p">:</span>
-    <span class="n">ydl</span><span class="o">.</span><span class="n">download</span><span class="p">([</span><span class="n">URL</span><span class="p">])</span>
+<span class="n">existing</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DATA</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">VIDEO_ID</span><span class="si">}</span><span class="s2">.*&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">existing</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Already downloaded: </span><span class="si">{</span><span class="n">existing</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">ydl_opts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;outtmpl&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;</span><span class="si">%(id)s</span><span class="s2">.</span><span class="si">%(ext)s</span><span class="s2">&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;quiet&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;no_warnings&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">with</span> <span class="n">yt_dlp</span><span class="o">.</span><span class="n">YoutubeDL</span><span class="p">(</span><span class="n">ydl_opts</span><span class="p">)</span> <span class="k">as</span> <span class="n">ydl</span><span class="p">:</span>
+        <span class="n">ydl</span><span class="o">.</span><span class="n">download</span><span class="p">([</span><span class="n">URL</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloaded: </span><span class="si">{</span><span class="n">VIDEO_ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
+<pre class="cell-output">Already downloaded: rDXubdQdJYs.mp3</pre>
 <h2>Extract frames</h2>
 <p>Since you know how to analyze images, why not just separate out the frames in a video? Below we extract one frame every two seconds. Now you have images: use the image tools!</p>
 <p><strong><code>video/frames.py</code></strong> — Extract frames from a video at 1 frame every 2 seconds using ffmpeg-python</p>
@@ -973,30 +979,14 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Based on an approximate timing of the video:
+<pre class="cell-output">In this 58-second video clip, **Joe Biden** appears to have slightly more screen time than Donald Trump.
 
-*   **Joe Biden:** Approximately **31 seconds**
-*   **Donald Trump:** Approximately **28 seconds**
+Here&#x27;s an approximate breakdown:
 
-**Joe Biden got slightly more screen time** in this debate video.
+*   **Joe Biden:** Approximately **32 seconds**
+*   **Donald Trump:** Approximately **25 seconds**
 
-Here&#x27;s the breakdown:
-
-*   **0:00 - 0:01:** Split screen (both visible) - approximately 1 second each
-*   **0:01 - 0:03:** Biden speaking - approximately 2 seconds
-*   **0:03 - 0:06:** Trump listening - approximately 3 seconds
-*   **0:06 - 0:07:** Biden speaking - approximately 1 second
-*   **0:07 - 0:13:** Trump speaking - approximately 6 seconds
-*   **0:13 - 0:16:** Biden speaking - approximately 3 seconds
-*   **0:16 - 0:20:** Trump speaking - approximately 4 seconds
-*   **0:20 - 0:29:** Biden speaking - approximately 9 seconds
-*   **0:29 - 0:34:** Trump speaking - approximately 5 seconds
-*   **0:34 - 0:38:** Biden speaking - approximately 4 seconds
-*   **0:38 - 0:41:** Trump listening - approximately 3 seconds
-*   **0:41 - 0:46:** Biden speaking - approximately 5 seconds
-*   **0:46 - 0:48:** Trump listening - approximately 2 seconds
-*   **0:48 - 0:52:** Trump speaking - approximately 4 seconds
-*   **0:52 - 0:58:** Biden speaking - approximately 6 seconds</pre>
+The initial 2 seconds of the video show both individuals on a split-screen as they walk out. After that, it primarily alternates between full-screen shots of each speaker as they speak or react.</pre>
 <blockquote>
 <p>Gemini's raw API docs: <a href="https://ai.google.dev/gemini-api/docs/video-understanding">video</a>, <a href="https://ai.google.dev/gemini-api/docs/audio">audio</a>.</p>
 </blockquote>
@@ -1040,28 +1030,28 @@ Here&#x27;s the breakdown:
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">confidence</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">frame-001.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-002.jpg: Joe Biden (0.95)</pre>
-<pre class="cell-output">frame-003.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-004.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-005.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-001.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-002.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-003.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-004.jpg: Joe Biden (0.99)</pre>
+<pre class="cell-output">frame-005.jpg: Donald Trump (0.95)</pre>
 <pre class="cell-output">frame-006.jpg: Donald Trump (1.00)</pre>
 <pre class="cell-output">frame-007.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-008.jpg: Joe Biden (0.95)</pre>
-<pre class="cell-output">frame-009.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-008.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-009.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-010.jpg: Donald Trump (0.95)</pre>
-<pre class="cell-output">frame-011.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-012.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-011.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-012.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-013.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-014.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-014.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-015.jpg: Joe Biden (0.95)</pre>
-<pre class="cell-output">frame-016.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-016.jpg: Donald Trump (1.00)</pre>
 <pre class="cell-output">frame-017.jpg: Donald Trump (0.95)</pre>
-<pre class="cell-output">frame-018.jpg: Joe Biden (0.95)</pre>
-<pre class="cell-output">frame-019.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-018.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-019.jpg: Joe Biden (0.98)</pre>
 <pre class="cell-output">frame-020.jpg: Joe Biden (0.95)</pre>
 <pre class="cell-output">frame-021.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-022.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-022.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-023.jpg: Joe Biden (0.95)</pre>
 <pre class="cell-output">frame-024.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-025.jpg: Donald Trump (1.00)</pre>
@@ -1109,41 +1099,41 @@ Here&#x27;s the breakdown:
       <th>0</th>
       <td>0</td>
       <td>Joe Biden</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>False</td>
-      <td>Joe Biden is seen walking onto the debate stage.</td>
+      <td>Joe Biden is on screen, walking onto the stage...</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking at a political debate, l...</td>
+      <td>This frame shows Joe Biden speaking during a d...</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
       <td>Donald Trump</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Donald Trump is on screen, speaking into a mic...</td>
+      <td>Donald Trump is on screen, wearing a suit and ...</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
       <td>Joe Biden</td>
-      <td>1.00</td>
+      <td>0.99</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking into a microp...</td>
+      <td>Joe Biden is on screen, appearing to speak int...</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
       <td>Donald Trump</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Donald Trump, former president, is shown speak...</td>
+      <td>Donald Trump is on screen, wearing a suit and ...</td>
     </tr>
     <tr>
       <th>5</th>
@@ -1151,7 +1141,7 @@ Here&#x27;s the breakdown:
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump, former president, is on screen a...</td>
+      <td>Donald Trump, the former president, is on scre...</td>
     </tr>
     <tr>
       <th>6</th>
@@ -1159,23 +1149,23 @@ Here&#x27;s the breakdown:
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking at a debate, with a m...</td>
+      <td>Donald Trump is speaking at a political debate...</td>
     </tr>
     <tr>
       <th>7</th>
       <td>7</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking during a poli...</td>
+      <td>Joe Biden is on screen and appears to be speak...</td>
     </tr>
     <tr>
       <th>8</th>
       <td>8</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen and appears to be speak...</td>
+      <td>A close-up shot of Joe Biden speaking during a...</td>
     </tr>
     <tr>
       <th>9</th>
@@ -1183,23 +1173,23 @@ Here&#x27;s the breakdown:
       <td>Donald Trump</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Donald Trump is on screen, speaking during a d...</td>
+      <td>Donald Trump is speaking during a political de...</td>
     </tr>
     <tr>
       <th>10</th>
       <td>10</td>
       <td>Joe Biden</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden with a questioning expression, a spe...</td>
+      <td>Joe Biden is on screen and appears to be speak...</td>
     </tr>
     <tr>
       <th>11</th>
       <td>11</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, wearing a dark suit, w...</td>
+      <td>Joe Biden is speaking, saying 'You have the mo...</td>
     </tr>
     <tr>
       <th>12</th>
@@ -1207,15 +1197,15 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking during a poli...</td>
+      <td>Joe Biden speaking during a political debate, ...</td>
     </tr>
     <tr>
       <th>13</th>
       <td>13</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking passionately during a de...</td>
+      <td>Joe Biden is speaking during a political debat...</td>
     </tr>
     <tr>
       <th>14</th>
@@ -1223,15 +1213,15 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking the words 'Yo...</td>
+      <td>Joe Biden is speaking at a political debate. A...</td>
     </tr>
     <tr>
       <th>15</th>
       <td>15</td>
       <td>Donald Trump</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is on screen and appears to be sp...</td>
+      <td>Donald Trump is speaking into a microphone dur...</td>
     </tr>
     <tr>
       <th>16</th>
@@ -1245,17 +1235,17 @@ Here&#x27;s the breakdown:
       <th>17</th>
       <td>17</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking at a political debate, w...</td>
+      <td>Joe Biden is on screen, speaking during a poli...</td>
     </tr>
     <tr>
       <th>18</th>
       <td>18</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>0.98</td>
       <td>True</td>
-      <td>Joe Biden is on screen, standing at a podium w...</td>
+      <td>Joe Biden is speaking at a podium during a pol...</td>
     </tr>
     <tr>
       <th>19</th>
@@ -1263,7 +1253,7 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden is shown speaking into a microphone ...</td>
+      <td>Joe Biden is on screen, looking down with a mi...</td>
     </tr>
     <tr>
       <th>20</th>
@@ -1271,15 +1261,15 @@ Here&#x27;s the breakdown:
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking during a political de...</td>
+      <td>Donald Trump is shown from the chest up, weari...</td>
     </tr>
     <tr>
       <th>21</th>
       <td>21</td>
       <td>Joe Biden</td>
-      <td>0.90</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Former Vice President Joe Biden is shown speak...</td>
+      <td>A close-up shot of Joe Biden speaking at a pod...</td>
     </tr>
     <tr>
       <th>22</th>
@@ -1287,7 +1277,7 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden is speaking at a podium during a deb...</td>
+      <td>Joe Biden is speaking at a podium during a pol...</td>
     </tr>
     <tr>
       <th>23</th>
@@ -1295,7 +1285,7 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>False</td>
-      <td>Joe Biden is on screen during a political deba...</td>
+      <td>Joe Biden is on screen. He is not speaking, as...</td>
     </tr>
     <tr>
       <th>24</th>
@@ -1303,7 +1293,7 @@ Here&#x27;s the breakdown:
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking during a political de...</td>
+      <td>Donald Trump is speaking at a political debate...</td>
     </tr>
     <tr>
       <th>25</th>
@@ -1319,7 +1309,7 @@ Here&#x27;s the breakdown:
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking at a debate, wearing ...</td>
+      <td>Donald Trump is speaking at a podium during a ...</td>
     </tr>
     <tr>
       <th>27</th>
@@ -1327,7 +1317,7 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking during a political debat...</td>
+      <td>Joe Biden speaking at a political debate.</td>
     </tr>
     <tr>
       <th>28</th>
@@ -1335,7 +1325,7 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden is on screen and speaking. He is wea...</td>
+      <td>Joe Biden is on screen and speaking during a p...</td>
     </tr>
     <tr>
       <th>29</th>
@@ -1343,7 +1333,7 @@ Here&#x27;s the breakdown:
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking into a microp...</td>
+      <td>Joe Biden is on screen, speaking at a politica...</td>
     </tr>
   </tbody>
 </table>

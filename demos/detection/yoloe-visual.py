@@ -4,8 +4,8 @@ from PIL import Image
 from ultralytics import YOLO, YOLOE
 
 DATA = Path(__file__).parent.parent / "data"
-SOURCE_IMAGE = DATA / "city.png"
-SEARCH_IMAGE = DATA / "city.png"
+SOURCE_IMAGE = DATA / "city.jpg"
+SEARCH_IMAGE = DATA / "city.jpg"
 
 # Auto-crop a reference object from the source image using YOLO
 detector = YOLO("yolo26n")

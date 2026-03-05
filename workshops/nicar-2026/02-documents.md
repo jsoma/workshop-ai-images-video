@@ -2,11 +2,11 @@
 install:
   - natural-pdf[ai]
 data_files:
-  - "city.png"
-  - "flock-scan.png"
-  - "letter.png"
+  - "city.jpg"
+  - "flock-scan.jpg"
+  - "letter.jpg"
   - "letter.pdf"
-  - "natural-pdf.png"
+  - "natural-pdf.jpg"
 ---
 # Documents
 
@@ -19,7 +19,7 @@ OCR stands for **Optical Character Recognition**, which just means "get the text
 Let's try with a PNG of a letter.
 
 ```show
-data/flock-scan.png
+data/flock-scan.jpg
 ```
 
 It's not an ideal scan - off angles, a little fuzzy, weird lines going through it. How will it do?
@@ -35,7 +35,7 @@ Wonderful!
 But as a journalist, you almost never need to recognize text in images - it's almost always in PDFs. The workflow that goes from PDF->LLM->OCR is a little more difficult than it should be, so I made a library called [Natural PDF](https://github.com/jsoma/natural-pdf) to help you do that.
 
 ```show
-data/letter.png
+data/letter.jpg
 ```
 
 While you [can use an LLM for OCR with Natural PDF](https://jsoma.github.io/natural-pdf-workshop/natural-pdf/02-ocr-and-ai-magic-ANSWERS.html) you don't need to! Using one fo the built-in OCR engines usually works pretty well.
@@ -49,7 +49,7 @@ documents/pdf-ocr.py
 [Natural PDF](https://github.com/jsoma/natural-pdf) can also help you extract **structured data** from PDFs. In this example, we pull specific fields from a document page. Visual citations show exactly where on the page each answer came from — you can see what the model looked at.
 
 ```show
-data/natural-pdf.png
+data/natural-pdf.jpg
 ```
 
 ```script

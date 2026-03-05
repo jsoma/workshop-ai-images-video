@@ -21,7 +21,7 @@ COCO_CLASSES = [
 ]
 
 model = RFDETRBase()
-detections = model.predict(str(DATA / "city.png"), threshold=0.5)
+detections = model.predict(str(DATA / "city.jpg"), threshold=0.5)
 
 for i in range(len(detections)):
     cls_name = COCO_CLASSES[int(detections.class_id[i])]

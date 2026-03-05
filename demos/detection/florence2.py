@@ -13,7 +13,7 @@ model = AutoModelForCausalLM.from_pretrained(
     MODEL_ID, trust_remote_code=True, torch_dtype=torch.float32
 ).to(device)
 
-image = Image.open(DATA / "city.png").convert("RGB")
+image = Image.open(DATA / "city.jpg").convert("RGB")
 
 for task in ["OD", "DENSE_REGION_CAPTION"]:
     prompt = f"<{task}>"

@@ -14,7 +14,7 @@ CATEGORIES = [
 ]
 
 classifier = pipeline("zero-shot-image-classification", model=MODEL_NAME)
-results = classifier(str(DATA / "city.png"), candidate_labels=CATEGORIES)
+results = classifier(str(DATA / "city.jpg"), candidate_labels=CATEGORIES)
 
 for r in results:
     print(f"  {r['score']:.3f}  {r['label']}")

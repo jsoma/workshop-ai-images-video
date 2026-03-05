@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from pydantic_ai import Agent, BinaryContent
 
 DATA = Path(__file__).parent.parent / "data"
-image_data = (DATA / "sky.jpg").read_bytes()
+image_data = (DATA / "city.jpg").read_bytes()
 
 class ImageDescription(BaseModel):
     subject: str = Field(description="Main subject of the image")
