@@ -17,11 +17,11 @@ try:
     result = model.transcribe(str(AUDIO), chunk_duration=600, overlap_duration=15)
 except ImportError:
     import onnx_asr
-    import subprocess
+    import ffmpeg
     print("Using onnx-asr...")
     WAV = AUDIO.with_suffix(".wav")
     if not WAV.exists():
-        subprocess.run(["ffmpeg", "-i", str(AUDIO), "-ar", "16000", "-ac", "1", str(WAV)], capture_output=True)
+        ffmpeg.input(str(AUDIO)).output(str(WAV), ar=16000, ac=1).run(quiet=True)
     model = onnx_asr.load_model("nemo-parakeet-tdt-0.6b-v3")
     result = model.recognize(str(WAV))
 

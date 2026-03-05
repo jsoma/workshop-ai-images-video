@@ -1097,11 +1097,11 @@ pre { line-height: 125%; }
     <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">),</span> <span class="n">chunk_duration</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">overlap_duration</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">onnx_asr</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ffmpeg</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using onnx-asr...&quot;</span><span class="p">)</span>
     <span class="n">WAV</span> <span class="o">=</span> <span class="n">AUDIO</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.wav&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">WAV</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">),</span> <span class="s2">&quot;-ar&quot;</span><span class="p">,</span> <span class="s2">&quot;16000&quot;</span><span class="p">,</span> <span class="s2">&quot;-ac&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">WAV</span><span class="p">)],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ffmpeg</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">))</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WAV</span><span class="p">),</span> <span class="n">ar</span><span class="o">=</span><span class="mi">16000</span><span class="p">,</span> <span class="n">ac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">onnx_asr</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;nemo-parakeet-tdt-0.6b-v3&quot;</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">recognize</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WAV</span><span class="p">))</span>
 
@@ -1650,20 +1650,18 @@ We probably want them split up beautifully though, right?</p>
 </pre></div>
 
 <pre class="cell-output">[00:02 - 00:07] Speaker 1: relative to what we&#x27;re going to do with more border patrol and more asylum officers.
-[00:08 - 00:08] Speaker 2: President Trump?
-[00:09 - 00:13] Speaker 3: I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
-[00:13 - 00:16] Speaker 4: The only person at this stage is a convicted felon is the man I&#x27;m looking at right now.
+[00:08 - 00:08] Speaker 2: President Trump.
+[00:08 - 00:12] Speaker 3: I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
+[00:13 - 00:16] Speaker 2: The only person at this stage is a convicted felon is the man I&#x27;m looking at right now.
 [00:17 - 00:20] Speaker 3: But when he talks about a convicted felon, his son is a convicted felon.
-[00:20 - 00:22] Speaker 4: What, what are you talking about?
-[00:23 - 00:24] Speaker 4: You you have the morals of an alley cat.
-[00:25 - 00:29] Speaker 4: My son was not a loser, was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.
-[00:29 - 00:33] Speaker 3: He&#x27;s blaming inflation and he&#x27;s right, it&#x27;s been very bad.
-[00:33 - 00:34] Speaker 3: He caused the inflation.
-[00:35 - 00:46] Speaker 1: Excuse me, with um dealing with everything we have to do with uh look if we finally beat Medicare.
-[00:46 - 00:48] Speaker 2: Thank you, President Biden. President Trump.
-[00:48 - 00:53] Speaker 3: Well, I took two tests, cognitive tests, I aced them. Go through the first five questions, he couldn&#x27;t do it.
-[00:53 - 00:55] Speaker 4: This guy&#x27;s three years younger and a lot less confident.
-[00:56 - 00:58] Speaker 4: I think that this look at the record. Look at what I&#x27;ve done.</pre>
+[00:20 - 00:22] Speaker 2: What what are you talking about?
+[00:22 - 00:24] Speaker 2: You you have the morals of an alley cat.
+[00:25 - 00:28] Speaker 2: My son was not a loser, was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.
+[00:29 - 00:34] Speaker 3: He&#x27;s blaming inflation and he&#x27;s right, it&#x27;s been very bad. He caused the inflation.
+[00:35 - 00:46] Speaker 1: I excuse me with um dealing with everything we have to do with uh look if we finally beat Medicare.
+[00:46 - 00:48] Speaker 2: Thank you, President Biden, President Trump.
+[00:48 - 00:53] Speaker 3: Well, I took two tests, cognitive tests, I ace them. Go through the first five questions, he couldn&#x27;t do it.
+[00:53 - 00:58] Speaker 2: This guy&#x27;s three years younger and a lot less confident. I think that this look at the record. Look at what I&#x27;ve done.</pre>
 <p>Cloud tradeoff: faster, structured output built-in, but your audio goes to Google. Most newsrooms will use both local and cloud depending on the sensitivity of the material.</p>
 <p>This is how real investigations work:</p>
 <ul>
