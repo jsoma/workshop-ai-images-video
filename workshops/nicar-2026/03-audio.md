@@ -1,5 +1,6 @@
 ---
 install:
+  - "onnx-asr[cpu,hub]"
   - "torchaudio<2.9"
   - torchvision
   - whisperx

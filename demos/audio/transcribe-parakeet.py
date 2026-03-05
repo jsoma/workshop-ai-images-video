@@ -17,9 +17,13 @@ try:
     result = model.transcribe(str(AUDIO), chunk_duration=600, overlap_duration=15)
 except ImportError:
     import onnx_asr
+    import subprocess
     print("Using onnx-asr...")
+    WAV = AUDIO.with_suffix(".wav")
+    if not WAV.exists():
+        subprocess.run(["ffmpeg", "-i", str(AUDIO), "-ar", "16000", "-ac", "1", str(WAV)], capture_output=True)
     model = onnx_asr.load_model("nemo-parakeet-tdt-0.6b-v3")
-    result = model.recognize(str(AUDIO))
+    result = model.recognize(str(WAV))
 
 sentences = [{"start": s.start, "end": s.end, "text": s.text} for s in result.sentences]
 print(f"Transcribed {len(sentences)} sentences")
