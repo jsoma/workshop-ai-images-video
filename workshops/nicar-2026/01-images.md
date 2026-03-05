@@ -1,4 +1,6 @@
 ---
+install:
+  - ultralytics
 data_files:
   - "car.jpg"
   - "sky.jpg"

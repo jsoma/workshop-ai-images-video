@@ -872,6 +872,8 @@ pre { line-height: 125%; }
 <div class="show-media show-audio"><div class="show-audio-label">rDXubdQdJYs.mp3</div><audio controls src="../data/rDXubdQdJYs.mp3"></audio></div>
 <p><strong><code>audio/transcribe-whisperx.py</code></strong> — WhisperX segment-level aligned transcription</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">whisperx</span>
 
@@ -1297,7 +1299,10 @@ pre { line-height: 125%; }
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="o">,</span><span class="w"> </span><span class="nn">whisperx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">whisperx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">whisperx.diarize</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiarizationPipeline</span>
 
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
@@ -1641,17 +1646,17 @@ We probably want them split up beautifully though, right?</p>
 </pre></div>
 
 <pre class="cell-output">[00:02 - 00:07] Speaker 1: relative to what we&#x27;re going to do with more border patrol and more asylum officers.
-[00:08 - 00:08] Speaker 2: President Trump.
-[00:09 - 00:13] Speaker 3: I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
-[00:13 - 00:17] Speaker 1: The only person at this stage is a convicted felon, this man I&#x27;m looking at right now.
-[00:17 - 00:20] Speaker 3: But when he talks about a convicted felon, his son is a convicted felon.
-[00:21 - 00:24] Speaker 1: What, what are you talking about? You you have the morals of an alley cat.
-[00:25 - 00:29] Speaker 3: My son was not a loser, was not a sucker. You&#x27;re the sucker, you&#x27;re the loser.
-[00:29 - 00:34] Speaker 3: He&#x27;s blaming inflation, and he&#x27;s right it&#x27;s been very bad. He caused the inflation.
-[00:35 - 00:46] Speaker 1: Excuse me with, um, dealing with everything we have to do with, uh, look, if we finally beat Medicare.
-[00:46 - 00:48] Speaker 2: Thank you, President Biden. President Trump.
-[00:48 - 00:53] Speaker 3: Well, I took two tests, cognitive tests, I aced them. Go through the first five questions, he couldn&#x27;t do it.
-[00:53 - 00:58] Speaker 1: This guy&#x27;s three years younger and a lot less competent. I think that this, look at the record. Look at what I&#x27;ve done.</pre>
+[00:08 - 00:08] Speaker 3: President Trump?
+[00:08 - 00:12] Speaker 2: Uh, I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.
+[00:13 - 00:16] Speaker 1: The only person at this stage is a convicted felon is the man I&#x27;m looking at right now.
+[00:17 - 00:20] Speaker 2: But when he talks about a convicted felon, his son is a convicted felon.
+[00:21 - 00:24] Speaker 1: What what are you talking about? You you have the morals of an alley cat.
+[00:25 - 00:28] Speaker 2: My son was not a loser, was not a sucker. You&#x27;re the sucker, you&#x27;re the loser.
+[00:29 - 00:34] Speaker 1: He&#x27;s blaming inflation and he&#x27;s right, it&#x27;s been very bad. He caused the inflation.
+[00:35 - 00:46] Speaker 2: Excuse me with um, dealing with everything we have to do with uh, look, if we finally beat Medicare.
+[00:46 - 00:48] Speaker 3: Thank you President Biden. President Trump.
+[00:48 - 00:53] Speaker 2: Well, I took two tests, cognitive tests, I ace them. Go through the first five questions, he couldn&#x27;t do it.
+[00:53 - 00:58] Speaker 1: This guy&#x27;s three years younger and a lot less confident. I think that this look at the record. Look at what I&#x27;ve done.</pre>
 <p>Cloud tradeoff: faster, structured output built-in, but your audio goes to Google. Most newsrooms will use both local and cloud depending on the sensitivity of the material.</p>
 <p>This is how real investigations work:</p>
 <ul>

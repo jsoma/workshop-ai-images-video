@@ -973,13 +973,30 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Based on the video provided:
+<pre class="cell-output">Based on an approximate timing of the video:
 
-**Joe Biden** had more screen time.
+*   **Joe Biden:** Approximately **31 seconds**
+*   **Donald Trump:** Approximately **28 seconds**
 
-Here&#x27;s an approximate breakdown:
-*   **Joe Biden:** Approximately 34 seconds
-*   **Donald Trump:** Approximately 25 seconds</pre>
+**Joe Biden got slightly more screen time** in this debate video.
+
+Here&#x27;s the breakdown:
+
+*   **0:00 - 0:01:** Split screen (both visible) - approximately 1 second each
+*   **0:01 - 0:03:** Biden speaking - approximately 2 seconds
+*   **0:03 - 0:06:** Trump listening - approximately 3 seconds
+*   **0:06 - 0:07:** Biden speaking - approximately 1 second
+*   **0:07 - 0:13:** Trump speaking - approximately 6 seconds
+*   **0:13 - 0:16:** Biden speaking - approximately 3 seconds
+*   **0:16 - 0:20:** Trump speaking - approximately 4 seconds
+*   **0:20 - 0:29:** Biden speaking - approximately 9 seconds
+*   **0:29 - 0:34:** Trump speaking - approximately 5 seconds
+*   **0:34 - 0:38:** Biden speaking - approximately 4 seconds
+*   **0:38 - 0:41:** Trump listening - approximately 3 seconds
+*   **0:41 - 0:46:** Biden speaking - approximately 5 seconds
+*   **0:46 - 0:48:** Trump listening - approximately 2 seconds
+*   **0:48 - 0:52:** Trump speaking - approximately 4 seconds
+*   **0:52 - 0:58:** Biden speaking - approximately 6 seconds</pre>
 <blockquote>
 <p>Gemini's raw API docs: <a href="https://ai.google.dev/gemini-api/docs/video-understanding">video</a>, <a href="https://ai.google.dev/gemini-api/docs/audio">audio</a>.</p>
 </blockquote>
@@ -993,7 +1010,8 @@ Here&#x27;s an approximate breakdown:
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">BinaryContent</span>
 
 <span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
-<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;openai:gpt-5-nano&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span>
+<span class="c1"># MODEL = &quot;openai:gpt-5-nano&quot;</span>
 <span class="n">FRAMES_DIR</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;debate&quot;</span>
 <span class="n">OUTPUT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;frame_classifications.csv&quot;</span>
 
@@ -1022,36 +1040,36 @@ Here&#x27;s an approximate breakdown:
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">confidence</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">frame-001.jpg: Two individuals on screen in Frame 0 (top and bottom panels) during a political debate (0.80)</pre>
-<pre class="cell-output">frame-002.jpg: Joe Biden (0.92)</pre>
-<pre class="cell-output">frame-003.jpg: Unknown male politician (0.70)</pre>
-<pre class="cell-output">frame-004.jpg: Unidentified adult male on screen (0.75)</pre>
-<pre class="cell-output">frame-005.jpg: Unknown political figure (identity redacted) (0.75)</pre>
-<pre class="cell-output">frame-006.jpg: Donald Trump (0.85)</pre>
-<pre class="cell-output">frame-007.jpg: unidentified male political figure on screen (0.55)</pre>
-<pre class="cell-output">frame-008.jpg: Joe Biden (0.78)</pre>
-<pre class="cell-output">frame-009.jpg: Joe Biden (0.85)</pre>
-<pre class="cell-output">frame-010.jpg: Donald Trump (0.75)</pre>
-<pre class="cell-output">frame-011.jpg: Unknown public figure on screen (0.65)</pre>
-<pre class="cell-output">frame-012.jpg: Unknown political figure (0.80)</pre>
-<pre class="cell-output">frame-013.jpg: Unknown political figure (frame 12) (0.65)</pre>
-<pre class="cell-output">frame-014.jpg: Unnamed male political figure (0.60)</pre>
-<pre class="cell-output">frame-015.jpg: Joe Biden (0.88)</pre>
-<pre class="cell-output">frame-016.jpg: Unidentified man (cannot determine identity from image) (0.30)</pre>
-<pre class="cell-output">frame-017.jpg: Unknown male political figure (0.78)</pre>
-<pre class="cell-output">frame-018.jpg: Joe Biden (0.85)</pre>
-<pre class="cell-output">frame-019.jpg: Unknown person on screen (political figure) (0.85)</pre>
-<pre class="cell-output">frame-020.jpg: Unknown male politician (0.72)</pre>
-<pre class="cell-output">frame-021.jpg: Unknown person (0.00)</pre>
-<pre class="cell-output">frame-022.jpg: Joe Biden (0.82)</pre>
-<pre class="cell-output">frame-023.jpg: Unknown male political figure (0.65)</pre>
-<pre class="cell-output">frame-024.jpg: Joe Biden (0.75)</pre>
-<pre class="cell-output">frame-025.jpg: Unknown political figure (0.85)</pre>
-<pre class="cell-output">frame-026.jpg: Donald Trump (0.85)</pre>
-<pre class="cell-output">frame-027.jpg: Donald Trump (0.90)</pre>
-<pre class="cell-output">frame-028.jpg: Joe Biden (0.85)</pre>
-<pre class="cell-output">frame-029.jpg: Joe Biden (0.92)</pre>
-<pre class="cell-output">frame-030.jpg: Unidentified male politician (0.92)</pre>
+<pre class="cell-output">frame-001.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-002.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-003.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-004.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-005.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-006.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-007.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-008.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-009.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-010.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-011.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-012.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-013.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-014.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-015.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-016.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-017.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-018.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-019.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-020.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-021.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-022.jpg: Joe Biden (0.90)</pre>
+<pre class="cell-output">frame-023.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-024.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-025.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-026.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-027.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-028.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-029.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-030.jpg: Joe Biden (1.00)</pre>
 <p>Every frame is now a row. You can sort, filter, and fact-check any one of them.</p>
 <div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">OUTPUT</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1090,242 +1108,242 @@ Here&#x27;s an approximate breakdown:
     <tr>
       <th>0</th>
       <td>0</td>
-      <td>Two individuals on screen in Frame 0 (top and ...</td>
-      <td>0.80</td>
+      <td>Joe Biden</td>
+      <td>1.00</td>
       <td>False</td>
-      <td>Top panel shows a man in a dark suit walking o...</td>
+      <td>Joe Biden is seen walking onto the debate stage.</td>
     </tr>
     <tr>
       <th>1</th>
       <td>1</td>
       <td>Joe Biden</td>
-      <td>0.92</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Close-up of Joe Biden speaking at a debate or ...</td>
+      <td>Joe Biden is speaking at a political debate, l...</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
-      <td>Unknown male politician</td>
-      <td>0.70</td>
-      <td>False</td>
-      <td>Frame 2 shows a male politician (no name ident...</td>
+      <td>Donald Trump</td>
+      <td>1.00</td>
+      <td>True</td>
+      <td>Donald Trump is on screen, speaking into a mic...</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
-      <td>Unidentified adult male on screen</td>
-      <td>0.75</td>
+      <td>Joe Biden</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Close-up of an unidentified adult male in a da...</td>
+      <td>Joe Biden is on screen, speaking into a microp...</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
-      <td>Unknown political figure (identity redacted)</td>
-      <td>0.75</td>
+      <td>Donald Trump</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame shows a male political figure at a micro...</td>
+      <td>Donald Trump, former president, is shown speak...</td>
     </tr>
     <tr>
       <th>5</th>
       <td>5</td>
       <td>Donald Trump</td>
-      <td>0.85</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame 5 shows a close-up of Donald Trump speak...</td>
+      <td>Donald Trump, former president, is on screen a...</td>
     </tr>
     <tr>
       <th>6</th>
       <td>6</td>
-      <td>unidentified male political figure on screen</td>
-      <td>0.55</td>
+      <td>Donald Trump</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame 6 shows a man in a dark suit and red tie...</td>
+      <td>Donald Trump is speaking at a debate, with a m...</td>
     </tr>
     <tr>
       <th>7</th>
       <td>7</td>
       <td>Joe Biden</td>
-      <td>0.78</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 7 shows Joe Biden in close-up, mouth ope...</td>
+      <td>Joe Biden is on screen, speaking during a poli...</td>
     </tr>
     <tr>
       <th>8</th>
       <td>8</td>
       <td>Joe Biden</td>
-      <td>0.85</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Close-up of Joe Biden on a stage with a blue b...</td>
+      <td>Joe Biden is on screen and appears to be speak...</td>
     </tr>
     <tr>
       <th>9</th>
       <td>9</td>
       <td>Donald Trump</td>
-      <td>0.75</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 9 shows Donald Trump in a debate setting...</td>
+      <td>Donald Trump is on screen, speaking during a d...</td>
     </tr>
     <tr>
       <th>10</th>
       <td>10</td>
-      <td>Unknown public figure on screen</td>
-      <td>0.65</td>
-      <td>False</td>
-      <td>Frame 10 shows an older man with white hair we...</td>
+      <td>Joe Biden</td>
+      <td>1.00</td>
+      <td>True</td>
+      <td>Joe Biden with a questioning expression, a spe...</td>
     </tr>
     <tr>
       <th>11</th>
       <td>11</td>
-      <td>Unknown political figure</td>
-      <td>0.80</td>
+      <td>Joe Biden</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 11: Close-up of an older man with white ...</td>
+      <td>Joe Biden is on screen, wearing a dark suit, w...</td>
     </tr>
     <tr>
       <th>12</th>
       <td>12</td>
-      <td>Unknown political figure (frame 12)</td>
-      <td>0.65</td>
+      <td>Joe Biden</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame shows a male politician in a suit and ti...</td>
+      <td>Joe Biden is on screen, speaking during a poli...</td>
     </tr>
     <tr>
       <th>13</th>
       <td>13</td>
-      <td>Unnamed male political figure</td>
-      <td>0.60</td>
+      <td>Joe Biden</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Close-up of an older man with white hair in a ...</td>
+      <td>Joe Biden is speaking passionately during a de...</td>
     </tr>
     <tr>
       <th>14</th>
       <td>14</td>
       <td>Joe Biden</td>
-      <td>0.88</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 14 shows Joe Biden on a debate stage or ...</td>
+      <td>Joe Biden is on screen, speaking the words 'Yo...</td>
     </tr>
     <tr>
       <th>15</th>
       <td>15</td>
-      <td>Unidentified man (cannot determine identity fr...</td>
-      <td>0.30</td>
+      <td>Donald Trump</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Close-up of a man in a dark suit with a red ti...</td>
+      <td>Donald Trump is on screen and appears to be sp...</td>
     </tr>
     <tr>
       <th>16</th>
       <td>16</td>
-      <td>Unknown male political figure</td>
-      <td>0.78</td>
+      <td>Donald Trump</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Close-up of an older male political figure spe...</td>
+      <td>Donald Trump is on screen, speaking into a mic...</td>
     </tr>
     <tr>
       <th>17</th>
       <td>17</td>
       <td>Joe Biden</td>
-      <td>0.85</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 17 shows Joe Biden on stage at a debate....</td>
+      <td>Joe Biden is speaking at a political debate, w...</td>
     </tr>
     <tr>
       <th>18</th>
       <td>18</td>
-      <td>Unknown person on screen (political figure)</td>
-      <td>0.85</td>
+      <td>Joe Biden</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame shows a man with white hair, wearing a d...</td>
+      <td>Joe Biden is on screen, standing at a podium w...</td>
     </tr>
     <tr>
       <th>19</th>
       <td>19</td>
-      <td>Unknown male politician</td>
-      <td>0.72</td>
+      <td>Joe Biden</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 19 shows an older man in a dark suit and...</td>
+      <td>Joe Biden is shown speaking into a microphone ...</td>
     </tr>
     <tr>
       <th>20</th>
       <td>20</td>
-      <td>Unknown person</td>
-      <td>0.00</td>
-      <td>False</td>
-      <td>Frame shows a man with light hair wearing a da...</td>
+      <td>Donald Trump</td>
+      <td>1.00</td>
+      <td>True</td>
+      <td>Donald Trump is speaking during a political de...</td>
     </tr>
     <tr>
       <th>21</th>
       <td>21</td>
       <td>Joe Biden</td>
-      <td>0.82</td>
+      <td>0.90</td>
       <td>True</td>
-      <td>Frame 21 shows a close-up of Joe Biden at a po...</td>
+      <td>Former Vice President Joe Biden is shown speak...</td>
     </tr>
     <tr>
       <th>22</th>
       <td>22</td>
-      <td>Unknown male political figure</td>
-      <td>0.65</td>
+      <td>Joe Biden</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Frame 22 shows a male politician at a debate p...</td>
+      <td>Joe Biden is speaking at a podium during a deb...</td>
     </tr>
     <tr>
       <th>23</th>
       <td>23</td>
       <td>Joe Biden</td>
-      <td>0.75</td>
+      <td>1.00</td>
       <td>False</td>
-      <td>Frame 23 shows Joe Biden at a debate podium wi...</td>
+      <td>Joe Biden is on screen during a political deba...</td>
     </tr>
     <tr>
       <th>24</th>
       <td>24</td>
-      <td>Unknown political figure</td>
-      <td>0.85</td>
+      <td>Donald Trump</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame 24: Close-up of a male political figure ...</td>
+      <td>Donald Trump is speaking during a political de...</td>
     </tr>
     <tr>
       <th>25</th>
       <td>25</td>
       <td>Donald Trump</td>
-      <td>0.85</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame 25 shows Donald Trump at a debate microp...</td>
+      <td>Donald Trump is speaking during a political de...</td>
     </tr>
     <tr>
       <th>26</th>
       <td>26</td>
       <td>Donald Trump</td>
-      <td>0.90</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Close-up of Donald Trump speaking at a politic...</td>
+      <td>Donald Trump is speaking at a debate, wearing ...</td>
     </tr>
     <tr>
       <th>27</th>
       <td>27</td>
       <td>Joe Biden</td>
-      <td>0.85</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Frame 27: Joe Biden on screen during a CNN deb...</td>
+      <td>Joe Biden is speaking during a political debat...</td>
     </tr>
     <tr>
       <th>28</th>
       <td>28</td>
       <td>Joe Biden</td>
-      <td>0.92</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Framed close-up of Joe Biden on stage during a...</td>
+      <td>Joe Biden is on screen and speaking. He is wea...</td>
     </tr>
     <tr>
       <th>29</th>
       <td>29</td>
-      <td>Unidentified male politician</td>
-      <td>0.92</td>
+      <td>Joe Biden</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Close-up of an older man with white hair, wear...</td>
+      <td>Joe Biden is on screen, speaking into a microp...</td>
     </tr>
   </tbody>
 </table>
