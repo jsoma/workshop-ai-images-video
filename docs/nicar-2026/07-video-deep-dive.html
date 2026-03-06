@@ -763,26 +763,9 @@ footer a:hover {
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 768px) {
-  body { flex-direction: column; }
-  .sidebar {
-    width: 100%; min-width: 0; height: auto;
-    position: static; border-right: none;
-    border-bottom: var(--border-w) solid var(--sidebar-border);
-    flex-direction: row; align-items: center;
-  }
-  .sidebar nav { display: flex; flex-wrap: wrap; gap: 0; }
-  .sidebar nav a {
-    border-left: none;
-    border-bottom: 2px solid transparent;
-    padding: 0.4rem 0.8rem;
-  }
-  .sidebar nav a.active {
-    border-left: none;
-    border-bottom-color: var(--sidebar-active-border);
-  }
+@media (max-width: 900px) {
+  .sidebar { display: none; }
   main { padding: 1.5rem 1rem; }
-  .theme-toggle { margin: 0; padding: 0 1rem; border: none; }
 }
 
 pre { line-height: 125%; }
