@@ -15,6 +15,7 @@ try:
     print("Using parakeet-mlx...")
     model = from_pretrained("mlx-community/parakeet-tdt-0.6b-v3")
     result = model.transcribe(str(AUDIO), chunk_duration=600, overlap_duration=15)
+    sentences = [{"start": s.start, "end": s.end, "text": s.text} for s in result.sentences]
 except ImportError:
     import onnx_asr
     import ffmpeg
@@ -22,10 +23,10 @@ except ImportError:
     WAV = AUDIO.with_suffix(".wav")
     if not WAV.exists():
         ffmpeg.input(str(AUDIO)).output(str(WAV), ar=16000, ac=1).run(quiet=True)
-    model = onnx_asr.load_model("nemo-parakeet-tdt-0.6b-v3")
+    vad = onnx_asr.load_vad("silero")
+    model = onnx_asr.load_model("nemo-parakeet-tdt-0.6b-v3").with_vad(vad)
     result = model.recognize(str(WAV))
-
-sentences = [{"start": s.start, "end": s.end, "text": s.text} for s in result.sentences]
+    sentences = [{"start": s.start, "end": s.end, "text": s.text} for s in result]
 print(f"Transcribed {len(sentences)} sentences")
 
 # --- cell ---

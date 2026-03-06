@@ -13,7 +13,7 @@ data_files:
 ---
 # Audio
 
-Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it.
+Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it. This is how you can do story research like [Misinformation on TikTok: How 'Documented' Examined Hundreds of Videos in Different Languages](https://pulitzercenter.org/misinformation-tiktok-how-documented-examined-hundreds-videos-different-languages).
 
 ## Transcription with Whisper
 
@@ -27,6 +27,12 @@ When you use Whisper, you have to make some decisions:
 * **Which version of the model:** Like tiny, base, large... bigger is better, but slower! **Turbo** is the best combination of speed and accuracy. 
 
 Let's practice on this Trump/Biden debate clip.
+
+```show
+https://www.youtube.com/watch?v=rDXubdQdJYs
+```
+
+I saved it as an mp3 to make life a little easier.
 
 ```show
 data/rDXubdQdJYs.mp3
@@ -43,6 +49,8 @@ NVIDIA's [Parakeet](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3) is a new
 Here we combine Parakeet for transcription with **pyannote** for speaker diarization — "who said what?"
 
 **Setup:** Diarization requires a free Hugging Face token (`HF_TOKEN`) and accepting the model licenses at [pyannote/segmentation-3.0](https://huggingface.co/pyannote/segmentation-3.0) and [pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1). It's kind of a pain to jump through the hoops but if you're vaguely technical it's definitely worth it.
+
+> In the example below, we try to use Parakeet MLX (it's fast on my mac!) but if that fails we go for [onnx-asr](https://istupakov.github.io/onnx-asr/usage/), a flexible, portable tool that allows you to use different ASR (automatic speech recognition) models.
 
 ```script{log=error}
 audio/transcribe-parakeet.py

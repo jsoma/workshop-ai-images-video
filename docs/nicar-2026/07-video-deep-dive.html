@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonus: Video Deep Dive — Analyzing Images &amp; Video with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+(function() {
+  try {
+    var saved = localStorage.getItem('theme');
+    var theme = saved ? saved :
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
+<style>
+/* ==========================================================================
+   DARK THEME (Darkroom) — default
+   ========================================================================== */
+
+[data-theme="dark"] {
+  --color-bg:           #09090b;
+  --color-bg-subtle:    #141416;
+  --color-surface:      #1c1c1f;
+  --color-border:       #2a2a2e;
+  --color-border-light: #1f1f22;
+  --color-text:         #e8e4dc;
+  --color-text-muted:   #9a9590;
+  --color-text-faint:   #5a5550;
+  --color-accent:       #c41230;
+  --color-accent-hover: #e01940;
+  --color-accent-faint: rgba(196, 18, 48, 0.12);
+
+  --font-display:  "Instrument Serif", "Georgia", serif;
+  --font-body:     "DM Sans", "Helvetica Neue", sans-serif;
+  --font-mono:     "JetBrains Mono", "SF Mono", monospace;
+
+  --sidebar-bg:         #0f0f12;
+  --sidebar-border:     #1f1f22;
+  --sidebar-text:       #9a9590;
+  --sidebar-text-hover: #e8e4dc;
+  --sidebar-active-bg:  rgba(196, 18, 48, 0.08);
+  --sidebar-active-text: #e8e4dc;
+  --sidebar-active-border: var(--color-accent);
+
+  --code-bg:            #111114;
+  --code-border:        #1f1f22;
+  --code-text:          #d4d0c8;
+  --inline-code-bg:     #1c1c1f;
+  --inline-code-text:   #d4d0c8;
+  --inline-code-border: transparent;
+
+  --output-bg:          #0d0d10;
+  --output-border:      #1f1f22;
+  --output-text:        #a09890;
+  --output-label-bg:    #0d0d10;
+  --output-sep:         #2a2a2e;
+
+  --table-border:       #2a2a2e;
+  --table-header-bg:    #141416;
+  --table-header-text:  #e8e4dc;
+  --table-stripe-bg:    rgba(255,255,255,0.015);
+
+  --banner-bg:          #111114;
+  --banner-border:      #1f1f22;
+  --banner-text:        #e8e4dc;
+  --banner-muted:       #9a9590;
+
+  --colab-bg:           transparent;
+  --colab-text:         #e8e4dc;
+  --colab-border:       #e8e4dc;
+  --colab-hover-bg:     #e8e4dc;
+  --colab-hover-text:   #09090b;
+
+  --footer-border:      #1f1f22;
+  --grain-opacity:      0.03;
+
+  /* Syntax highlighting */
+  --syn-comment:    #5a5856;
+  --syn-keyword:    #c49060;
+  --syn-string:     #90b090;
+  --syn-number:     #b0a090;
+  --syn-function:   #80a0c0;
+  --syn-class:      #80b0c0;
+  --syn-operator:   #8a8580;
+  --syn-decorator:  #a080c0;
+  --syn-builtin:    #c0b8a0;
+  --syn-variable:   #b0a0c0;
+  --syn-error:      #e8a0a0;
+  --syn-deleted:    #c41230;
+  --syn-inserted:   #80b880;
+
+  --toggle-icon:    "\263E"; /* moon */
+  --h2-style:       serif;
+}
+
+/* ==========================================================================
+   LIGHT THEME (Signal)
+   ========================================================================== */
+
+[data-theme="light"] {
+  --color-bg:           #EFEFEB;
+  --color-bg-subtle:    #E3E3DD;
+  --color-surface:      #fff;
+  --color-border:       #111;
+  --color-border-light: #ccc;
+  --color-text:         #111;
+  --color-text-muted:   #555;
+  --color-text-faint:   #999;
+  --color-accent:       #FF2D55;
+  --color-accent-hover: #ff0040;
+  --color-accent-faint: rgba(255, 45, 85, 0.06);
+
+  --font-display:  "Archivo Black", "Impact", sans-serif;
+  --font-body:     "IBM Plex Sans", "Helvetica Neue", sans-serif;
+  --font-mono:     "IBM Plex Mono", "Courier New", monospace;
+
+  --sidebar-bg:         #111;
+  --sidebar-border:     #111;
+  --sidebar-text:       #999;
+  --sidebar-text-hover: #fff;
+  --sidebar-active-bg:  var(--color-accent);
+  --sidebar-active-text: #fff;
+  --sidebar-active-border: var(--color-accent);
+
+  --code-bg:            #fff;
+  --code-border:        #111;
+  --code-text:          #111;
+  --inline-code-bg:     #E3E3DD;
+  --inline-code-text:   #111;
+  --inline-code-border: #ccc;
+
+  --output-bg:          #f8f8f4;
+  --output-border:      #111;
+  --output-text:        #333;
+  --output-label-bg:    #EFEFEB;
+  --output-sep:         #999;
+
+  --table-border:       #111;
+  --table-header-bg:    #111;
+  --table-header-text:  #fff;
+  --table-stripe-bg:    rgba(0,0,0,0.03);
+
+  --banner-bg:          #111;
+  --banner-border:      #111;
+  --banner-text:        #fff;
+  --banner-muted:       #aaa;
+
+  --colab-bg:           var(--color-accent);
+  --colab-text:         #fff;
+  --colab-border:       var(--color-accent);
+  --colab-hover-bg:     #111;
+  --colab-hover-text:   #fff;
+
+  --footer-border:      #111;
+  --grain-opacity:      0;
+
+  /* Syntax highlighting */
+  --syn-comment:    #999;
+  --syn-keyword:    #111;
+  --syn-string:     #FF2D55;
+  --syn-number:     #0057FF;
+  --syn-function:   #0057FF;
+  --syn-class:      #111;
+  --syn-operator:   #555;
+  --syn-decorator:  #555;
+  --syn-builtin:    #333;
+  --syn-variable:   #333;
+  --syn-error:      #FF2D55;
+  --syn-deleted:    #c00;
+  --syn-inserted:   #080;
+
+  --toggle-icon:    "\2600"; /* sun */
+  --h2-style:       sans;
+}
+
+/* ==========================================================================
+   SHARED STRUCTURAL TOKENS
+   ========================================================================== */
+
+:root {
+  --sidebar-width:  280px;
+  --content-max:    960px;
+  --radius:         0px;
+  --border-w:       1px;
+}
+
+[data-theme="light"] {
+  --border-w: 3px;
+}
+
+/* ==========================================================================
+   RESET & BASE
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text);
+  background: var(--color-bg);
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+a { color: var(--color-accent); }
+a:hover { color: var(--color-accent-hover); }
+img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+/* Grain */
+.grain {
+  position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+  transition: opacity 0.3s ease;
+}
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  border-right: var(--border-w) solid var(--sidebar-border);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .workshop-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid var(--sidebar-border);
+  margin-bottom: 0.5rem;
+}
+
+[data-theme="light"] .sidebar .workshop-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom-color: #333;
+}
+
+.sidebar .workshop-title a {
+  color: var(--sidebar-text-hover);
+  transition: color 0.2s;
+}
+
+.sidebar .workshop-title a:hover {
+  color: var(--color-accent);
+}
+
+.sidebar nav { list-style: none; flex: 1; }
+
+.sidebar nav a {
+  display: block;
+  padding: 0.55rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .sidebar nav a {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border-left-width: 3px;
+}
+
+.sidebar nav a:hover {
+  color: var(--sidebar-text-hover);
+  background: rgba(255,255,255,0.04);
+}
+
+.sidebar nav a.active {
+  color: var(--sidebar-active-text);
+  font-weight: 500;
+  background: var(--sidebar-active-bg);
+  border-left-color: var(--sidebar-active-border);
+}
+
+[data-theme="light"] .sidebar nav a.active {
+  font-weight: 600;
+}
+
+/* --- Theme toggle button --- */
+.theme-toggle {
+  margin: auto 1.25rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+[data-theme="light"] .theme-toggle {
+  border-top-color: #333;
+}
+
+.theme-toggle button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--sidebar-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.theme-toggle button:hover {
+  color: var(--sidebar-text-hover);
+}
+
+.theme-toggle button::before {
+  content: var(--toggle-icon);
+  font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   MAIN CONTENT
+   ========================================================================== */
+
+main {
+  flex: 1;
+  max-width: var(--content-max);
+  padding: 2rem 3rem;
+  min-width: 0;
+  transition: background 0.3s ease;
+}
+
+/* --- Banner --- */
+.banner {
+  background: transparent;
+  border: none;
+  border-bottom: none;
+  border-radius: 0;
+  padding: 0 0 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: var(--color-text);
+  transition: all 0.3s ease;
+}
+
+[data-theme="light"] .banner {
+  border-bottom: none;
+}
+
+.banner-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2.2rem;
+  color: var(--color-text);
+}
+
+[data-theme="light"] .banner-title {
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.15rem;
+}
+
+.banner p {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  margin: 0.25rem 0 0;
+  line-height: 1.6;
+}
+
+.banner strong { font-weight: 600; color: var(--color-text); }
+
+/* --- Colab button --- */
+.colab-btn {
+  display: inline-block;
+  padding: 0.5em 1.1em;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--colab-text);
+  background: var(--colab-bg);
+  border: var(--border-w) solid var(--colab-border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .colab-btn {
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+}
+
+.colab-btn:hover {
+  background: var(--colab-hover-bg);
+  color: var(--colab-hover-text);
+  border-color: var(--colab-hover-bg);
+}
+
+.colab-bar { margin-top: 1.2rem; margin-bottom: 1.5rem; }
+
+/* --- Typography --- */
+h1 {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  font-weight: 400;
+  line-height: 1;
+  margin: 2.5rem 0 0.8rem;
+  border-bottom: var(--border-w) solid var(--color-border);
+  padding-bottom: 0.4rem;
+  color: var(--color-text);
+}
+
+[data-theme="light"] h1 {
+  font-size: 5rem;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 2.5rem 0 0.8rem;
+}
+
+h2 {
+  font-family: var(--font-body);
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin: 2.5rem 0 0.5rem;
+  color: var(--color-text);
+  position: relative;
+  padding-left: 1.3rem;
+}
+
+[data-theme="light"] h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Accent bar before h2 */
+h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  width: 8px;
+  height: 1.2em;
+  background: var(--color-accent);
+  border-radius: 1px;
+}
+
+[data-theme="light"] h2::before {
+  width: 6px;
+  border-radius: 0;
+}
+
+h3 {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin: 1.5rem 0 0.3rem;
+}
+
+[data-theme="light"] h3 {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+p {
+  margin: 0.7rem 0;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+p strong { color: var(--color-text); font-weight: 500; }
+[data-theme="light"] p strong { font-weight: 600; }
+
+hr {
+  border: none;
+  border-top: var(--border-w) solid var(--color-border);
+  margin: 2rem 0;
+}
+
+main ul, main ol { margin: 0.7rem 0; padding-left: 1.5rem; color: var(--color-text-muted); }
+main li { margin: 0.25rem 0; font-size: 1rem; }
+
+blockquote {
+  border-left: 2px solid var(--color-accent);
+  padding-left: 1rem;
+  color: var(--color-text-muted);
+  margin: 0.8rem 0;
+}
+
+[data-theme="light"] blockquote {
+  border-left-width: 3px;
+}
+
+em { font-style: italic; }
+strong { font-weight: 500; }
+[data-theme="light"] strong { font-weight: 600; }
+
+.show-image, .show-media {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.show-image img {
+  max-width: 80%;
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.show-audio {
+  background: var(--color-surface);
+  border: var(--border-w) solid var(--color-border);
+  border-radius: 0;
+  padding: 1rem 1.2rem;
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.show-audio-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.show-audio audio {
+  width: 100%;
+}
+
+.show-video video {
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.show-youtube {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.show-youtube iframe {
+  border: var(--border-w) solid var(--color-border);
+}
+
+.show-grid {
+  display: grid;
+  gap: 10px;
+  margin: 1.5rem 0;
+}
+
+.show-grid-item {
+  margin: 0;
+  text-align: center;
+}
+
+.show-grid-item img {
+  width: 100%;
+  border: var(--border-w) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.show-grid-item figcaption {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: 0.3rem;
+}
+
+/* --- Code blocks --- */
+pre, code {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+}
+
+pre {
+  background: var(--code-bg);
+  border: var(--border-w) solid var(--code-border);
+  padding: 1.2rem 1.3rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 1rem 0;
+  line-height: 1.6;
+  color: var(--code-text);
+  white-space: pre;
+  transition: all 0.3s ease;
+}
+
+.highlight {
+  background: var(--code-bg);
+  border: var(--border-w) solid var(--code-border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.3rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  transition: all 0.3s ease;
+}
+.highlight::-webkit-scrollbar { display: none; }
+
+.highlight pre {
+  margin: 0; padding: 0; background: none; border: none; border-radius: 0;
+  overflow-y: hidden;
+}
+
+p code, li code {
+  background: var(--inline-code-bg);
+  color: var(--inline-code-text);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.92rem;
+  border: 1px solid var(--inline-code-border);
+  transition: all 0.3s ease;
+}
+
+[data-theme="light"] p code,
+[data-theme="light"] li code {
+  border-radius: 0;
+}
+
+/* --- Cell outputs --- */
+.cell-output {
+  background: var(--output-bg);
+  border: var(--border-w) solid var(--output-border);
+  border-top: 2px dashed var(--output-sep);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.3rem;
+  margin: 1rem 0 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--output-text);
+  overflow: visible;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* "OUTPUT" label */
+[data-theme="light"] .cell-output::before {
+  content: "OUTPUT";
+  position: absolute;
+  top: -0.65em;
+  left: 0.8rem;
+  transform: none;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #fff;
+  background: #666;
+  padding: 0.2em 0.6em;
+  line-height: 1.2;
+}
+
+pre.cell-output {
+  border-top: 2px dashed var(--output-sep);
+}
+
+.cell-error {
+  color: var(--syn-error);
+  background: var(--color-accent-faint);
+  border-color: var(--color-accent);
+}
+
+/* --- Tables --- */
+.cell-output > div {
+  overflow-x: auto;
+}
+
+.cell-output table, table.dataframe {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  width: max-content;
+  min-width: 100%;
+}
+
+.cell-output th, .cell-output td {
+  border: var(--border-w) solid var(--table-border);
+  padding: 0.5em 0.8em;
+  text-align: left;
+  color: var(--color-text-muted);
+}
+
+.cell-output th {
+  background: var(--table-header-bg);
+  color: var(--table-header-text);
+  font-weight: 500;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cell-output tr:nth-child(even) {
+  background: var(--table-stripe-bg);
+}
+
+/* ==========================================================================
+   FOOTER NAV
+   ========================================================================== */
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: var(--border-w) solid var(--footer-border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+[data-theme="light"] footer {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+footer a {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+footer a:hover {
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  body { flex-direction: column; }
+  .sidebar {
+    width: 100%; min-width: 0; height: auto;
+    position: static; border-right: none;
+    border-bottom: var(--border-w) solid var(--sidebar-border);
+    flex-direction: row; align-items: center;
+  }
+  .sidebar nav { display: flex; flex-wrap: wrap; gap: 0; }
+  .sidebar nav a {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.4rem 0.8rem;
+  }
+  .sidebar nav a.active {
+    border-left: none;
+    border-bottom-color: var(--sidebar-active-border);
+  }
+  main { padding: 1.5rem 1rem; }
+  .theme-toggle { margin: 0; padding: 0 1rem; border: none; }
+}
+
+pre { line-height: 125%; }
+.highlight .hll { background-color: var(--color-accent-faint); }
+.highlight .c, .highlight .ch, .highlight .cm, .highlight .cpf, .highlight .c1, .highlight .cs { color: var(--syn-comment); font-style: italic; }
+.highlight .err { color: var(--syn-error); }
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kr, .highlight .nt { color: var(--syn-keyword); font-weight: bold; }
+[data-theme="dark"] .highlight .k,
+[data-theme="dark"] .highlight .kc,
+[data-theme="dark"] .highlight .kd,
+[data-theme="dark"] .highlight .kn,
+[data-theme="dark"] .highlight .kr,
+[data-theme="dark"] .highlight .nt { font-weight: normal; }
+.highlight .kp { color: var(--syn-keyword); }
+.highlight .kt { color: var(--syn-class); }
+.highlight .o { color: var(--syn-operator); }
+.highlight .cp { color: var(--syn-operator); }
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .il { color: var(--syn-number); }
+.highlight .s, .highlight .sa, .highlight .sb, .highlight .sc, .highlight .dl, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 { color: var(--syn-string); }
+.highlight .sd { color: var(--syn-comment); font-style: italic; }
+.highlight .se { color: var(--syn-number); font-weight: bold; }
+.highlight .si { color: var(--syn-variable); font-weight: bold; }
+.highlight .sr { color: var(--syn-variable); }
+.highlight .ss { color: var(--syn-variable); }
+.highlight .na { color: var(--syn-operator); }
+.highlight .nb, .highlight .bp { color: var(--syn-builtin); }
+.highlight .nc { color: var(--syn-class); font-weight: bold; }
+.highlight .no { color: var(--syn-builtin); }
+.highlight .nd { color: var(--syn-decorator); }
+.highlight .ni { color: var(--syn-operator); font-weight: bold; }
+.highlight .ne { color: var(--syn-error); font-weight: bold; }
+.highlight .nf, .highlight .fm { color: var(--syn-function); }
+.highlight .nl { color: var(--syn-operator); }
+.highlight .nn { color: var(--syn-class); font-weight: bold; }
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi, .highlight .vm { color: var(--syn-variable); }
+.highlight .ow { color: var(--syn-keyword); font-weight: bold; }
+.highlight .w { color: var(--color-text-faint); }
+.highlight .gd { color: var(--syn-deleted); }
+.highlight .ge { font-style: italic; }
+.highlight .ges { font-weight: bold; font-style: italic; }
+.highlight .gr { color: var(--syn-error); }
+.highlight .gh { color: var(--color-text); font-weight: bold; }
+.highlight .gi { color: var(--syn-inserted); }
+.highlight .go { color: var(--color-text-faint); }
+.highlight .gp { color: var(--color-text-muted); font-weight: bold; }
+.highlight .gs { font-weight: bold; }
+.highlight .gu { color: var(--syn-keyword); font-weight: bold; }
+.highlight .gt { color: var(--syn-error); }
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<aside class="sidebar">
+  <div class="workshop-title"><a href="index.html">Analyzing Images &amp; Video with AI</a></div>
+  <nav>
+    <a href="01-images.html">Images</a><a href="02-documents.html">Documents</a><a href="03-audio.html">Audio</a><a href="04-video.html">Video</a><a href="05-recipes.html">The full pipeline</a><a href="06-tracking.html">Bonus: Tracking &amp; Counting</a><a href="07-video-deep-dive.html" class="active">Bonus: Video Deep Dive</a>
+  </nav>
+  <div class="theme-toggle">
+    <button onclick="toggleTheme()" id="theme-btn">Switch theme</button>
+  </div>
+</aside>
+
+<main>
+<div class="banner">
+  <div class="banner-text">
+    <div class="banner-title">Analyzing Images &amp; Video with AI</div>
+    <p>You already know what to do with text: summarize it, answer questions about it, extract data from it. Images, audio, and video are just ways of <strong>getting to text and structured data.</strong></p>
+  </div>
+</div>
+
+<div class="colab-bar"><a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/07-video-deep-dive.ipynb" class="colab-btn">Open this notebook in Colab</a></div>
+
+<h1>Bonus: Video Deep Dive</h1>
+<p>The main video notebook showed you how to split video into frames and audio. This one goes deeper: automatic scene detection, and using Gemini to understand video directly — with timestamps, structured data, and zero decomposition.</p>
+<h2>Scene detection with PySceneDetect</h2>
+<p><a href="https://www.scenedetect.com/">PySceneDetect</a> finds cuts in video automatically by flagging big visual changes. It's ancient technology, but super quick and (mostly) effective. Great for splitting long videos into meaningful chunks.</p>
+<p><strong><code>video/scenes.py</code></strong> — Detect scene boundaries and extract mid-scene frames with PySceneDetect</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scenedetect</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_video</span><span class="p">,</span> <span class="n">SceneManager</span><span class="p">,</span> <span class="n">ContentDetector</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">VIDEO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp4&quot;</span>
+<span class="n">OUTPUT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;scenes&quot;</span>
+<span class="n">OUTPUT</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">video</span> <span class="o">=</span> <span class="n">open_video</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">VIDEO</span><span class="p">))</span>
+<span class="n">scene_manager</span> <span class="o">=</span> <span class="n">SceneManager</span><span class="p">()</span>
+<span class="n">scene_manager</span><span class="o">.</span><span class="n">add_detector</span><span class="p">(</span><span class="n">ContentDetector</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">27.0</span><span class="p">))</span>
+<span class="n">scene_manager</span><span class="o">.</span><span class="n">detect_scenes</span><span class="p">(</span><span class="n">video</span><span class="p">)</span>
+<span class="n">scene_list</span> <span class="o">=</span> <span class="n">scene_manager</span><span class="o">.</span><span class="n">get_scene_list</span><span class="p">()</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scene_list</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;scene&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">start</span><span class="o">.</span><span class="n">get_timecode</span><span class="p">(),</span> <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">end</span><span class="o">.</span><span class="n">get_timecode</span><span class="p">(),</span>
+                 <span class="s2">&quot;duration_sec&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">get_seconds</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)})</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">OUTPUT</span> <span class="o">/</span> <span class="s2">&quot;scene_list.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">VIDEO</span><span class="p">))</span>
+<span class="n">fps</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">CAP_PROP_FPS</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scene_list</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">mid_frame</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">start</span><span class="o">.</span><span class="n">get_seconds</span><span class="p">()</span> <span class="o">+</span> <span class="n">end</span><span class="o">.</span><span class="n">get_seconds</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">fps</span><span class="p">)</span>
+    <span class="n">cap</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">CAP_PROP_POS_FRAMES</span><span class="p">,</span> <span class="n">mid_frame</span><span class="p">)</span>
+    <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ret</span><span class="p">:</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">OUTPUT</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;scene_</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">.jpg&quot;</span><span class="p">),</span> <span class="n">frame</span><span class="p">,</span> <span class="p">[</span><span class="n">cv2</span><span class="o">.</span><span class="n">IMWRITE_JPEG_QUALITY</span><span class="p">,</span> <span class="mi">95</span><span class="p">])</span>
+<span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">scene_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> scenes, frames saved to </span><span class="si">{</span><span class="n">OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">objc[914]: Class AVFFrameReceiver is implemented in both /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1053e43a8) and /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/av/.dylibs/libavdevice.62.1.100.dylib (0x11de103a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+objc[914]: Class AVFAudioReceiver is implemented in both /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1053e43f8) and /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/av/.dylibs/libavdevice.62.1.100.dylib (0x11de103f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.</pre>
+<pre class="cell-output">Found 16 scenes, frames saved to outputs/scenes</pre>
+<p>Each scene gets a start time, end time, and a representative frame saved to disk. Now you can analyze scenes individually instead of processing the whole video.</p>
+<h2>Send a video file to Gemini</h2>
+<p>Gemini can watch video. Upload a file, ask a question, get an answer. It's slower, it's more expensive, but it's <em>very easy to do</em>.</p>
+<p><strong><code>video/gemini-upload.py</code></strong> — Upload a video file to Gemini and ask a question about it</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">VideoUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai.providers.google</span><span class="w"> </span><span class="kn">import</span> <span class="n">GoogleProvider</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">VIDEO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp4&quot;</span>
+<span class="n">PROMPT</span> <span class="o">=</span> <span class="s2">&quot;Describe what happens in this video.&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="n">GoogleProvider</span><span class="p">()</span>
+<span class="n">video_file</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">VIDEO</span><span class="p">))</span>
+
+<span class="k">while</span> <span class="n">video_file</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;PROCESSING&quot;</span><span class="p">:</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">video_file</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span><span class="n">PROMPT</span><span class="p">,</span> <span class="n">VideoUrl</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">mime_type</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">This video is a split-screen compilation from the CNN Presidential Debate held in Atlanta, Georgia, on June 27, 2024, featuring President Joe Biden and former President Donald Trump. The video highlights several contentious exchanges between the two candidates.
+
+Here&#x27;s a breakdown of what happens:
+
+*   **0:00-0:02:** The video opens with a split screen showing Joe Biden (top) and Donald Trump (bottom) separately walking onto the debate stage, both appearing serious.
+*   **0:02-0:07:** Biden is shown speaking about &quot;more border patrol and more asylum officers,&quot; with a somewhat hesitant delivery.
+*   **0:07-0:12:** Trump responds, looking dismissive, saying, &quot;I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.&quot;
+*   **0:12-0:17:** Biden then directly attacks Trump, stating angrily, &quot;The only person on this stage that is a convicted felon is the man I&#x27;m looking at right now.&quot;
+*   **0:17-0:20:** Trump quickly retorts, pointing a finger, &quot;but when he talks about a convicted felon, his son is a convicted felon,&quot; referring to Hunter Biden.
+*   **0:20-0:24:** A visibly agitated Biden asks, &quot;What are you talking about? You have the morals of an alley cat.&quot;
+*   **0:24-0:29:** Biden continues his emotional response, saying, &quot;My son was not a loser. He was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.&quot;
+*   **0:29-0:34:** Trump, with a serious expression, discusses inflation, asserting that Biden &quot;caused the inflation.&quot;
+*   **0:34-0:40:** Biden struggles to articulate his thoughts, closing his eyes and pausing, eventually saying, &quot;Excuse me, with, dealing with everything we have to do with, uh...&quot;
+*   **0:40-0:46:** Trump watches as Biden continues to falter, then says, &quot;We finally beat Medicare,&quot; which appears to be a misstatement or a lost train of thought. A moderator&#x27;s voice is then heard.
+*   **0:47-0:52:** Trump, appearing confident, states, &quot;Well, I took two tests. Cognitive tests. I aced them. Go through the first five questions. He couldn&#x27;t do it,&quot; seemingly challenging Biden&#x27;s mental acuity.
+*   **0:52-0:58:** Biden concludes the clip by responding, &quot;This guy is three years younger and a lot less competent. I think that just look at the record. Look at what I&#x27;ve done,&quot; expressing frustration and defiance.</pre>
+<h2>Or just give it a YouTube URL</h2>
+<p>If the video is already on YouTube, it's even easier: Gemini accepts YouTube URLs directly.</p>
+<p><strong><code>video/gemini-youtube.py</code></strong> — Send a YouTube URL directly to Gemini for analysis (no download needed)</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">VideoUrl</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;https://www.youtube.com/watch?v=rDXubdQdJYs&quot;</span>
+<span class="n">PROMPT</span> <span class="o">=</span> <span class="s2">&quot;What topics are discussed in this video?&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span>
+    <span class="n">PROMPT</span><span class="p">,</span>
+    <span class="n">VideoUrl</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">URL</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">The video features segments from a presidential debate between Joe Biden and Donald Trump, and the topics discussed include:
+
+*   **Immigration and border security:** Biden mentions increasing border patrol and asylum officers.
+*   **Felony convictions:** Biden refers to Trump as a &quot;convicted felon,&quot; and Trump retorts by mentioning Hunter Biden&#x27;s conviction.
+*   **Personal insults and character attacks:** Biden calls Trump names like &quot;alley cat,&quot; &quot;sucker,&quot; and &quot;loser.&quot;
+*   **The economy and inflation:** Trump blames Biden for inflation.
+*   **Mental fitness and cognitive ability:** Trump boasts about passing cognitive tests and implies Biden couldn&#x27;t, while Biden calls Trump &quot;less competent&quot; and refers to his own record.
+*   **Healthcare:** Biden makes a somewhat garbled statement about &quot;beating Medicare&quot; (likely a verbal gaffe meaning improving it).</pre>
+<h2>Ask about a specific moment</h2>
+<p>"What's happening at 1:30?" Gemini can jump to timestamps. Useful when you already know <em>where</em> to look but need the AI to describe <em>what</em> it sees.</p>
+<p><strong><code>video/gemini-timestamp.py</code></strong> — Ask Gemini about a specific moment in a video using timestamps</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">VideoUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai.providers.google</span><span class="w"> </span><span class="kn">import</span> <span class="n">GoogleProvider</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">VIDEO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp4&quot;</span>
+<span class="n">PROMPT</span> <span class="o">=</span> <span class="s2">&quot;What is happening at 01:30 in this video? Describe the scene and any text on screen.&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="n">GoogleProvider</span><span class="p">()</span>
+<span class="n">video_file</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">VIDEO</span><span class="p">))</span>
+
+<span class="k">while</span> <span class="n">video_file</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;PROCESSING&quot;</span><span class="p">:</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">video_file</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span><span class="n">PROMPT</span><span class="p">,</span> <span class="n">VideoUrl</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">mime_type</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">At 01:30 in the video, Joe Biden is shown in a close-up shot, speaking intensely into a microphone. He is wearing a dark suit, a white shirt, and a blue tie, with his brows furrowed and his mouth slightly open as he speaks.
+
+The background is a solid blue with a faint, repeating CNN logo pattern.
+
+**Text on screen:**
+
+*   **Top left:** &quot;wp&quot; (logo)
+*   **Top right:** &quot;Courtesy of CNN&quot; and &quot;Atlanta, Ga. | June 27, 2024&quot;
+*   **Bottom center (subtitles):** &quot;My son was not a loser. He was not a sucker. You&#x27;re the sucker.&quot;</pre>
+<h2>Structured scene-by-scene breakdown</h2>
+<p>If you join Gemini with Pydantic, you can ask for exactly what you want: timestamps, descriptions, people visible, text on screen. It's the same structured output pattern from the image notebooks, just applied to video.</p>
+<p><strong><code>video/gemini-structured.py</code></strong> — Get a structured scene-by-scene breakdown of a video</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">VideoUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_ai.providers.google</span><span class="w"> </span><span class="kn">import</span> <span class="n">GoogleProvider</span>
+
+<span class="n">DATA</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">VIDEO</span> <span class="o">=</span> <span class="n">DATA</span> <span class="o">/</span> <span class="s2">&quot;rDXubdQdJYs.mp4&quot;</span>
+<span class="n">MODEL</span> <span class="o">=</span> <span class="s2">&quot;google-gla:gemini-2.5-flash&quot;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Scene</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Start timestamp MM:SS&quot;</span><span class="p">)</span>
+    <span class="n">end</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;End timestamp MM:SS&quot;</span><span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;What happens in this scene&quot;</span><span class="p">)</span>
+    <span class="n">people_visible</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;People visible&quot;</span><span class="p">)</span>
+    <span class="n">text_on_screen</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Any chyrons, captions, or on-screen text&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="n">GoogleProvider</span><span class="p">()</span>
+<span class="n">video_file</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">VIDEO</span><span class="p">))</span>
+
+<span class="k">while</span> <span class="n">video_file</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;PROCESSING&quot;</span><span class="p">:</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">video_file</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">MODEL</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="n">Scene</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">run_sync</span><span class="p">([</span>
+    <span class="s2">&quot;Break this video into scenes. For each scene identify timestamps, &quot;</span>
+    <span class="s2">&quot;what happens, who is visible, and any text on screen.&quot;</span><span class="p">,</span>
+    <span class="n">VideoUrl</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">video_file</span><span class="o">.</span><span class="n">mime_type</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">end</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">people_visible</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  People: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">people_visible</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">text_on_screen</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Text: </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">text_on_screen</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+<pre class="cell-output">[00:00 - 00:01] Split screen showing Joe Biden walking on the top and Donald Trump walking on the bottom.
+  People: Joe Biden, Donald Trump
+  Text: PRESIDENTIAL DEBATE, E PLURIBUS UNUM, wp, CNN (repeated), Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:01 - 00:04] Close-up of Joe Biden speaking, with subtitles.
+  People: Joe Biden
+  Text: ...relative to what we&#x27;re going to do with, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:04 - 00:06] Close-up of Donald Trump speaking, with subtitles.
+  People: Donald Trump
+  Text: more border patrol and more asylum officers, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:06 - 00:07] Close-up of Joe Biden speaking, with subtitles.
+  People: Joe Biden
+  Text: more border patrol and more asylum officers, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:07 - 00:13] Close-up of Donald Trump speaking, with subtitles and his name/title.
+  People: Donald Trump
+  Text: I really don&#x27;t know what he said at the end of that sentence., Donald Trump, FORMER PRESIDENT, don&#x27;t think he knows what he said either., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:13 - 00:17] Close-up of Joe Biden speaking, with subtitles.
+  People: Joe Biden
+  Text: The only person on this stage that is a convicted felon is the man I&#x27;m looking at right now., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:17 - 00:20] Close-up of Donald Trump speaking, with subtitles.
+  People: Donald Trump
+  Text: ...but when he talks about a convicted felon, his son is a convicted felon., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:20 - 00:24] Close-up of Joe Biden speaking, with subtitles.
+  People: Joe Biden
+  Text: What are you talking about? You have the morals of an alley cat., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:24 - 00:29] Close-up of Joe Biden speaking passionately, with subtitles.
+  People: Joe Biden
+  Text: My son was not a loser. He was not a sucker. You&#x27;re the sucker. You&#x27;re the loser., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:29 - 00:34] Close-up of Donald Trump speaking, with subtitles.
+  People: Donald Trump
+  Text: He&#x27;s blaming inflation and he&#x27;s right it&#x27;s been very bad. He caused the inflation., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:34 - 00:39] Close-up of Joe Biden speaking, with subtitles.
+  People: Joe Biden
+  Text: Excuse me, with, dealing with everything we have to do with., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:39 - 00:41] Close-up of Donald Trump listening and looking.
+  People: Donald Trump
+  Text: wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:41 - 00:47] Close-up of Joe Biden speaking, with subtitles, and a moderator interjecting.
+  People: Joe Biden
+  Text: Look, if... We finally beat Medicare. Thank you, President Biden, president Trump?, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:47 - 00:53] Close-up of Donald Trump speaking, with subtitles.
+  People: Donald Trump
+  Text: Well, I took two tests. Cognitive tests. I aced them. Go through the first five questions. He couldn&#x27;t do it., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
+[00:53 - 00:59] Close-up of Joe Biden speaking, with subtitles.
+  People: Joe Biden
+  Text: This guy is three years younger and a lot less competent. I think that just look at the record. Look at what I&#x27;ve done., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024</pre>
+
+<footer>
+  <a href="06-tracking.html">&larr; Bonus: Tracking &amp; Counting</a>
+  <span></span>
+</footer>
+
+<div style="text-align: center; margin: 2rem 0;">
+<script async src="https://subscribe-forms.beehiiv.com/embed.js"></script><iframe src="https://subscribe-forms.beehiiv.com/74449fe6-9aee-4fca-81ec-c07b8588210f" class="beehiiv-embed" data-test-id="beehiiv-embed" frameborder="0" scrolling="no" style="width: 440px; height: 87px; margin: 0; border-radius: 0px 0px 0px 0px !important; background-color: transparent; box-shadow: 0 0 #0000; max-width: 100%;"></iframe>
+</div>
+</main>
+
+<script>
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  var btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+}
+
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme');
+  var next = current === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('theme', next); } catch (e) {}
+  applyTheme(next);
+}
+
+// Set button text to match current theme
+applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+
+// Listen for OS theme changes (only if user hasn't manually chosen)
+var mq = window.matchMedia('(prefers-color-scheme: light)');
+function onThemeChange(e) {
+  try { if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'light' : 'dark'); } catch (ex) {}
+}
+if (mq.addEventListener) mq.addEventListener('change', onThemeChange);
+else if (mq.addListener) mq.addListener(onThemeChange);
+</script>
+</body>
+</html>

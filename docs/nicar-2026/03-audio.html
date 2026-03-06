@@ -841,7 +841,7 @@ pre { line-height: 125%; }
 <aside class="sidebar">
   <div class="workshop-title"><a href="index.html">Analyzing Images &amp; Video with AI</a></div>
   <nav>
-    <a href="01-images.html">Images</a><a href="02-documents.html">Documents</a><a href="03-audio.html" class="active">Audio</a><a href="04-video.html">Video</a><a href="05-recipes.html">The full pipeline</a>
+    <a href="01-images.html">Images</a><a href="02-documents.html">Documents</a><a href="03-audio.html" class="active">Audio</a><a href="04-video.html">Video</a><a href="05-recipes.html">The full pipeline</a><a href="06-tracking.html">Bonus: Tracking &amp; Counting</a><a href="07-video-deep-dive.html">Bonus: Video Deep Dive</a>
   </nav>
   <div class="theme-toggle">
     <button onclick="toggleTheme()" id="theme-btn">Switch theme</button>
@@ -859,7 +859,7 @@ pre { line-height: 125%; }
 <div class="colab-bar"><a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/03-audio.ipynb" class="colab-btn">Open this notebook in Colab</a></div>
 
 <h1>Audio</h1>
-<p>Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it.</p>
+<p>Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it. This is how you can do story research like <a href="https://pulitzercenter.org/misinformation-tiktok-how-documented-examined-hundreds-videos-different-languages">Misinformation on TikTok: How 'Documented' Examined Hundreds of Videos in Different Languages</a>.</p>
 <h2>Transcription with Whisper</h2>
 <p>Once upon a time OpenAI released an open model <a href="https://github.com/openai/whisper/">named Whisper</a>. It's great! Very very popular.</p>
 <p>There are newer models out there — <a href="https://github.com/senstella/parakeet-mlx">parakeet-mlx</a> is blazing fast on Macs — but Whisper is very easy to use so everyone (and I mean <em>everyone</em>) uses it.</p>
@@ -869,6 +869,8 @@ pre { line-height: 125%; }
 <li><strong>Which version of the model:</strong> Like tiny, base, large... bigger is better, but slower! <strong>Turbo</strong> is the best combination of speed and accuracy. </li>
 </ul>
 <p>Let's practice on this Trump/Biden debate clip.</p>
+<div class="show-media show-youtube"><iframe width="500" height="281" src="https://www.youtube.com/embed/rDXubdQdJYs" frameborder="0" allowfullscreen></iframe></div>
+<p>I saved it as an mp3 to make life a little easier.</p>
 <div class="show-media show-audio"><div class="show-audio-label">rDXubdQdJYs.mp3</div><audio controls src="../data/rDXubdQdJYs.mp3"></audio></div>
 <p><strong><code>audio/transcribe-whisperx.py</code></strong> — WhisperX segment-level aligned transcription</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -1082,6 +1084,9 @@ pre { line-height: 125%; }
 <p>NVIDIA's <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">Parakeet</a> is a newer speech model that's significantly faster than Whisper — especially on Macs via <a href="https://github.com/senstella/parakeet-mlx">parakeet-mlx</a>. It also gives you cleaner sentence-level output without needing a separate alignment step.</p>
 <p>Here we combine Parakeet for transcription with <strong>pyannote</strong> for speaker diarization — "who said what?"</p>
 <p><strong>Setup:</strong> Diarization requires a free Hugging Face token (<code>HF_TOKEN</code>) and accepting the model licenses at <a href="https://huggingface.co/pyannote/segmentation-3.0">pyannote/segmentation-3.0</a> and <a href="https://huggingface.co/pyannote/speaker-diarization-community-1">pyannote/speaker-diarization-community-1</a>. It's kind of a pain to jump through the hoops but if you're vaguely technical it's definitely worth it.</p>
+<blockquote>
+<p>In the example below, we try to use Parakeet MLX (it's fast on my mac!) but if that fails we go for <a href="https://istupakov.github.io/onnx-asr/usage/">onnx-asr</a>, a flexible, portable tool that allows you to use different ASR (automatic speech recognition) models.</p>
+</blockquote>
 <p><strong><code>audio/transcribe-parakeet.py</code></strong> — Transcribe + diarize with Parakeet and pyannote</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyannote.audio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span>
@@ -1095,6 +1100,7 @@ pre { line-height: 125%; }
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using parakeet-mlx...&quot;</span><span class="p">)</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;mlx-community/parakeet-tdt-0.6b-v3&quot;</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transcribe</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">),</span> <span class="n">chunk_duration</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">overlap_duration</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">sentences</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">text</span><span class="p">}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">sentences</span><span class="p">]</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">onnx_asr</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">ffmpeg</span>
@@ -1102,10 +1108,10 @@ pre { line-height: 125%; }
     <span class="n">WAV</span> <span class="o">=</span> <span class="n">AUDIO</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.wav&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">WAV</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">ffmpeg</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">AUDIO</span><span class="p">))</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WAV</span><span class="p">),</span> <span class="n">ar</span><span class="o">=</span><span class="mi">16000</span><span class="p">,</span> <span class="n">ac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">onnx_asr</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;nemo-parakeet-tdt-0.6b-v3&quot;</span><span class="p">)</span>
+    <span class="n">vad</span> <span class="o">=</span> <span class="n">onnx_asr</span><span class="o">.</span><span class="n">load_vad</span><span class="p">(</span><span class="s2">&quot;silero&quot;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">onnx_asr</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="s2">&quot;nemo-parakeet-tdt-0.6b-v3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_vad</span><span class="p">(</span><span class="n">vad</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">recognize</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">WAV</span><span class="p">))</span>
-
-<span class="n">sentences</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">text</span><span class="p">}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">sentences</span><span class="p">]</span>
+    <span class="n">sentences</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">text</span><span class="p">}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transcribed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sentences&quot;</span><span class="p">)</span>
 </pre></div>
 

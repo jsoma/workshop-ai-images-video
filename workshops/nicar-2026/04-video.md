@@ -8,7 +8,7 @@ data_files:
 ---
 # Video
 
-You've got image tools and audio tools. Video is both — frames and a soundtrack — so you already have everything you need! Yes, you could send it to Gemini or another LLM (which we do at the end), but you can also just decompose it and reuse what you've learned.
+You've got image tools and audio tools. Video is both — frames and a soundtrack — so you already have everything you need! Yes, you could send it to Gemini or another LLM (which we do at the end), but you can also just split it up and reuse what you've learned. Just because public meetings come as videos doesn't mean [you can't just treat them as audio](https://ryanserpi.co/projects/assembly/), and the same way you count or detect objects in images [you can do the same thing in videos](https://www.dw.com/en/betting-ads-swamp-brazilian-football-as-addiction-spikes/a-72941493).
 
 ## Download
 
@@ -49,7 +49,7 @@ While it's *convenient*, using Gemini is slightly more difficult to fact-check. 
 
 ## The boring (auditable) way
 
-Instead of getting Gemini to go whole-hog on the video analysis, we use our other skills: split into frames, classify each frame with an LLM. Produce an auditable CSV, where every row links to a frame you can check.
+Instead of getting Gemini to go whole-hog on the video analysis, we use our other skills: split into frames, classify each frame with an LLM. This allows you to produce an auditable CSV, where every row links to a frame you can check.
 
 ```script
 video/decompose-classify.py

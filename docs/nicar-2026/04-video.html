@@ -841,7 +841,7 @@ pre { line-height: 125%; }
 <aside class="sidebar">
   <div class="workshop-title"><a href="index.html">Analyzing Images &amp; Video with AI</a></div>
   <nav>
-    <a href="01-images.html">Images</a><a href="02-documents.html">Documents</a><a href="03-audio.html">Audio</a><a href="04-video.html" class="active">Video</a><a href="05-recipes.html">The full pipeline</a>
+    <a href="01-images.html">Images</a><a href="02-documents.html">Documents</a><a href="03-audio.html">Audio</a><a href="04-video.html" class="active">Video</a><a href="05-recipes.html">The full pipeline</a><a href="06-tracking.html">Bonus: Tracking &amp; Counting</a><a href="07-video-deep-dive.html">Bonus: Video Deep Dive</a>
   </nav>
   <div class="theme-toggle">
     <button onclick="toggleTheme()" id="theme-btn">Switch theme</button>
@@ -859,7 +859,7 @@ pre { line-height: 125%; }
 <div class="colab-bar"><a href="https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/04-video.ipynb" class="colab-btn">Open this notebook in Colab</a></div>
 
 <h1>Video</h1>
-<p>You've got image tools and audio tools. Video is both — frames and a soundtrack — so you already have everything you need! Yes, you could send it to Gemini or another LLM (which we do at the end), but you can also just decompose it and reuse what you've learned.</p>
+<p>You've got image tools and audio tools. Video is both — frames and a soundtrack — so you already have everything you need! Yes, you could send it to Gemini or another LLM (which we do at the end), but you can also just split it up and reuse what you've learned. Just because public meetings come as videos doesn't mean <a href="https://ryanserpi.co/projects/assembly/">you can't just treat them as audio</a>, and the same way you count or detect objects in images <a href="https://www.dw.com/en/betting-ads-swamp-brazilian-football-as-addiction-spikes/a-72941493">you can do the same thing in videos</a>.</p>
 <h2>Download</h2>
 <p><a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a> is the best tool for downloading video content on the internet. It's gotten less effect at YouTube in the past 6 months or so, but it's still great for older videos and non-YT sites. Always try it out first!</p>
 <p><strong><code>video/download.py</code></strong> — Download a video from YouTube with yt-dlp</p>
@@ -992,7 +992,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
 </blockquote>
 <p>While it's <em>convenient</em>, using Gemini is slightly more difficult to fact-check. It's harder to show your editor the work, errors are hidden behind a wall of "just trust me!" It's a vibe, for better or worse. </p>
 <h2>The boring (auditable) way</h2>
-<p>Instead of getting Gemini to go whole-hog on the video analysis, we use our other skills: split into frames, classify each frame with an LLM. Produce an auditable CSV, where every row links to a frame you can check.</p>
+<p>Instead of getting Gemini to go whole-hog on the video analysis, we use our other skills: split into frames, classify each frame with an LLM. This allows you to produce an auditable CSV, where every row links to a frame you can check.</p>
 <p><strong><code>video/decompose-classify.py</code></strong> — The auditable way: classify each frame with Pydantic AI, produce an auditable CSV</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>

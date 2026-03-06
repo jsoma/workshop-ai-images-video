@@ -15,3 +15,5 @@ You already know what to do with text: summarize it, answer questions about it, 
 3. [Audio](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/03-audio.ipynb)
 4. [Video](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/04-video.ipynb)
 5. [The full pipeline](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/05-recipes.ipynb)
+6. [Bonus: Tracking & Counting](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/06-tracking.ipynb)
+7. [Bonus: Video Deep Dive](https://colab.research.google.com/github/jsoma/workshop-ai-images-video/blob/main/notebooks/nicar-2026/07-video-deep-dive.ipynb)
