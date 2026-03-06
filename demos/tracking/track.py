@@ -1,8 +1,9 @@
 # Track objects across video frames with YOLO + ByteTrack
 from pathlib import Path
-from PIL import Image
 import cv2
 import supervision as sv
+import ipywidgets as widgets
+from IPython.display import display
 from ultralytics import YOLO
 
 DATA = Path(__file__).parent.parent / "data"
@@ -15,6 +16,9 @@ smoother = sv.DetectionsSmoother()
 box_ann = sv.BoxAnnotator()
 label_ann = sv.LabelAnnotator()
 trace_ann = sv.TraceAnnotator()
+
+image_widget = widgets.Image(format='jpeg')
+display(image_widget)
 
 cap = cv2.VideoCapture(str(VIDEO))
 frame_count = 0
@@ -29,8 +33,9 @@ while cap.isOpened() and frame_count < MAX_FRAMES:
     annotated = box_ann.annotate(frame.copy(), detections)
     annotated = trace_ann.annotate(annotated, detections)
     annotated = label_ann.annotate(annotated, detections, labels=labels)
+    _, buf = cv2.imencode('.jpg', annotated)
+    image_widget.value = buf.tobytes()
     frame_count += 1
 cap.release()
 
 print(f"Tracked {frame_count} frames")
-Image.fromarray(cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB))

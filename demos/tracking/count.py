@@ -1,8 +1,9 @@
 # Count objects crossing a line with YOLO + ByteTrack + LineZone
 from pathlib import Path
-from PIL import Image
 import cv2
 import supervision as sv
+import ipywidgets as widgets
+from IPython.display import display
 from ultralytics import YOLO
 
 DATA = Path(__file__).parent.parent / "data"
@@ -16,6 +17,9 @@ label_ann = sv.LabelAnnotator()
 trace_ann = sv.TraceAnnotator()
 line_zone = sv.LineZone(start=sv.Point(200, 175), end=sv.Point(700, 175))
 line_ann = sv.LineZoneAnnotator(text_thickness=1)
+
+image_widget = widgets.Image(format='jpeg')
+display(image_widget)
 
 cap = cv2.VideoCapture(str(VIDEO))
 frame_count = 0
@@ -32,9 +36,10 @@ while cap.isOpened():
     annotated = trace_ann.annotate(annotated, detections)
     annotated = label_ann.annotate(annotated, detections, labels=labels)
     annotated = line_ann.annotate(annotated, line_counter=line_zone)
+    _, buf = cv2.imencode('.jpg', annotated)
+    image_widget.value = buf.tobytes()
     frame_count += 1
 cap.release()
 
 print(f"Processed {frame_count} frames")
 print(f"Crossed IN: {line_zone.in_count} | OUT: {line_zone.out_count}")
-Image.fromarray(cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB))
