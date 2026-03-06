@@ -9,11 +9,13 @@ data_files:
 
 The main video notebook showed you how to split video into frames and audio. This one goes deeper: automatic scene detection, and using Gemini to understand video directly — with timestamps, structured data, and zero decomposition.
 
+[Gemini's Video Understanding page](https://ai.google.dev/gemini-api/docs/video-understanding) has some great suggestions on what you can do.
+
 ## Scene detection with PySceneDetect
 
 [PySceneDetect](https://www.scenedetect.com/) finds cuts in video automatically by flagging big visual changes. It's ancient technology, but super quick and (mostly) effective. Great for splitting long videos into meaningful chunks.
 
-```script
+```script{log=error}
 video/scenes.py
 ```
 

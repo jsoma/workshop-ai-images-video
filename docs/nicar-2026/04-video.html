@@ -862,6 +862,7 @@ pre { line-height: 125%; }
 <p>You've got image tools and audio tools. Video is both — frames and a soundtrack — so you already have everything you need! Yes, you could send it to Gemini or another LLM (which we do at the end), but you can also just split it up and reuse what you've learned. Just because public meetings come as videos doesn't mean <a href="https://ryanserpi.co/projects/assembly/">you can't just treat them as audio</a>, and the same way you count or detect objects in images <a href="https://www.dw.com/en/betting-ads-swamp-brazilian-football-as-addiction-spikes/a-72941493">you can do the same thing in videos</a>.</p>
 <h2>Download</h2>
 <p><a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a> is the best tool for downloading video content on the internet. It's gotten less effect at YouTube in the past 6 months or so, but it's still great for older videos and non-YT sites. Always try it out first!</p>
+<p>If you'd prefer something that has a "normal" non-programming-y interface, <a href="https://stacher.io/">Stacher</a> is great.</p>
 <p><strong><code>video/download.py</code></strong> — Download a video from YouTube with yt-dlp</p>
 <div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">yt_dlp</span>
@@ -979,14 +980,12 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">In this 58-second video clip, **Joe Biden** appears to have slightly more screen time than Donald Trump.
+<pre class="cell-output">Based on a manual timing of the video:
 
-Here&#x27;s an approximate breakdown:
+*   **Joe Biden** was on screen for approximately **29 seconds**.
+*   **Donald Trump** was on screen for approximately **23.5 seconds**.
 
-*   **Joe Biden:** Approximately **32 seconds**
-*   **Donald Trump:** Approximately **25 seconds**
-
-The initial 2 seconds of the video show both individuals on a split-screen as they walk out. After that, it primarily alternates between full-screen shots of each speaker as they speak or react.</pre>
+Therefore, **Joe Biden** got more screen time in this debate video.</pre>
 <blockquote>
 <p>Gemini's raw API docs: <a href="https://ai.google.dev/gemini-api/docs/video-understanding">video</a>, <a href="https://ai.google.dev/gemini-api/docs/audio">audio</a>.</p>
 </blockquote>
@@ -1032,33 +1031,33 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
 
 <pre class="cell-output">frame-001.jpg: Joe Biden (0.95)</pre>
 <pre class="cell-output">frame-002.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-003.jpg: Donald Trump (0.95)</pre>
-<pre class="cell-output">frame-004.jpg: Joe Biden (0.99)</pre>
-<pre class="cell-output">frame-005.jpg: Donald Trump (0.95)</pre>
-<pre class="cell-output">frame-006.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-003.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-004.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-005.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-006.jpg: Donald Trump (0.90)</pre>
 <pre class="cell-output">frame-007.jpg: Donald Trump (1.00)</pre>
 <pre class="cell-output">frame-008.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-009.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-010.jpg: Donald Trump (0.95)</pre>
-<pre class="cell-output">frame-011.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-009.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-010.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-011.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-012.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-013.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-013.jpg: Joe Biden (0.95)</pre>
 <pre class="cell-output">frame-014.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-015.jpg: Joe Biden (0.95)</pre>
 <pre class="cell-output">frame-016.jpg: Donald Trump (1.00)</pre>
 <pre class="cell-output">frame-017.jpg: Donald Trump (0.95)</pre>
 <pre class="cell-output">frame-018.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-019.jpg: Joe Biden (0.98)</pre>
-<pre class="cell-output">frame-020.jpg: Joe Biden (0.95)</pre>
-<pre class="cell-output">frame-021.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-022.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-023.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-019.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-020.jpg: Joe Biden (1.00)</pre>
+<pre class="cell-output">frame-021.jpg: Donald Trump (0.95)</pre>
+<pre class="cell-output">frame-022.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-023.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-024.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-025.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-026.jpg: Donald Trump (1.00)</pre>
-<pre class="cell-output">frame-027.jpg: Donald Trump (1.00)</pre>
+<pre class="cell-output">frame-026.jpg: Donald Trump (0.99)</pre>
+<pre class="cell-output">frame-027.jpg: Donald Trump (0.95)</pre>
 <pre class="cell-output">frame-028.jpg: Joe Biden (1.00)</pre>
-<pre class="cell-output">frame-029.jpg: Joe Biden (0.95)</pre>
+<pre class="cell-output">frame-029.jpg: Joe Biden (1.00)</pre>
 <pre class="cell-output">frame-030.jpg: Joe Biden (1.00)</pre>
 <p>Every frame is now a row. You can sort, filter, and fact-check any one of them.</p>
 <div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
@@ -1101,7 +1100,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>0.95</td>
       <td>False</td>
-      <td>Joe Biden is on screen, walking onto the stage...</td>
+      <td>Joe Biden is on screen, walking onto the stage.</td>
     </tr>
     <tr>
       <th>1</th>
@@ -1109,39 +1108,39 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>This frame shows Joe Biden speaking during a d...</td>
+      <td>Joe Biden is speaking at a political debate ho...</td>
     </tr>
     <tr>
       <th>2</th>
       <td>2</td>
       <td>Donald Trump</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is on screen, wearing a suit and ...</td>
+      <td>Donald Trump is on screen during a political d...</td>
     </tr>
     <tr>
       <th>3</th>
       <td>3</td>
       <td>Joe Biden</td>
-      <td>0.99</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden is on screen, appearing to speak int...</td>
+      <td>Joe Biden is on screen, likely speaking, as a ...</td>
     </tr>
     <tr>
       <th>4</th>
       <td>4</td>
       <td>Donald Trump</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is on screen, wearing a suit and ...</td>
+      <td>Donald Trump, former president, is on screen, ...</td>
     </tr>
     <tr>
       <th>5</th>
       <td>5</td>
       <td>Donald Trump</td>
-      <td>1.00</td>
+      <td>0.90</td>
       <td>True</td>
-      <td>Donald Trump, the former president, is on scre...</td>
+      <td>Donald Trump, former president, is speaking du...</td>
     </tr>
     <tr>
       <th>6</th>
@@ -1157,31 +1156,31 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen and appears to be speak...</td>
+      <td>Joe Biden is on screen, speaking. His mouth is...</td>
     </tr>
     <tr>
       <th>8</th>
       <td>8</td>
       <td>Joe Biden</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>A close-up shot of Joe Biden speaking during a...</td>
+      <td>Joe Biden is speaking during a political debat...</td>
     </tr>
     <tr>
       <th>9</th>
       <td>9</td>
       <td>Donald Trump</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking during a political de...</td>
+      <td>Donald Trump is speaking, visible from the che...</td>
     </tr>
     <tr>
       <th>10</th>
       <td>10</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen and appears to be speak...</td>
+      <td>Joe Biden is on screen, appearing to be speaki...</td>
     </tr>
     <tr>
       <th>11</th>
@@ -1189,15 +1188,15 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking, saying 'You have the mo...</td>
+      <td>Joe Biden is on screen, speaking during a poli...</td>
     </tr>
     <tr>
       <th>12</th>
       <td>12</td>
       <td>Joe Biden</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden speaking during a political debate, ...</td>
+      <td>Joe Biden is speaking at a political debate, w...</td>
     </tr>
     <tr>
       <th>13</th>
@@ -1205,7 +1204,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking during a political debat...</td>
+      <td>Joe Biden is on screen, speaking during a poli...</td>
     </tr>
     <tr>
       <th>14</th>
@@ -1213,7 +1212,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Joe Biden is speaking at a political debate. A...</td>
+      <td>Joe Biden is on screen, mid-sentence, wearing ...</td>
     </tr>
     <tr>
       <th>15</th>
@@ -1221,7 +1220,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking into a microphone dur...</td>
+      <td>Donald Trump is on screen, speaking during a p...</td>
     </tr>
     <tr>
       <th>16</th>
@@ -1229,7 +1228,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Donald Trump</td>
       <td>0.95</td>
       <td>True</td>
-      <td>Donald Trump is on screen, speaking into a mic...</td>
+      <td>Donald Trump is on screen and speaking. Subtit...</td>
     </tr>
     <tr>
       <th>17</th>
@@ -1237,47 +1236,47 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking during a poli...</td>
+      <td>Joe Biden is speaking, with his eyes closed an...</td>
     </tr>
     <tr>
       <th>18</th>
       <td>18</td>
       <td>Joe Biden</td>
-      <td>0.98</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking at a podium during a pol...</td>
+      <td>Joe Biden is speaking at a political debate. T...</td>
     </tr>
     <tr>
       <th>19</th>
       <td>19</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, looking down with a mi...</td>
+      <td>Joe Biden is speaking at a debate, looking dow...</td>
     </tr>
     <tr>
       <th>20</th>
       <td>20</td>
       <td>Donald Trump</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Donald Trump is shown from the chest up, weari...</td>
+      <td>Donald Trump is on screen, wearing a suit and ...</td>
     </tr>
     <tr>
       <th>21</th>
       <td>21</td>
       <td>Joe Biden</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>A close-up shot of Joe Biden speaking at a pod...</td>
+      <td>Joe Biden is on screen, speaking into a microp...</td>
     </tr>
     <tr>
       <th>22</th>
       <td>22</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is speaking at a podium during a pol...</td>
+      <td>Joe Biden is on screen and appears to be speak...</td>
     </tr>
     <tr>
       <th>23</th>
@@ -1285,7 +1284,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>False</td>
-      <td>Joe Biden is on screen. He is not speaking, as...</td>
+      <td>Joe Biden is on screen. Based on the text over...</td>
     </tr>
     <tr>
       <th>24</th>
@@ -1293,13 +1292,13 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Donald Trump</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Donald Trump is speaking at a political debate...</td>
+      <td>Donald Trump is speaking at a debate, wearing ...</td>
     </tr>
     <tr>
       <th>25</th>
       <td>25</td>
       <td>Donald Trump</td>
-      <td>1.00</td>
+      <td>0.99</td>
       <td>True</td>
       <td>Donald Trump is speaking during a political de...</td>
     </tr>
@@ -1307,9 +1306,9 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <th>26</th>
       <td>26</td>
       <td>Donald Trump</td>
-      <td>1.00</td>
+      <td>0.95</td>
       <td>True</td>
-      <td>Donald Trump is speaking at a podium during a ...</td>
+      <td>Donald Trump is on screen, speaking. His mouth...</td>
     </tr>
     <tr>
       <th>27</th>
@@ -1317,15 +1316,15 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden speaking at a political debate.</td>
+      <td>Joe Biden is speaking during a political debat...</td>
     </tr>
     <tr>
       <th>28</th>
       <td>28</td>
       <td>Joe Biden</td>
-      <td>0.95</td>
+      <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen and speaking during a p...</td>
+      <td>Joe Biden is on screen, speaking during a poli...</td>
     </tr>
     <tr>
       <th>29</th>
@@ -1333,7 +1332,7 @@ The initial 2 seconds of the video show both individuals on a split-screen as th
       <td>Joe Biden</td>
       <td>1.00</td>
       <td>True</td>
-      <td>Joe Biden is on screen, speaking at a politica...</td>
+      <td>Joe Biden is speaking at a political debate, w...</td>
     </tr>
   </tbody>
 </table>

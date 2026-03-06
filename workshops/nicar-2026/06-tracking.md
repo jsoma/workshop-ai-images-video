@@ -50,7 +50,7 @@ We've been using Gemini for all sorts of stuff. Let's see if it can count cars i
 tracking/gemini-count.py
 ```
 
-**The answer is: no, not really.** LLMs are bad at counting things in video – they're great at *vibes*, they're great as yes/no, but measurements are where things get iffy (at least at the moment). This is exactly the kind of task where boring traditional computer vision (detection + tracking + counting) beats the "just ask AI" approach.
+**The answer is: huh, this is better than last year.** LLMs are bad at counting things in video – they're great at *vibes*, they're great as yes/no, but measurements are where things get iffy (at least at the moment). This is exactly the kind of task where boring traditional computer vision (detection + tracking + counting) beats the "just ask AI" approach.
 
 ## Going further
 

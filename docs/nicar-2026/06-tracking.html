@@ -1020,11 +1020,79 @@ Crossed IN: 20 | OUT: 20</pre>
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">Here&#x27;s the count from the video:
+<pre class="cell-output">Let&#x27;s count them carefully:
 
-*   Number of cars that enter the left tunnel: **21**
-*   Number of cars that exit the right tunnel: **24**</pre>
-<p><strong>The answer is: no, not really.</strong> LLMs are bad at counting things in video – they're great at <em>vibes</em>, they're great as yes/no, but measurements are where things get iffy (at least at the moment). This is exactly the kind of task where boring traditional computer vision (detection + tracking + counting) beats the "just ask AI" approach.</p>
+**Cars entering the left tunnel:**
+
+1.  Dark blue car (0:00)
+2.  Green van (0:02)
+3.  Black car (0:04)
+4.  White convertible (0:06)
+5.  Police car (0:07)
+6.  White hatchback (0:08)
+7.  Silver sedan (0:09)
+8.  Dark grey hatchback (0:10)
+9.  Black cab (0:10)
+10. White car (behind black cab) (0:11)
+11. White flatbed truck (0:11)
+12. Silver car (0:12)
+13. Black sedan (0:13)
+14. White van (0:14)
+15. Blue car (0:14)
+16. Silver hatchback (0:15)
+17. White hatchback (0:17)
+18. Dark grey sedan (0:17)
+19. Silver hatchback (0:18)
+20. Silver hatchback (0:19)
+21. White flatbed truck (0:20)
+22. White hatchback (0:20)
+23. Silver taxi (0:21)
+24. Silver hatchback (0:22)
+25. Black hatchback (0:23)
+26. White car (0:23)
+
+**Total entering left tunnel: 26 cars**
+
+---
+
+**Cars exiting the right tunnel:**
+
+1.  White sedan (0:00)
+2.  Dark blue sedan (0:01)
+3.  Red car (0:02)
+4.  Black sedan (0:03)
+5.  Silver hatchback (0:03)
+6.  Red car (0:04)
+7.  Silver car (0:05)
+8.  White car (0:06)
+9.  Dark blue sedan (0:07)
+10. Silver sedan (0:08)
+11. White van (0:09)
+12. Red car (on far right, 0:09)
+13. Silver car (0:10)
+14. White van (0:10)
+15. Black sedan (0:11)
+16. Silver sedan (0:12)
+17. Blue sedan (0:13)
+18. Black sedan (0:13)
+19. Green flatbed truck (on far right, 0:14)
+20. Black sedan (0:14)
+21. Blue sedan (0:15)
+22. Dark blue van (0:16)
+23. Dark blue sedan (0:16)
+24. Black sedan (0:17)
+25. Blue sedan (0:18)
+26. Blue sedan (0:19)
+27. Silver van (0:19)
+28. Black taxi (0:20)
+29. Blue sedan (0:20)
+30. White van (0:21)
+31. Blue sedan (0:22)
+32. Black taxi (0:22)
+33. Black sedan (0:23)
+
+**Total exiting right tunnel: 33 cars**</pre>
+<p><strong>The answer is: huh, this is better than last year.</strong> LLMs are bad at counting things in video – they're great at <em>vibes</em>, they're great as yes/no, but measurements are where things get iffy (at least at the moment). This is exactly the kind of task where boring traditional computer vision (detection + tracking + counting) beats the "just ask AI" approach.</p>
 <h2>Going further</h2>
 <p>What if you don't just want <em>cars</em>, though — you want to be Bloomberg, and spot taxis and box trucks and commercial vehicles! While you might try to find a model that does that, you can also <strong>train your own</strong> with a handful of labeled images.</p>
 <p>If you're interested in going to the next level, check out <a href="https://blog.roboflow.com/getting-started-with-roboflow/">the Roboflow docs</a> — you can train a custom YOLO model, swap it in, and everything else stays the same.</p>

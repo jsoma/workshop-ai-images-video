@@ -14,6 +14,8 @@ You've got image tools and audio tools. Video is both — frames and a soundtrac
 
 [yt-dlp](https://github.com/yt-dlp/yt-dlp) is the best tool for downloading video content on the internet. It's gotten less effect at YouTube in the past 6 months or so, but it's still great for older videos and non-YT sites. Always try it out first!
 
+If you'd prefer something that has a "normal" non-programming-y interface, [Stacher](https://stacher.io/) is great.
+
 ```script
 video/download.py
 ```

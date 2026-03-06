@@ -860,6 +860,7 @@ pre { line-height: 125%; }
 
 <h1>Bonus: Video Deep Dive</h1>
 <p>The main video notebook showed you how to split video into frames and audio. This one goes deeper: automatic scene detection, and using Gemini to understand video directly — with timestamps, structured data, and zero decomposition.</p>
+<p><a href="https://ai.google.dev/gemini-api/docs/video-understanding">Gemini's Video Understanding page</a> has some great suggestions on what you can do.</p>
 <h2>Scene detection with PySceneDetect</h2>
 <p><a href="https://www.scenedetect.com/">PySceneDetect</a> finds cuts in video automatically by flagging big visual changes. It's ancient technology, but super quick and (mostly) effective. Great for splitting long videos into meaningful chunks.</p>
 <p><strong><code>video/scenes.py</code></strong> — Detect scene boundaries and extract mid-scene frames with PySceneDetect</p>
@@ -899,8 +900,6 @@ pre { line-height: 125%; }
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">scene_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> scenes, frames saved to </span><span class="si">{</span><span class="n">OUTPUT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">objc[914]: Class AVFFrameReceiver is implemented in both /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1053e43a8) and /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/av/.dylibs/libavdevice.62.1.100.dylib (0x11de103a8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
-objc[914]: Class AVFAudioReceiver is implemented in both /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/cv2/.dylibs/libavdevice.61.3.100.dylib (0x1053e43f8) and /Users/soma/Library/CloudStorage/Dropbox/Soma/Curriculum/2026-nicar/01-fri-analyzing-images-videos-ai/ai-images-video/.venv/lib/python3.12/site-packages/av/.dylibs/libavdevice.62.1.100.dylib (0x11de103f8). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.</pre>
 <pre class="cell-output">Found 16 scenes, frames saved to outputs/scenes</pre>
 <p>Each scene gets a start time, end time, and a representative frame saved to disk. Now you can analyze scenes individually instead of processing the whole video.</p>
 <h2>Send a video file to Gemini</h2>
@@ -929,22 +928,27 @@ objc[914]: Class AVFAudioReceiver is implemented in both /Users/soma/Library/Clo
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">This video is a split-screen compilation from the CNN Presidential Debate held in Atlanta, Georgia, on June 27, 2024, featuring President Joe Biden and former President Donald Trump. The video highlights several contentious exchanges between the two candidates.
+<pre class="cell-output">This video shows excerpts from the June 27, 2024, CNN Presidential Debate in Atlanta, Georgia, featuring President Joe Biden and former President Donald Trump.
 
-Here&#x27;s a breakdown of what happens:
+The video begins with a split screen:
+*   **Top half:** President Joe Biden, dressed in a dark suit and blue tie, walks onto the debate stage, smiling slightly. The stage background is blue with &quot;CNN&quot; logos and an American eagle crest.
+*   **Bottom half:** Former President Donald Trump, in a dark suit and red tie, also walks onto the stage with a serious expression. His background is similar, with red and white star motifs.
 
-*   **0:00-0:02:** The video opens with a split screen showing Joe Biden (top) and Donald Trump (bottom) separately walking onto the debate stage, both appearing serious.
-*   **0:02-0:07:** Biden is shown speaking about &quot;more border patrol and more asylum officers,&quot; with a somewhat hesitant delivery.
-*   **0:07-0:12:** Trump responds, looking dismissive, saying, &quot;I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either.&quot;
-*   **0:12-0:17:** Biden then directly attacks Trump, stating angrily, &quot;The only person on this stage that is a convicted felon is the man I&#x27;m looking at right now.&quot;
-*   **0:17-0:20:** Trump quickly retorts, pointing a finger, &quot;but when he talks about a convicted felon, his son is a convicted felon,&quot; referring to Hunter Biden.
-*   **0:20-0:24:** A visibly agitated Biden asks, &quot;What are you talking about? You have the morals of an alley cat.&quot;
-*   **0:24-0:29:** Biden continues his emotional response, saying, &quot;My son was not a loser. He was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.&quot;
-*   **0:29-0:34:** Trump, with a serious expression, discusses inflation, asserting that Biden &quot;caused the inflation.&quot;
-*   **0:34-0:40:** Biden struggles to articulate his thoughts, closing his eyes and pausing, eventually saying, &quot;Excuse me, with, dealing with everything we have to do with, uh...&quot;
-*   **0:40-0:46:** Trump watches as Biden continues to falter, then says, &quot;We finally beat Medicare,&quot; which appears to be a misstatement or a lost train of thought. A moderator&#x27;s voice is then heard.
-*   **0:47-0:52:** Trump, appearing confident, states, &quot;Well, I took two tests. Cognitive tests. I aced them. Go through the first five questions. He couldn&#x27;t do it,&quot; seemingly challenging Biden&#x27;s mental acuity.
-*   **0:52-0:58:** Biden concludes the clip by responding, &quot;This guy is three years younger and a lot less competent. I think that just look at the record. Look at what I&#x27;ve done,&quot; expressing frustration and defiance.</pre>
+The video then transitions to close-up shots of each candidate as they speak:
+
+1.  **Biden** is heard saying &quot;...relative to what we&#x27;re going to do with more border patrol and more asylum officers.&quot; He pauses and appears to struggle slightly with the end of the sentence.
+2.  **Trump** responds, &quot;I really don&#x27;t know what he said at the end of that sentence. I don&#x27;t think he knows what he said either,&quot; looking directly at Biden with a dismissive expression and gesturing with his hand.
+3.  **Biden** then delivers a sharp personal attack: &quot;The only person on this stage that is a convicted felon is the man I&#x27;m looking at right now.&quot;
+4.  **Trump** retaliates quickly: &quot;...but when he talks about a convicted felon, his son is a convicted felon.&quot; He points a finger, looking sternly.
+5.  **Biden** becomes visibly agitated, his face contorted: &quot;What are you talking about? You have the morals of an alley cat. My son was not a loser. He was not a sucker. You&#x27;re the sucker. You&#x27;re the loser.&quot;
+6.  The conversation shifts to inflation. **Trump** states, &quot;He&#x27;s blaming inflation and he&#x27;s right, it&#x27;s been very bad. He caused the inflation.&quot;
+7.  **Biden** is then shown with his eyes closed, appearing to struggle to articulate his thoughts: &quot;Excuse me, with, dealing with everything we have to do with... Look, if... We finally beat Medicare.&quot;
+8.  **Trump** observes Biden, at one point appearing to smirk and roll his eyes slightly.
+9.  A moderator&#x27;s voice is heard, &quot;Thank you, President Biden, President Trump?&quot;
+10. **Trump** then talks about cognitive tests: &quot;Well, I took two tests. Cognitive tests. I aced them. Go through the first five questions. He couldn&#x27;t do it.&quot;
+11. **Biden** concludes the segment with a wry smile, asserting, &quot;This guy is three years younger and a lot less competent. I think that just look at the record. Look at what I&#x27;ve done.&quot;
+
+The video highlights a contentious exchange, characterized by personal attacks, challenges to cognitive ability, and difficulties in verbal delivery from both candidates, particularly Biden.</pre>
 <h2>Or just give it a YouTube URL</h2>
 <p>If the video is already on YouTube, it's even easier: Gemini accepts YouTube URLs directly.</p>
 <p><strong><code>video/gemini-youtube.py</code></strong> — Send a YouTube URL directly to Gemini for analysis (no download needed)</p>
@@ -965,14 +969,15 @@ Here&#x27;s a breakdown of what happens:
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">The video features segments from a presidential debate between Joe Biden and Donald Trump, and the topics discussed include:
+<pre class="cell-output">The video features segments from the June 27, 2024, CNN Presidential Debate between Joe Biden and Donald Trump. The topics discussed include:
 
-*   **Immigration and border security:** Biden mentions increasing border patrol and asylum officers.
-*   **Felony convictions:** Biden refers to Trump as a &quot;convicted felon,&quot; and Trump retorts by mentioning Hunter Biden&#x27;s conviction.
-*   **Personal insults and character attacks:** Biden calls Trump names like &quot;alley cat,&quot; &quot;sucker,&quot; and &quot;loser.&quot;
-*   **The economy and inflation:** Trump blames Biden for inflation.
-*   **Mental fitness and cognitive ability:** Trump boasts about passing cognitive tests and implies Biden couldn&#x27;t, while Biden calls Trump &quot;less competent&quot; and refers to his own record.
-*   **Healthcare:** Biden makes a somewhat garbled statement about &quot;beating Medicare&quot; (likely a verbal gaffe meaning improving it).</pre>
+1.  **Immigration and Border Security:** Biden mentions &quot;more border patrol and more asylum officers.&quot;
+2.  **Candidate Competence/Clarity:** Trump questions Biden&#x27;s ability to articulate his thoughts, while Biden later critiques Trump&#x27;s competence and age. Both reference cognitive abilities.
+3.  **Legal Issues/Felony Convictions:** Biden directly refers to Trump as a &quot;convicted felon,&quot; and Trump retorts by mentioning Hunter Biden&#x27;s felony conviction.
+4.  **Personal Attacks and Character:** Both candidates exchange insults, with Biden calling Trump&#x27;s morals into question and labeling him a &quot;sucker&quot; and &quot;loser&quot; in defense of his son.
+5.  **Economy/Inflation:** Trump blames Biden for inflation.
+6.  **Healthcare/Medicare:** Biden briefly mentions &quot;beating Medicare&quot; (though the phrasing suggests a stumble, the topic is clear).
+7.  **Political Records:** Biden alludes to looking at his record and what he&#x27;s done.</pre>
 <h2>Ask about a specific moment</h2>
 <p>"What's happening at 1:30?" Gemini can jump to timestamps. Useful when you already know <em>where</em> to look but need the AI to describe <em>what</em> it sees.</p>
 <p><strong><code>video/gemini-timestamp.py</code></strong> — Ask Gemini about a specific moment in a video using timestamps</p>
@@ -999,15 +1004,15 @@ Here&#x27;s a breakdown of what happens:
 <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">At 01:30 in the video, Joe Biden is shown in a close-up shot, speaking intensely into a microphone. He is wearing a dark suit, a white shirt, and a blue tie, with his brows furrowed and his mouth slightly open as he speaks.
+<pre class="cell-output">At 01:30, the video shows a close-up shot of **Donald Trump**.
 
-The background is a solid blue with a faint, repeating CNN logo pattern.
+**Describe the scene:**
+He is wearing a dark blue suit, a white collared shirt, and a bright red tie. A black microphone is positioned directly in front of him. He has a serious expression, with his mouth slightly open as if he is speaking, and is looking forward. There is a small American flag lapel pin on his left lapel. The background is a solid blue with faint, out-of-focus white &quot;CNN&quot; logos visible.
 
 **Text on screen:**
-
-*   **Top left:** &quot;wp&quot; (logo)
-*   **Top right:** &quot;Courtesy of CNN&quot; and &quot;Atlanta, Ga. | June 27, 2024&quot;
-*   **Bottom center (subtitles):** &quot;My son was not a loser. He was not a sucker. You&#x27;re the sucker.&quot;</pre>
+*   **Top left:** A white &quot;wp&quot; logo (likely indicating The Washington Post).
+*   **Top right:** &quot;Courtesy of CNN&quot; in white text. Below that, &quot;Atlanta, Ga. | June 27, 2024&quot;.
+*   **Bottom middle (subtitles):** &quot;Look, if...&quot;</pre>
 <h2>Structured scene-by-scene breakdown</h2>
 <p>If you join Gemini with Pydantic, you can ask for exactly what you want: timestamps, descriptions, people visible, text on screen. It's the same structured output pattern from the image notebooks, just applied to video.</p>
 <p><strong><code>video/gemini-structured.py</code></strong> — Get a structured scene-by-scene breakdown of a video</p>
@@ -1050,51 +1055,45 @@ The background is a solid blue with a faint, repeating CNN logo pattern.
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Text: </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">text_on_screen</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
-<pre class="cell-output">[00:00 - 00:01] Split screen showing Joe Biden walking on the top and Donald Trump walking on the bottom.
+<pre class="cell-output">[00:00 - 00:02] Split screen showing Joe Biden and Donald Trump walking onto a stage.
   People: Joe Biden, Donald Trump
-  Text: PRESIDENTIAL DEBATE, E PLURIBUS UNUM, wp, CNN (repeated), Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:01 - 00:04] Close-up of Joe Biden speaking, with subtitles.
+  Text: Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:02 - 00:04] Close-up of Joe Biden speaking.
   People: Joe Biden
-  Text: ...relative to what we&#x27;re going to do with, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:04 - 00:06] Close-up of Donald Trump speaking, with subtitles.
+  Text: ...relative to what we&#x27;re going to do with, Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:04 - 00:07] Close-up of Donald Trump listening, then Joe Biden speaking.
+  People: Donald Trump, Joe Biden
+  Text: more border patrol and more asylum officers, Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:07 - 00:13] Close-up of Donald Trump speaking, stating he doesn&#x27;t know what Biden said.
   People: Donald Trump
-  Text: more border patrol and more asylum officers, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:06 - 00:07] Close-up of Joe Biden speaking, with subtitles.
+  Text: I really don&#x27;t know what he said at the end of that sentence. don&#x27;t think he knows what he said either., Donald Trump FORMER PRESIDENT, Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:13 - 00:17] Close-up of Joe Biden speaking, accusing Trump of being a convicted felon.
   People: Joe Biden
-  Text: more border patrol and more asylum officers, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:07 - 00:13] Close-up of Donald Trump speaking, with subtitles and his name/title.
+  Text: The only person on this stage that is a convicted felon is the man I&#x27;m looking at right now., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:17 - 00:20] Close-up of Donald Trump speaking, retorting that Biden&#x27;s son is a convicted felon.
   People: Donald Trump
-  Text: I really don&#x27;t know what he said at the end of that sentence., Donald Trump, FORMER PRESIDENT, don&#x27;t think he knows what he said either., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:13 - 00:17] Close-up of Joe Biden speaking, with subtitles.
+  Text: ...but when he talks about a convicted felon, his son is a convicted felon., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:20 - 00:29] Close-up of Joe Biden speaking, expressing anger and calling Trump names.
   People: Joe Biden
-  Text: The only person on this stage that is a convicted felon is the man I&#x27;m looking at right now., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:17 - 00:20] Close-up of Donald Trump speaking, with subtitles.
+  Text: What are you talking about?, You have the morals of an alley cat., My son was not a loser. He was not a sucker. You&#x27;re the sucker. You&#x27;re the loser., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:29 - 00:34] Close-up of Donald Trump speaking, blaming Biden for inflation.
   People: Donald Trump
-  Text: ...but when he talks about a convicted felon, his son is a convicted felon., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:20 - 00:24] Close-up of Joe Biden speaking, with subtitles.
+  Text: He&#x27;s blaming inflation and he&#x27;s right it&#x27;s been very bad. He caused the inflation., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:34 - 00:39] Close-up of Joe Biden speaking, seemingly struggling with his words.
   People: Joe Biden
-  Text: What are you talking about? You have the morals of an alley cat., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:24 - 00:29] Close-up of Joe Biden speaking passionately, with subtitles.
-  People: Joe Biden
-  Text: My son was not a loser. He was not a sucker. You&#x27;re the sucker. You&#x27;re the loser., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:29 - 00:34] Close-up of Donald Trump speaking, with subtitles.
+  Text: Excuse me, with, dealing with everything we have to do with., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:39 - 00:41] Close-up of Donald Trump listening.
   People: Donald Trump
-  Text: He&#x27;s blaming inflation and he&#x27;s right it&#x27;s been very bad. He caused the inflation., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:34 - 00:39] Close-up of Joe Biden speaking, with subtitles.
+  Text: Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:41 - 00:47] Close-up of Joe Biden speaking, then the moderator interrupting. Biden seems to be searching for words.
   People: Joe Biden
-  Text: Excuse me, with, dealing with everything we have to do with., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:39 - 00:41] Close-up of Donald Trump listening and looking.
+  Text: Look, if..., We finally beat Medicare., Thank you, President Biden, president Trump?, Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:47 - 00:52] Close-up of Donald Trump speaking, claiming he aced cognitive tests.
   People: Donald Trump
-  Text: wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:41 - 00:47] Close-up of Joe Biden speaking, with subtitles, and a moderator interjecting.
+  Text: Well, I took two tests. Cognitive tests. I aced them. Go through the first five questions. He couldn&#x27;t do it., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp
+[00:52 - 00:59] Close-up of Joe Biden speaking, stating Trump is younger but less competent.
   People: Joe Biden
-  Text: Look, if... We finally beat Medicare. Thank you, President Biden, president Trump?, wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:47 - 00:53] Close-up of Donald Trump speaking, with subtitles.
-  People: Donald Trump
-  Text: Well, I took two tests. Cognitive tests. I aced them. Go through the first five questions. He couldn&#x27;t do it., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024
-[00:53 - 00:59] Close-up of Joe Biden speaking, with subtitles.
-  People: Joe Biden
-  Text: This guy is three years younger and a lot less competent. I think that just look at the record. Look at what I&#x27;ve done., wp, Courtesy of CNN, Atlanta, Ga. | June 27, 2024</pre>
+  Text: This guy is three years younger and a lot less competent. I think that just look at the record. Look at what I&#x27;ve done., Courtesy of CNN, Atlanta, Ga. | June 27, 2024, wp</pre>
 
 <footer>
   <a href="06-tracking.html">&larr; Bonus: Tracking &amp; Counting</a>

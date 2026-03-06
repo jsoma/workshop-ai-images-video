@@ -5,6 +5,7 @@ install:
   - ffmpeg-python
   - whisperx
   - "yt-dlp[default]"
+restart_runtime: true
 env_keys:
   - HF_TOKEN
 data_files:

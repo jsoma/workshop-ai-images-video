@@ -5,6 +5,8 @@ install:
   - "torchaudio<2.9"
   - torchvision
   - whisperx
+  - "pyannote.audio>=4.0"
+restart_runtime: true
 
 env_keys:
   - HF_TOKEN
@@ -13,7 +15,9 @@ data_files:
 ---
 # Audio
 
-Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it. This is how you can do story research like [Misinformation on TikTok: How 'Documented' Examined Hundreds of Videos in Different Languages](https://pulitzercenter.org/misinformation-tiktok-how-documented-examined-hundreds-videos-different-languages).
+Images and documents gave you structured data. Audio is another way to get text — and once it's text, you already know what to do with it. This is how you can do story research like [Misinformation on TikTok: How 'Documented' Examined Hundreds of Videos in Different Languages](https://pulitzercenter.org/misinformation-tiktok-how-documented-examined-hundreds-videos-different-languages) or [The Second Trump Presidency, Brought to you by YouTubers](https://www.bloomberg.com/graphics/2025-youtube-podcast-men-for-trump/).
+
+> If you don't want to code... just use [NotebookLM](https://notebooklm.google.com/). It will do everything for you. Just go to sleep right now.
 
 ## Transcription with Whisper
 
